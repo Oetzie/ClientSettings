@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="clientsettings" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.0">
+    <object class="Areas" table="clientsettings_areas" extends="xPDOSimpleObject">
+    	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
+        <field key="name" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+        <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="menuindex" dbtype="int" precision="11" phptype="integer" null="false" default=""/>
+        <field key="editedon" dbtype="timestamp" phptype="timestamp" attributes="ON UPDATE CURRENT_TIMESTAMP" null="false" default=""/>
+        
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+                <column key="id" collation="A" null="false" />
+        </index>
+        
+        <aggregate alias="cgSettings" local="id" class="Settings" foreign="area_id" owner="local" cardinality="many" />
+    </object>
+    
+    <object class="Settings" table="clientsettings_settings" extends="xPDOSimpleObject">
+    	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
+    	<field key="area_id" dbtype="int" precision="11" phptype="integer" null="false" default=""/>
+    	<field key="key" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+    	<field key="label" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+        <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="xtype" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+        <field key="exclude" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
+        <field key="value" dbtype="text" phptype="string" null="false" default=""/>
+        <field key="menuindex" dbtype="int" precision="11" phptype="integer" null="false" default=""/>
+        <field key="editedon" dbtype="timestamp" phptype="timestamp" attributes="ON UPDATE CURRENT_TIMESTAMP" null="false" default=""/>
+        
+        <index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+                <column key="id" collation="A" null="false" />
+        </index>
+        
+        <aggregate alias="cgAreas" local="area_id" class="Areas" foreign="id" owner="foreign" cardinality="one" />
+        <aggregate alias="cgValues" local="id" class="Values" foreign="setting_id" owner="local" cardinality="many" />
+    </object>
+    
+    <object class="Values" table="clientsettings_values" extends="xPDOSimpleObject">
+    	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
+    	<field key="setting" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+    	<field key="context" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+    	<field key="value" dbtype="text" phptype="string" null="false" default=""/>
+    	<field key="editedon" dbtype="timestamp" phptype="timestamp" attributes="ON UPDATE CURRENT_TIMESTAMP" null="false" default=""/>
+    	
+    	<index alias="PRIMARY" name="PRIMARY" primary="true" unique="true">
+                <column key="id" collation="A" null="false" />
+        </index>
+
+        <aggregate alias="cgSetting" local="setting" class="Settings" foreign="key" owner="foreign" cardinality="one" />
+    </object>
+</model>
