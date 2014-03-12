@@ -62,8 +62,11 @@ ClientSettings.grid.Settings = function(config) {
             header		: _('clientsettings.label'),
             dataIndex	: 'label',
             sortable	: true,
-            editable	: false,
-            width		: 150
+            editable	: true,
+            width		: 150,
+			editor		: {
+            	xtype		: 'textfield'
+            }
         }, {
             header		: _('clientsettings.key'),
             dataIndex	: 'key',
