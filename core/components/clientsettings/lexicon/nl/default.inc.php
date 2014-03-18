@@ -24,10 +24,11 @@
 
 	$_lang['clientsettings'] 								= 'Instellingen';
 	$_lang['clientsettings.desc'] 							= 'Wijzig of maak site-brede instellingen.';
-	$_lang['clientsettings.no_settings']					= 'Geen instellingen';
-	$_lang['clientsettings.no_settings_desc']				= 'Het lijkt erop dat er geen instellingen beschikbaar zijn.';
-	$_lang['clientsettings.client_view']					= 'Normale weergave';
-	$_lang['clientsettings.admin_view']						= 'Admin weergave';
+	
+	$_lang['area_clientsettings']							= 'Instellingen';
+	
+	$_lang['setting_clientsettings.admin_groups']			= 'Gebruikersgroepen';
+	$_lang['setting_clientsettings.admin_groups_desc']		= 'De gebruikersgroepen die toegang hebben tot de admin gedeelte van de instellingen, gebruikersgroepen scheiden met een komma.';
 
 	$_lang['clientsettings.admin_area'] 					= 'Gebied';
 	$_lang['clientsettings.admin_areas'] 					= 'Gebieden';
@@ -44,27 +45,32 @@
 	$_lang['clientsettings.admin_setting_update']			= 'Instelling updaten';
 	$_lang['clientsettings.admin_setting_remove']			= 'Instelling verwijderen';
 	$_lang['clientsettings.admin_setting_remove_confirm']	= 'Weet je zeker dat je deze instelling wilt verwijderen? Dit kan jouw MODX website kapot maken.';
+	
+	$_lang['clientsettings.label_key']						= 'Key';
+	$_lang['clientsettings.label_key_desc']					= 'De key voor de instelling. De instelling zal beschikbaar zijn via de [[++key]] tags.';
+	$_lang['clientsettings.label_label']					= 'Label';
+	$_lang['clientsettings.label_label_desc']				= 'De label voor de instelling.';
+	$_lang['clientsettings.label_name']						= 'Naam';
+	$_lang['clientsettings.label_name_desc']				= 'De naam voor het gebied.';
+	$_lang['clientsettings.label_description']				= 'Beschrijving';
+	$_lang['clientsettings.label_description_desc']			= 'Een korte beschrijving van de instelling.';
+	$_lang['clientsettings.label_area']						= 'Gebied';
+	$_lang['clientsettings.label_area_desc']				= 'Het gebied voor de instelling.';
+	$_lang['clientsettings.label_xtype']					= 'Type';
+	$_lang['clientsettings.label_xtype_desc']				= 'Type van de instelling. dit kan zijn bijvoorbeeld textfield, textarea, of ja/nee zijn.';
+	$_lang['clientsettings.label_exclude']					= 'Context uitsluiten';
+	$_lang['clientsettings.label_exclude_desc']				= 'Instelling uitsluiten voor context. Contexten scheiden met een komma.';
+	$_lang['clientsettings.label_menuindex']				= 'Sorteervolgorde';
+	$_lang['clientsettings.label_menuindex_desc']			= '';
+	$_lang['clientsettings.label_value']					= 'Waarde';
+	$_lang['clientsettings.label_value_desc']				= '';
+	
+	$_lang['clientsettings.no_settings']					= 'Geen instellingen';
+	$_lang['clientsettings.no_settings_desc']				= 'Het lijkt erop dat er geen instellingen beschikbaar zijn.';
+	$_lang['clientsettings.client_view']					= 'Normale weergave';
+	$_lang['clientsettings.admin_view']						= 'Admin weergave';
+	$_lang['clientsettings.number']							= 'Nummer';
 	$_lang['clientsettings.setting_error_character']		= 'Instelling key bevat niet toegestane tekens. Definieer een andere keynaam.';
 	$_lang['clientsettings.setting_error_exists']			= 'Instelling met deze key bestaat reeds. Definieer een andere keynaam';
-	
-	$_lang['clientsettings.key']							= 'Key';
-	$_lang['clientsettings.key_desc']						= 'De key voor de instelling. De instelling zal beschikbaar zijn via de [[++key]] tags.';
-	$_lang['clientsettings.label']							= 'Label';
-	$_lang['clientsettings.label_desc']						= 'De label voor de instelling.';
-	$_lang['clientsettings.name']							= 'Naam';
-	$_lang['clientsettings.name_desc']						= 'De naam voor het gebied.';
-	$_lang['clientsettings.description']					= 'Beschrijving';
-	$_lang['clientsettings.description_desc']				= 'Een korte beschrijving van de instelling.';
-	$_lang['clientsettings.area']							= 'Gebied';
-	$_lang['clientsettings.area_desc']						= 'Het gebied voor de instelling.';
-	$_lang['clientsettings.xtype']							= 'Type';
-	$_lang['clientsettings.xtype_desc']						= 'Type van de instelling. dit kan zijn bijvoorbeeld textfield, textarea, of ja/nee zijn.';
-	$_lang['clientsettings.exclude']						= 'Context uitsluiten';
-	$_lang['clientsettings.exclude_desc']					= 'Instelling uitsluiten voor context. Contexten scheiden met een komma.';
-	$_lang['clientsettings.menuindex']						= 'Sorteervolgorde';
-	$_lang['clientsettings.menuindex_desc']					= '';
-	$_lang['clientsettings.value']							= 'Waarde';
-	$_lang['clientsettings.value_desc']						= '';
-	$_lang['clientsettings.number']							= 'Nummer';
 	
 ?>

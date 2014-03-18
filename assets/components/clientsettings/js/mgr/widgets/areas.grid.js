@@ -39,7 +39,7 @@ ClientSettings.grid.Areas = function(config) {
 
     this.cm = new Ext.grid.ColumnModel({
         columns: [{
-            header		: _('clientsettings.name'),
+            header		: _('clientsettings.label_name'),
             dataIndex	: 'name',
             sortable	: true,
             editable	: true,
@@ -48,7 +48,7 @@ ClientSettings.grid.Areas = function(config) {
             	xtype		: 'textfield'
             }
         }, {
-            header		: _('clientsettings.description'),
+            header		: _('clientsettings.label_description'),
             dataIndex	: 'description',
             sortable	: true,
             editable	: true,
@@ -172,20 +172,20 @@ ClientSettings.window.CreateArea = function(config) {
         },
         fields		: [{
         	xtype		: 'textfield',
-        	fieldLabel	: _('clientsettings.name'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.name_desc'),
+        	fieldLabel	: _('clientsettings.label_name'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_name_desc'),
         	name		: 'name',
         	anchor		: '100%',
         	allowBlank	: false,
         	maxLength	: 75
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-            html		: _('clientsettings.name_desc'),
+            html		: _('clientsettings.label_name_desc'),
             cls			: 'desc-under'
         }, {
 	        xtype		: 'numberfield',
-            fieldLabel	: _('clientsettings.menuindex'),
-            description	: MODx.expandHelp ? '' : _('clientsettings.menuindex_desc'),
+            fieldLabel	: _('clientsettings.label_menuindex'),
+            description	: MODx.expandHelp ? '' : _('clientsettings.label_menuindex_desc'),
             name		: 'menuindex',
             anchor		: '100%',
             allowBlank	: false,
@@ -194,18 +194,18 @@ ClientSettings.window.CreateArea = function(config) {
             value		: 0
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-            html		: _('clientsettings.menuindex_desc'),
+            html		: _('clientsettings.label_menuindex_desc'),
             cls			: 'desc-under'
         }, {
         	xtype		: 'textarea',
-        	fieldLabel	: _('clientsettings.description'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.description_desc'),
+        	fieldLabel	: _('clientsettings.label_description'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_description_desc'),
         	name		: 'description',
         	anchor		: '100%',
         	allowBlank	: true
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-        	html		: _('clientsettings.description_desc'),
+        	html		: _('clientsettings.label_description_desc'),
         	cls			: 'desc-under'
         }]
     });
@@ -231,20 +231,20 @@ ClientSettings.window.UpdateArea = function(config) {
             name		: 'id'
         }, {
         	xtype		: 'textfield',
-        	fieldLabel	: _('name'),
-        	description	: MODx.expandHelp ? '' : _('name_desc'),
+        	fieldLabel	: _('clientsettings.label_name'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_name_desc'),
         	name		: 'name',
         	anchor		: '100%',
         	allowBlank	: false,
         	maxLength	: 75
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-            html		: _('name_desc'),
+            html		: _('clientsettings.label_name_desc'),
             cls			: 'desc-under'
         }, {
 	        xtype		: 'numberfield',
-            fieldLabel	: _('clientsettings.menuindex'),
-            description	: MODx.expandHelp ? '' : _('clientsettings.menu_desc'),
+            fieldLabel	: _('clientsettings.label_menuindex'),
+            description	: MODx.expandHelp ? '' : _('clientsettings.label_menu_desc'),
             name		: 'menuindex',
             anchor		: '100%',
             allowBlank	: false,
@@ -252,18 +252,18 @@ ClientSettings.window.UpdateArea = function(config) {
             maxValue	: 9999999999
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-            html		: _('clientsettings.menuindex_desc'),
+            html		: _('clientsettings.label_menuindex_desc'),
             cls			: 'desc-under'
         }, {
         	xtype		: 'textarea',
-        	fieldLabel	: _('clientsettings.description'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.description_desc'),
+        	fieldLabel	: _('clientsettings.label_description'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_description_desc'),
         	name		: 'description',
         	anchor		: '100%',
         	allowBlank	: true
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-        	html		: _('clientsettings.description_desc'),
+        	html		: _('clientsettings.label_description_desc'),
         	cls			: 'desc-under'
         }]
     });

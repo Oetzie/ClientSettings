@@ -8,7 +8,7 @@
 		'value' 	=> 'Administrator',
 		'xtype' 	=> 'textfield',
 		'namespace' => PKG_NAME_LOWER,
-		'area' 		=> PKG_NAME
+		'area' 		=> PKG_NAME_LOWER
 	), '', true, true);
 		
 	return $settings;
