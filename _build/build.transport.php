@@ -49,18 +49,32 @@
 	$category = $modx->newObject('modCategory');
 	$category->fromArray(array('id' => 1, 'category' => PKG_NAME), '', true, true);
 
-	if (file_exists($sources['data'].'transport.plugins.php')) {	
-		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in plugin(s) into category...');
+	if (file_exists($sources['data'].'transport.snippets.php')) {	
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in snippet(s) into category...');
 	
-		$plugins = include $sources['data'].'transport.plugins.php';
+		$snippets = include $sources['data'].'transport.snippets.php';
 	
-		foreach ($plugins as $plugin) {
-			$category->addMany($plugin);
+		foreach ($snippets as $snippet) {
+			$category->addMany($snippet);
 		}
 
-		$modx->log(modX::LOG_LEVEL_INFO, 'Packed plugin(s) '.count($plugins).' into category.');
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packed snippet(s) '.count($snippets).' into category.');
 	} else {
-		$modx->log(modX::LOG_LEVEL_INFO, 'No plugins(s) to pack...');
+		$modx->log(modX::LOG_LEVEL_INFO, 'No snippet(s) to pack...');
+	}
+	
+	if (file_exists($sources['data'].'transport.chunks.php')) {
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in chunk(s) into category...');
+		
+		$chunks = include $sources['data'].'transport.chunks.php';
+	
+		foreach ($chunks as $chunk) {
+			$category->addMany($chunk);
+		}
+		
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packed chunk(s) '.count($chunks).' into category.');
+	} else {
+		$modx->log(modX::LOG_LEVEL_INFO, 'No chunk(s) to pack...');
 	}
 	
 	$builder->putVehicle($builder->createVehicle($category, array(
@@ -78,6 +92,16 @@
 	            xPDOTransport::PRESERVE_KEYS 	=> true,
 	            xPDOTransport::UPDATE_OBJECT 	=> false,
 	            xPDOTransport::UNIQUE_KEY 		=> array('pluginid', 'event'),
+	        ),
+	        'Snippets' => array(
+	            xPDOTransport::PRESERVE_KEYS 	=> false,
+	            xPDOTransport::UPDATE_OBJECT 	=> true,
+	            xPDOTransport::UNIQUE_KEY 		=> 'name'
+	        ),
+	        'Chunks' => array(
+	            xPDOTransport::PRESERVE_KEYS 	=> false,
+	            xPDOTransport::UPDATE_OBJECT 	=> true,
+	            xPDOTransport::UNIQUE_KEY 		=> 'name'
 	        )
 	    )
 	)));
