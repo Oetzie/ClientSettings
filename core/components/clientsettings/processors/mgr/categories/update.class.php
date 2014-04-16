@@ -22,8 +22,38 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	require_once (dirname(dirname(__FILE__)) . '/areas.class.php');
+	class CategoriesUpdateProcessor extends modObjectUpdateProcessor {
+		/**
+		 * @acces public.
+		 * @var String.
+		 */
+		public $classKey = 'Categories';
+		
+		/**
+		 * @acces public.
+		 * @var Array.
+		 */
+		public $languageTopics = array('clientsettings:default');
+		
+		/**
+		 * @acces public.
+		 * @var String.
+		 */
+		public $objectType = 'clientsettings.categories';
+		
+		/**
+		 * @acces public.
+		 * @return Mixed.
+		 */
+		public function initialize() {
+			if (null === $this->getProperty('active')) {
+				$this->setProperty('active', 0);
+			}
+
+			return parent::initialize();
+		}
+	}
 	
-	class Areas_mysql extends Areas {}
+	return 'CategoriesUpdateProcessor';
 	
 ?>

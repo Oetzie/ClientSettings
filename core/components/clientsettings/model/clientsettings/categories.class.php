@@ -1,5 +1,5 @@
 <?php
-
+	
 	/**
 	 * ClientSettings
 	 *
@@ -22,26 +22,5 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	class AreasRemoveProcessor extends modObjectRemoveProcessor {
-		/**
-		 * @acces public.
-		 * @var String.
-		 */
-		public $classKey = 'Areas';
-		
-		/**
-		 * @acces public.
-		 * @var Array.
-		 */
-		public $languageTopics = array('clientsettings:default');
-		
-		/**
-		 * @acces public.
-		 * @var String.
-		 */
-		public $objectType = 'clientsettings.areas';
-	}
-	
-	
-	return 'AreasRemoveProcessor';
+	class Categories extends xPDOSimpleObject {}
 ?>

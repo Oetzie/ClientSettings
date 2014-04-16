@@ -1,17 +1,15 @@
 <?php
 
-	$mtime = microtime();
-	$mtime = explode(" ", $mtime);
-	$mtime = $mtime[1] + $mtime[0];
-	$tstart = $mtime;
+	$mtime 	= explode(' ', microtime());
+	$tstart = $mtime[1] + $mtime[0];
+	
 	set_time_limit(0);
 
-	define('PKG_NAME', 'ClientSettings');
-	define('PKG_NAME_LOWER', strtolower(PKG_NAME));
-	define('PKG_NAMESPACE', strtolower(PKG_NAME));
-	
-	define('PKG_VERSION','1.0.0');
-	define('PKG_RELEASE','pl');
+	define('PKG_NAME', 			'ClientSettings');
+	define('PKG_NAME_LOWER', 	strtolower(PKG_NAME));
+	define('PKG_NAMESPACE', 	strtolower(PKG_NAME));
+	define('PKG_VERSION',		'1.0.1');
+	define('PKG_RELEASE',		'pl');
 
 	$root = dirname(dirname(__FILE__)).'/';
 
@@ -20,167 +18,142 @@
 	    'build' 		=> $root.'_build/',
 	    'data' 			=> $root.'_build/data/',
 	    'resolvers' 	=> $root.'_build/resolvers/',
+	    'core' 			=> $root.'core/components/'.PKG_NAME_LOWER,
+	    'assets' 		=> $root.'assets/components/'.PKG_NAME_LOWER,
 	    'chunks' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/elements/chunks/',
 	    'snippets' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/elements/snippets/',
 	    'plugins' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/elements/plugins/',
 	    'lexicon' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/lexicon/',
-	    'docs' 			=> $root.'core/components/'.PKG_NAME_LOWER.'/docs/',
-	    'pages' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/elements/pages/',
-	    'source_assets' => $root.'assets/components/'.PKG_NAME_LOWER,
-	    'source_core' 	=> $root.'core/components/'.PKG_NAME_LOWER,
+	    'docs' 			=> $root.'core/components/'.PKG_NAME_LOWER.'/docs/'
 	);
 
 	require_once $sources['build'].'/build.config.php';
-	require_once MODX_CORE_PATH.'model/modx/modx.class.php';
 	require_once $sources['build'].'/includes/functions.php';
-	
+	require_once MODX_CORE_PATH.'model/modx/modx.class.php';
+
 	$modx = new modX();
 	$modx->initialize('mgr');
 	$modx->setLogLevel(modX::LOG_LEVEL_INFO);
-	
-	echo XPDO_CLI_MODE ? '' : '<pre>';
-	
 	$modx->setLogTarget('ECHO');
 	
+	echo XPDO_CLI_MODE ? '' : '<pre>';
+
 	$modx->loadClass('transport.modPackageBuilder', '', false, true);
 	
 	$builder = new modPackageBuilder($modx);
 	$builder->createPackage(PKG_NAMESPACE, PKG_VERSION, PKG_RELEASE);
 	$builder->registerNamespace(PKG_NAMESPACE, false, true, '{core_path}components/'.PKG_NAMESPACE.'/');
 	
-	/* Category */
-	
 	$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in category...');
 	
-	$category = include $sources['data'].'transport.category.php';
+	$category = $modx->newObject('modCategory');
+	$category->fromArray(array('id' => 1, 'category' => PKG_NAME), '', true, true);
+
+	if (file_exists($sources['data'].'transport.plugins.php')) {	
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in plugin(s) into category...');
 	
-	if (empty($category)) {
-		$modx->log(modX::LOG_LEVEL_ERROR, 'No category to be packed.');
+		$plugins = include $sources['data'].'transport.plugins.php';
+	
+		foreach ($plugins as $plugin) {
+			$category->addMany($plugin);
+		}
+
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packed plugin(s) '.count($plugins).' into category.');
 	} else {
-		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in plugin...');
+		$modx->log(modX::LOG_LEVEL_INFO, 'No plugins(s) to pack...');
+	}
+	
+	$builder->putVehicle($builder->createVehicle($category, array(
+	    xPDOTransport::UNIQUE_KEY 		=> 'category',
+	    xPDOTransport::PRESERVE_KEYS 	=> false,
+	    xPDOTransport::UPDATE_OBJECT 	=> true,
+	    xPDOTransport::RELATED_OBJECTS 	=> true,
+	    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
+	        'Plugins' => array(
+	            xPDOTransport::PRESERVE_KEYS 	=> false,
+	            xPDOTransport::UPDATE_OBJECT 	=> true,
+	            xPDOTransport::UNIQUE_KEY 		=> 'name'
+	        ),
+	        'PluginEvents' => array(
+	            xPDOTransport::PRESERVE_KEYS 	=> true,
+	            xPDOTransport::UPDATE_OBJECT 	=> false,
+	            xPDOTransport::UNIQUE_KEY 		=> array('pluginid', 'event'),
+	        )
+	    )
+	)));
+	
+	if (file_exists($sources['data'].'transport.settings.php')) {
+		$settings = include $sources['data'].'transport.settings.php';
 		
-		$plugin = $modx->newObject('modPlugin');
-		$plugin->fromArray(array(
-			'id' 			=> 1,
-			'name'			=> PKG_NAME,
-			'description'	=> PKG_NAME.' '.PKG_VERSION.'-'.PKG_RELEASE.' plugin for MODx Revolution',
-			'plugincode'	=> getSnippetContent($sources['plugins'].'/'.PKG_NAME_LOWER.'.plugin.php')
-		));
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in systemsetting(s) into category...');
 		
-		$events = include $sources['data'].'transport.plugin.events.php';
-		
-		if (!is_array($events) || empty($events)) {
-		    $modx->log(xPDO::LOG_LEVEL_ERROR, 'No plugin events to be packed.');
-		} else {
-			$plugin->addMany($events);
-			
-		    $modx->log(xPDO::LOG_LEVEL_INFO, 'Plugin events packed.');
-		    
-		    flush();
+		foreach ($settings as $key => $value) {
+			$builder->putVehicle($builder->createVehicle($value, array(
+				xPDOTransport::UNIQUE_KEY => 'key',
+				xPDOTransport::PRESERVE_KEYS => true,
+				xPDOTransport::UPDATE_OBJECT => false
+			)));
 		}
 		
-		$category->addMany($plugin);
-			
-		$modx->log(modX::LOG_LEVEL_INFO, 'Plugin packed.');
-		
-		$builder->putVehicle($builder->createVehicle($category, array(
-		    xPDOTransport::UNIQUE_KEY 		=> 'category',
-		    xPDOTransport::PRESERVE_KEYS 	=> false,
-		    xPDOTransport::UPDATE_OBJECT 	=> true,
-		    xPDOTransport::RELATED_OBJECTS 	=> true,
-		    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
-		        'Plugins' => array(
-		            xPDOTransport::PRESERVE_KEYS 	=> false,
-		            xPDOTransport::UPDATE_OBJECT 	=> true,
-		            xPDOTransport::UNIQUE_KEY 		=> 'name'
-		        ),
-		        'PluginEvents' => array(
-		            xPDOTransport::PRESERVE_KEYS 	=> true,
-		            xPDOTransport::UPDATE_OBJECT 	=> false,
-		            xPDOTransport::UNIQUE_KEY 		=> array('pluginid', 'event'),
-		        )
-		    )
-		)));
-		
-		$modx->log(modX::LOG_LEVEL_INFO, 'Category packed.');
-	}
-	
-	unset($category);
-	
-	/* Menu */
-	
-	$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in menu...');
-	
-	$menu = include $sources['data'].'transport.menu.php';
-	
-	if (empty($menu)) {
-		$modx->log(modX::LOG_LEVEL_ERROR, 'No menu found to be packed.');
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packed systemsetting(s) '.count($settings).' into category.');
 	} else {
-		$vehicle = $builder->createVehicle($menu, array (
-		    xPDOTransport::PRESERVE_KEYS 	=> true,
-		    xPDOTransport::UPDATE_OBJECT 	=> true,
-		    xPDOTransport::UNIQUE_KEY 		=> 'text',
-		    xPDOTransport::RELATED_OBJECTS 	=> true,
-		    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
-		        'Action' => array (
-		            xPDOTransport::PRESERVE_KEYS 	=> false,
-		            xPDOTransport::UPDATE_OBJECT 	=> true,
-		            xPDOTransport::UNIQUE_KEY 	=> array ('namespace','controller')
-		        ),
-		    ),
-		));
-		
-		$modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP resolvers...');
-		
-		$vehicle->resolve('file', array(
-	    	'source' => $sources['source_assets'],
-	    	'target' => "return MODX_ASSETS_PATH.'components/';",
-	    ));
-	    
-		$vehicle->resolve('file', array(
-		    'source' => $sources['source_core'],
-		    'target' => "return MODX_CORE_PATH.'components/';",
-		));
-		
-		$vehicle->resolve('php',array(
-		    'source' => $sources['resolvers'].'resolve.tables.php',
-		));
-		
-		$builder->putVehicle($vehicle);
-		
-		$modx->log(modX::LOG_LEVEL_INFO, 'Menu packed.');
+		$modx->log(modX::LOG_LEVEL_INFO, 'No systemsetting(s) to pack...');
 	}
 
-	unset($menu, $vehicle);
+	$modx->log(modX::LOG_LEVEL_INFO, 'Packed category.');
 	
-	/* Settings */
-	
-	$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in system settings...');
-	
-	$settings = include $sources['data'].'transport.settings.php';
-	
-	if (!is_array($settings) || empty($settings)) {
-		$modx->log(modX::LOG_LEVEL_ERROR, 'No system settings found to be packed.');
-	} else {
-    	foreach ($settings as $setting) {
-	         $builder->putVehicle($builder->createVehicle($setting, array(
-	         	xPDOTransport::UNIQUE_KEY 		=> 'key',
-	         	xPDOTransport::PRESERVE_KEYS 	=> true,
-	         	xPDOTransport::UPDATE_OBJECT 	=> false
-	         )));
-	    }
-	    
-	    $modx->log(xPDO::LOG_LEVEL_INFO, count($settings).' system settings packed.');
-	    
-	    flush();
+	if (file_exists($sources['data'].'transport.menu.php')) {
+		$menu = include $sources['data'].'transport.menu.php';
+		
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in menu...');
+		
+		if (null === $menu) {
+			$modx->log(modX::LOG_LEVEL_ERROR, 'No menu to pack.');
+		} else {
+			$vehicle = $builder->createVehicle($menu, array(
+			    xPDOTransport::PRESERVE_KEYS 	=> true,
+			    xPDOTransport::UPDATE_OBJECT 	=> true,
+			    xPDOTransport::UNIQUE_KEY 		=> 'text',
+			    xPDOTransport::RELATED_OBJECTS 	=> true,
+			    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array(
+			        'Action' => array(
+			            xPDOTransport::PRESERVE_KEYS 	=> false,
+			            xPDOTransport::UPDATE_OBJECT 	=> true,
+			            xPDOTransport::UNIQUE_KEY 		=> array('namespace','controller')
+			        ),
+			    ),
+			));
+			
+			$modx->log(modX::LOG_LEVEL_INFO, 'Adding in PHP resolvers...');
+			
+			if (is_dir($sources['assets'])) {
+				$vehicle->resolve('file', array(
+			    	'source' => $sources['assets'],
+			    	'target' => "return MODX_ASSETS_PATH.'components/';",
+			    ));
+			}
+			
+		    if (is_dir($sources['core'])) {
+				$vehicle->resolve('file', array(
+				    'source' => $sources['core'],
+				    'target' => "return MODX_CORE_PATH.'components/';",
+				));
+			}
+			
+			if (file_exists($sources['resolvers'].'resolve.tables.php')) {
+				$vehicle->resolve('php',array(
+			    	'source' => $sources['resolvers'].'resolve.tables.php',
+				));
+			}
+			
+			$builder->putVehicle($vehicle);
+			
+			$modx->log(modX::LOG_LEVEL_INFO, 'Packed menu.');
+		}
 	}
 	
-	unset($settings);
-	
 	$modx->log(xPDO::LOG_LEVEL_INFO, 'Setting Package Attributes...');
-	
-	flush();
-	
+
 	$builder->setPackageAttributes(array(
 	    'license' 	=> file_get_contents($sources['docs'].'license.txt'),
 	    'readme' 	=> file_get_contents($sources['docs'].'readme.txt'),
@@ -188,20 +161,18 @@
 	));
 
 	$modx->log(xPDO::LOG_LEVEL_INFO, 'Zipping up package...');
-	
-	flush();
-	
+
 	$builder->pack();
 	
-	$mtime		= microtime();
-	$mtime		= explode(" ", $mtime);
-	$mtime		= $mtime[1] + $mtime[0];
-	$tend		= $mtime;
+	$mtime		= explode(' ', microtime());
+	$tend		= $mtime[1] + $mtime[0];
 	$totalTime	= ($tend - $tstart);
 	$totalTime	= sprintf("%2.4f s", $totalTime);
 
 	$modx->log(modX::LOG_LEVEL_INFO, 'Package Built: Execution time: {'.$totalTime.'}');
-	
-	echo XPDO_CLI_MODE ? '' : '</pre>';
 
+	echo XPDO_CLI_MODE ? '' : '</pre>';
+	
 	exit();
+	
+?>

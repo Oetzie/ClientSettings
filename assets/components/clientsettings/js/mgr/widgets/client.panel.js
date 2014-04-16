@@ -54,20 +54,20 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 	            	autoWidth	: true,
 	            	border		: false
 	            },
-	            items		: _this.areas(context)
+	            items		: _this.categories(context)
 	        });
 		});
 		
 		return contexts;
 	},
-    areas: function(context) {
-    	var areas = [];
+    categories: function(context) {
+    	var categories = [];
     	var _this = this;
 
-	    Ext.each(ClientSettings.config.areas, function(area) {
+	    Ext.each(ClientSettings.config.categories, function(category) {
 	    	var settings = [];
 
-	    	Ext.iterate(area.items, function(setting) {
+	    	Ext.iterate(category.items, function(setting) {
 	    		var exclude = setting.exclude.split(',');
 
 	    		if (-1 == exclude.indexOf(context.key)) {
@@ -115,15 +115,15 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
             });
 	    	
 	    	if (settings.length > 0) {
-		   		areas.push({
-	            	title		: area.name,
+		   		categories.push({
+	            	title		: category.name,
 		            defaults	: {
 						autoHeight	: true,
 						autoWidth	: true,
 						border		: false
 					},
 		            items		: [{
-			            html			: '<p>' + area.description + '</p>',
+			            html			: '<p>' + category.description + '</p>',
 			            bodyCssClass	: 'panel-desc panel-desc-inner'
 		            }, {
 			            layout			: 'form',
@@ -136,7 +136,7 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 		   	}
 	    });
 	    
-	    if (areas.length == 0) {
+	    if (categories.length == 0) {
 		    return [{
 				title		: _('clientsettings.no_settings'),
 				defaults	: {
@@ -151,7 +151,7 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 		   }]; 
 	    }
     	
-        return areas;
+        return categories;
     }
 });
 

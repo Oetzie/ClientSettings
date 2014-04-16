@@ -22,12 +22,12 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class AreasCreateProcessor extends modObjectCreateProcessor {
+	class CLientSettingsCreateProcessor extends modObjectCreateProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Areas';
+		public $classKey = 'Categories';
 		
 		/**
 		 * @acces public.
@@ -39,7 +39,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $objectType = 'clientsettings.areas';
+		public $objectType = 'clientsettings.categories';
 		
 		/**
 		 * @acces public.
@@ -56,5 +56,5 @@
 		}
 	}
 	
-	return 'AreasCreateProcessor';
+	return 'CLientSettingsCreateProcessor';
 ?>

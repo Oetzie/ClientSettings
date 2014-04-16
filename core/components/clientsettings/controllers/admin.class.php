@@ -38,7 +38,7 @@
 		 */
 		public function loadCustomCssJs() {
 			$this->addJavascript($this->clientsettings->config['jsUrl'].'mgr/widgets/admin.panel.js');
-			$this->addJavascript($this->clientsettings->config['jsUrl'].'mgr/widgets/areas.grid.js');
+			$this->addJavascript($this->clientsettings->config['jsUrl'].'mgr/widgets/categories.grid.js');
 			$this->addJavascript($this->clientsettings->config['jsUrl'].'mgr/widgets/settings.grid.js');
 			$this->addLastJavascript($this->clientsettings->config['jsUrl'].'mgr/sections/admin.js');
 		}

@@ -31,7 +31,7 @@
 			$this->addHtml('<script type="text/javascript">
 				Ext.onReady(function() {
 					ClientSettings.config.contexts = '.$this->modx->toJSON($this->getContext()).';
-					ClientSettings.config.areas = '.$this->modx->toJSON($this->getAreas()).';
+					ClientSettings.config.categories = '.$this->modx->toJSON($this->getCategories()).';
 				});
 			</script>');
 		}
@@ -65,36 +65,46 @@
 		 * @acces protected.
 		 * @return Array.
 		 */
-		protected function getAreas() {
-			$areas = array();
+		protected function getCategories() {
+			$categories = array();
 			
-			$query = $this->modx->newQuery('Areas');
+			$query = $this->modx->newQuery('Categories');
+			$query->where(array(
+				'active' => 1
+			));
 			$query->sortby('menuindex', 'ASC');
 			$query->sortby('name', 'ASC');
 			
-			foreach ($this->modx->getCollection('Areas', $query) as $key => $area) {
-				$areaTab = array_merge($area->toArray(), array('items' => array()));
+			foreach ($this->modx->getCollection('Categories', $query) as $key => $category) {
+				$categoryTab = array_merge($category->toArray(), array(
+					'items' => array()
+				));
 				
 				$query = $this->modx->newQuery('Settings');
+				$query->where(array(
+					'active' => 1
+				));
 				$query->sortby('menuindex', 'ASC');
 				$query->sortby('label', 'ASC');
 				
-				foreach ($area->getMany('cgSettings', $query) as $setting) {
-					$settingTab = array_merge($setting->toArray(), array('values' => array()));
+				foreach ($category->getMany('SettingsAlias', $query) as $setting) {
+					$settingTab = array_merge($setting->toArray(), array(
+						'values' => array()
+					));
 					
-					foreach ($setting->getMany('cgValues', $this->modx->newQuery('Values')) as $value) {
+					foreach ($setting->getMany('ValuesAlias', $this->modx->newQuery('Values')) as $value) {
 						$value = $value->toArray();
 						
 						$settingTab['values'][$value['context']] = $value;
 					}
 					
-					$areaTab['items'][] = $settingTab;
+					$categoryTab['items'][] = $settingTab;
 				}
 				
-				$areas[] = $areaTab;
+				$categories[] = $categoryTab;
 			}
 			
-			return $areas;
+			return $categories;
 		}
 		
 		/**
@@ -104,10 +114,14 @@
 		protected function getContext() {
 			$contexts = array();
 			
-			$query = $this->modx->newQuery('modContext', array('key:NOT IN' => array('mgr')));
+			$query = $this->modx->newQuery('modContext', array(
+				'key:NOT IN' => array('mgr')
+			));
 			
 			foreach ($this->modx->getCollection('modContext', $query) as $key => $context) {
-				$contexts[] = array('key' => $key);
+				$contexts[] = array(
+					'key' => $key
+				);
 			}
 			
 			return $contexts;

@@ -46,6 +46,8 @@
 		 * @return Mixed.
 		 */
 		public function process() {
+			$this->modx->cacheManager->clearCache();
+			
 			foreach ($this->getProperties() as $key => $value) {
 				if (false !== strpos($key, ':')) {
 					list($context, $setting) = explode(':', $key);

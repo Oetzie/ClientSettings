@@ -28,7 +28,7 @@
 			
 			$clientsettings = new ClientSettings($modx);
 			
-			$settings = $clientsettings->getSettings($modx->context->key);
+			$settings = $clientsettings->getSettings();
 			
 			$modx->setPlaceholders($settings, '+');
 			

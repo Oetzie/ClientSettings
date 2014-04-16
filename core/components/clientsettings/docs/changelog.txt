@@ -2,7 +2,15 @@
 ClientSettings
 ----------------------
 
----------------------
+----------------------
+Version: 1.0.1-pl
+Released: 2014-04-14
+----------------------
+- Cache bug fixed
+- Bether and default Extjs comboboxes
+- Faster
+
+----------------------
 Version: 1.0.0
 Released: 2014-01-03
 ----------------------

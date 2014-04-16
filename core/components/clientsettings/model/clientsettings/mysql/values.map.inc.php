@@ -82,7 +82,7 @@
 			)
 		),
 		'aggregates' => array(
-			'cgSetting' 	=> array(
+			'SettingAlias'	=> array(
 				'local' 		=> 'setting',
 				'class' 		=> 'Settings',
 				'foreign' 		=> 'key',

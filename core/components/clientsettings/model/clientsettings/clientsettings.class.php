@@ -48,18 +48,20 @@
 			$assetsPath 	= $this->modx->getOption('clientsettings.assets_path', $config, $this->modx->getOption('assets_path').'components/clientsettings/');
 		
 			$this->config = array_merge(array(
-				'basePath'			=> $corePath,
-				'corePath' 			=> $corePath,
-				'modelPath' 		=> $corePath.'model/',
-				'processorsPath' 	=> $corePath.'processors/',
-				'elementsPath' 		=> $corePath.'elements/',
-				'templatesPath' 	=> $corePath.'templates/',
-				'assetsPath' 		=> $assetsPath,
-				'jsUrl' 			=> $assetsUrl.'js/',
-				'cssUrl' 			=> $assetsUrl.'css/',
-				'assetsUrl' 		=> $assetsUrl,
-				'connectorUrl'		=> $assetsUrl.'connector.php',
-				'helpurl'			=> 'clientsettings'
+				'basePath'				=> $corePath,
+				'corePath' 				=> $corePath,
+				'modelPath' 			=> $corePath.'model/',
+				'processorsPath' 		=> $corePath.'processors/',
+				'elementsPath' 			=> $corePath.'elements/',
+				'chunksPath' 			=> $corePath.'elements/chunks/',
+				'snippetsPath' 			=> $corePath.'elements/snippets/',
+				'templatesPath' 		=> $corePath.'templates/',
+				'assetsPath' 			=> $assetsPath,
+				'jsUrl' 				=> $assetsUrl.'js/',
+				'cssUrl' 				=> $assetsUrl.'css/',
+				'assetsUrl' 			=> $assetsUrl,
+				'connectorUrl'			=> $assetsUrl.'connector.php',
+				'helpurl'				=> 'clientsettings'
 			), $config);
 		
 			$this->modx->addPackage('clientsettings', $this->config['modelPath']);
@@ -75,13 +77,14 @@
 		
 		/**
 		 * @acces public.
-		 * @param String $context.
 		 * @return Array.
 		 */
-		public function getSettings($context) {
+		public function getSettings() {
 			$settings = array();
 			
-			$query = $this->modx->newQuery('Values', array('context' => $context));
+			$query = $this->modx->newQuery('Values', array(
+				'context' => $this->modx->context->key
+			));
 			
 			foreach ($this->modx->getCollection('Values', $query) as $key => $setting) {
 				$setting = $setting->toArray();
@@ -97,7 +100,7 @@
 		 * @return Boolean.
 		 */
 		public function hasPermission() {
-			$usergroups = $this->modx->getOption('clientsettings.admin_groups', null, 'Administrator');
+			$usergroups = $this->modx->getOption('clientsettings_admin_groups', null, 'Administrator');
 			
 			$isMember = $this->modx->user->isMember(explode(',', $usergroups), false);
 			

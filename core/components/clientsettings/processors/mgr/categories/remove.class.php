@@ -21,13 +21,13 @@
 	 * ClientSettings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
-
-	class AreasUpdateProcessor extends modObjectUpdateProcessor {
+	 
+	class ClientSettingsRemoveProcessor extends modObjectRemoveProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Areas';
+		public $classKey = 'Categories';
 		
 		/**
 		 * @acces public.
@@ -39,9 +39,9 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $objectType = 'clientsettings.areas';
+		public $objectType = 'clientsettings.categories';
 	}
 	
-	return 'AreasUpdateProcessor';
 	
+	return 'ClientSettingsRemoveProcessor';
 ?>

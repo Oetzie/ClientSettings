@@ -24,7 +24,7 @@
 	
 	require_once dirname(__FILE__).'/update.class.php';
 	
-	class AreasUpdateFromGridProcessor extends AreasUpdateProcessor {
+	class CategoriesUpdateFromGridProcessor extends CategoriesUpdateProcessor {
 		/**
 		* @acces public.
 		* @return Mixed.
@@ -49,6 +49,6 @@
 		}
 	}
 	
-	return 'AreasUpdateFromGridProcessor';
+	return 'CategoriesUpdateFromGridProcessor';
 	
 ?>

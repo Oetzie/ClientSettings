@@ -29,7 +29,7 @@
 		'extends' 	=> 'xPDOSimpleObject',
 		'fields' 	=> array(
 			'id'			=> null,
-			'area_id'		=> null,
+			'category_id'	=> null,
 			'key' 			=> null,
 			'label'			=> null,
 			'description'	=> null,
@@ -37,6 +37,7 @@
 			'exclude'		=> null,
 			'value' 		=> null,
 			'menuindex' 	=> null,
+			'active'		=> null,
 			'editedon' 		=> null
 		),
 		'fieldMeta'	=> array(
@@ -48,7 +49,7 @@
 				'index' 	=> 'pk',
 				'generated'	=> 'native'
 			),
-			'area_id' 		=> array(
+			'category_id' => array(
 				'dbtype' 	=> 'int',
 				'precision' => '11',
 				'phptype' 	=> 'integer',
@@ -95,6 +96,13 @@
 				'phptype' 	=> 'integer',
 				'null' 		=> false
 			),
+			'active'	=> array(
+				'dbtype' 	=> 'int',
+				'precision' => '1',
+				'phptype' 	=> 'integer',
+				'null' 		=> false,
+				'default'	=> 1
+			),
 			'editedon' 	=> array(
 				'dbtype' 	=> 'timestamp',
 				'phptype' 	=> 'timestamp',
@@ -116,14 +124,14 @@
 			)
 		),
 		'aggregates' => array(
-			'cgAreas' 		=> array(
-				'local' 		=> 'area_id',
-				'class' 		=> 'Areas',
+			'CategoriesAlias' => array(
+				'local' 		=> 'category_id',
+				'class' 		=> 'Categories',
 				'foreign' 		=> 'id',
 				'owner' 		=> 'foreign',
 				'cardinality' 	=> 'one'
 			),
-			'cgValues' 	=> array(
+			'ValuesAlias'	=> array(
 				'local' 		=> 'key',
 				'class' 		=> 'Values',
 				'foreign'		=> 'setting',

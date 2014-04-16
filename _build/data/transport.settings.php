@@ -2,8 +2,8 @@
 
 	$settings = array();
 
-	$settings['admin_groups'] = $modx->newObject('modSystemSetting');
-	$settings['admin_groups']->fromArray(array(
+	$settings[0] = $modx->newObject('modSystemSetting');
+	$settings[0]->fromArray(array(
 		'key' 		=> PKG_NAME_LOWER.'.admin_groups',
 		'value' 	=> 'Administrator',
 		'xtype' 	=> 'textfield',

@@ -22,16 +22,17 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	$xpdo_meta_map['Areas']= array(
+	$xpdo_meta_map['Categories']= array(
 		'package' 	=> 'clientsettings',
 		'version' 	=> '1.0',
-		'table' 	=> 'clientsettings_areas',
+		'table' 	=> 'clientsettings_categories',
 		'extends' 	=> 'xPDOSimpleObject',
 		'fields' 	=> array(
 			'id'			=> null,
 			'name' 			=> null,
 			'description' 	=> null,
 			'menuindex' 	=> null,
+			'active'		=> null,
 			'editedon' 		=> null
 		),
 		'fieldMeta'	=> array(
@@ -60,6 +61,13 @@
 				'phptype' 	=> 'integer',
 				'null' 		=> false
 			),
+			'active'	=> array(
+				'dbtype' 	=> 'int',
+				'precision' => '1',
+				'phptype' 	=> 'integer',
+				'null' 		=> false,
+				'default'	=> 1
+			),
 			'editedon' 	=> array(
 				'dbtype' 	=> 'timestamp',
 				'phptype' 	=> 'timestamp',
@@ -81,10 +89,10 @@
 			)
 		),
 		'aggregates' => array(
-			'cgSettings' 	=> array(
+			'SettingsAlias'	=> array(
 				'local' 		=> 'id',
 				'class' 		=> 'Settings',
-				'foreign'		=> 'area_id',
+				'foreign'		=> 'category_id',
 				'owner' 		=> 'local',
 				'cardinality' 	=> 'many'
 			)

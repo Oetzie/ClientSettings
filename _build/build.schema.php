@@ -1,33 +1,36 @@
 <?php
 
-	$mtime = microtime();
-	$mtime = explode(" ", $mtime);
-	$mtime = $mtime[1] + $mtime[0];
-	$tstart = $mtime;
+	$mtime 	= explode(' ', microtime());
+	$tstart = $mtime[1] + $mtime[0];
+	
 	set_time_limit(0);
 
-	define('PKG_NAME','ClientSettings');
-	define('PKG_NAME_LOWER', strtolower(PKG_NAME));
+	define('PKG_NAME',			'ClientSettings');
+	define('PKG_NAME_LOWER', 	strtolower(PKG_NAME));
+	define('PKG_NAMESPACE', 	strtolower(PKG_NAME));
+	define('PKG_VERSION',		'1.0.1');
+	define('PKG_RELEASE',		'pl');
 
 	$root = dirname(dirname(__FILE__)).'/';
+	
 	$sources = array(
-	    'root' 		=> $root,
-	    'core' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/',
-	    'model' 	=> $root.'core/components/'.PKG_NAME_LOWER.'/model/',
-	    'assets' 	=> $root.'assets/components/'.PKG_NAME_LOWER.'/',
+	    'root' 			=> $root,
+	    'core' 			=> $root.'core/components/'.PKG_NAME_LOWER,
+	    'assets' 		=> $root.'assets/components/'.PKG_NAME_LOWER,
+	    'model' 		=> $root.'core/components/'.PKG_NAME_LOWER.'/model/',
 	);
 
-	require_once dirname(__FILE__).'/build.config.php';
-	include_once MODX_CORE_PATH.'model/modx/modx.class.php';
+	require_once $sources['build'].'/build.config.php';
+	require_once MODX_CORE_PATH.'model/modx/modx.class.php';
 	
-	$modx= new modX();
+	$modx = new modX();
 	$modx->initialize('mgr');
-	$modx->loadClass('transport.modPackageBuilder', '', false, true);
-	
-	echo '<pre>';
-	
 	$modx->setLogLevel(modX::LOG_LEVEL_INFO);
 	$modx->setLogTarget('ECHO');
+	
+	echo XPDO_CLI_MODE ? '' : '<pre>';
+
+	$modx->loadClass('transport.modPackageBuilder', '', false, true);
 
 	$manager = $modx->getManager();
 	
@@ -63,14 +66,15 @@
 		
 	$generator->parseSchema($sources['model'].'schema/'.PKG_NAME_LOWER.'.mysql.schema.xml', $sources['model']);
 
+	$mtime		= explode(' ', microtime());
+	$tend		= $mtime[1] + $mtime[0];
+	$totalTime	= ($tend - $tstart);
+	$totalTime	= sprintf("%2.4f s", $totalTime);
 
-	$mtime = microtime();
-	$mtime = explode(" ", $mtime);
-	$mtime = $mtime[1] + $mtime[0];
-	$tend = $mtime;
-	$totalTime = ($tend - $tstart);
-	$totalTime = sprintf("%2.4f s", $totalTime);
+	$modx->log(modX::LOG_LEVEL_INFO, 'Package Built: Execution time: {'.$totalTime.'}');
 
-	echo "\nExecution time: {".$totalTime."}\n";
-
+	echo XPDO_CLI_MODE ? '' : '</pre>';
+	
 	exit();
+	
+?>

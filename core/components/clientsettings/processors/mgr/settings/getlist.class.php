@@ -72,28 +72,28 @@
 		 * @param Object $query.
 		 * @return Object.
 		 */
-		public function prepareQueryBeforeCount(xPDOQuery $query) {
-			$query->leftJoin('Areas', 'cgAreas');
-			$query->select($this->modx->getSelectColumns('Settings', 'Settings'));
-			$query->select($this->modx->getSelectColumns('Areas', 'cgAreas', 'area_', array('name')));
+		public function prepareQueryBeforeCount(xPDOQuery $c) {
+			$c->leftJoin('Categories', 'CategoriesAlias');
+			$c->select($this->modx->getSelectColumns('Settings', 'Settings'));
+			$c->select($this->modx->getSelectColumns('Categories', 'CategoriesAlias', 'category_', array('name')));
 			
-			$area = $this->getProperty('area');
+			$category = $this->getProperty('category');
 			
-			if (!empty($area)) {
-				$query->where(array('area_id' => $area));
+			if (!empty($category)) {
+				$c->where(array(
+					'category_id' => $category
+				));
 			}
 			
-			$search = $this->getProperty('search');
+			$query = $this->getProperty('query');
 			
-			if (!empty($search)) {
-				if (!empty($area)) {
-					$query->where(array('AND:key:LIKE' => '%'.$search.'%'));
-				} else {
-					$query->where(array('key:LIKE' => '%'.$search.'%'));
-				}
+			if (!empty($query)) {
+				$c->where(array(
+					'key:LIKE' 		=> '%'.$query.'%'
+				));
 			}
 			
-			return $query;
+			return $c;
 		}
 		
 		/**

@@ -22,12 +22,12 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class AreasGetListProcessor extends modObjectGetListProcessor {
+	class ClientSettingsGetListProcessor extends modObjectGetListProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Areas';
+		public $classKey = 'Categories';
 		
 		/**
 		 * @acces public.
@@ -51,7 +51,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $objectType = 'clientsettings.areas';
+		public $objectType = 'clientsettings.categories';
 		
 		/**
 		 * @acces public.
@@ -103,6 +103,6 @@
 		}
 	}
 
-	return 'AreasGetListProcessor';
+	return 'ClientSettingsGetListProcessor';
 	
 ?>

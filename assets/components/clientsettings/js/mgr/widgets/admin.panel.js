@@ -18,33 +18,33 @@ ClientSettings.panel.Admin = function(config) {
 			xtype		: 'modx-tabs',
 			items		: [{
 				layout		: 'form',
-				title		: _('clientsettings.admin_settings'),
+				title		: _('clientsettings.settings'),
 				defaults	: {
 					autoHeight	: true,
 					autoWidth	: true,
 					border		: false
 				},
 				items		: [{
-					html			: '<p>'+_('clientsettings.admin_settings_desc')+'</p>',
+					html			: '<p>'+_('clientsettings.settings_desc')+'</p>',
 					bodyCssClass	: 'panel-desc'
 				}, {
-					xtype			: 'clientsettings-grid-admin-setting',
+					xtype			: 'clientsettings-grid-settings',
 					cls				: 'main-wrapper',
 					preventRender	: true
 				}]
 			}, {
 				layout		: 'form',
-				title		: _('clientsettings.admin_areas'),
+				title		: _('clientsettings.categories'),
 				defaults	: {
 					autoHeight	: true,
 					autoWidth	: true,
 					border		: false
 				},
 				items		: [{
-					html			: '<p>'+_('clientsettings.admin_areas_desc')+'</p>',
+					html			: '<p>'+_('clientsettings.categories_desc')+'</p>',
 					bodyCssClass	: 'panel-desc'
 				}, {
-					xtype			: 'clientsettings-grid-admin-area',
+					xtype			: 'clientsettings-grid-categories',
 					cls				: 'main-wrapper',
 					preventRender	: true
 				}]
