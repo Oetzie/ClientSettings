@@ -88,7 +88,8 @@ ClientSettings.grid.Categories = function(config) {
         save_action	: 'mgr/categories/updateFromGrid',
         fields		: ['id', 'name', 'description', 'menuindex', 'active', 'editedon'],
         paging		: true,
-        pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30
+        pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
+        sortBy		: 'menuindex'
     });
     
     ClientSettings.grid.Categories.superclass.constructor.call(this, config);

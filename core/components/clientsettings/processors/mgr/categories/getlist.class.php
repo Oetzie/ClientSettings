@@ -93,10 +93,10 @@
 		public function prepareRow(xPDOObject $object) {
 			$array = $object->toArray();
 
-			if ($object->get('editedon') == '-1-11-30 00:00:00' || $array['editedon'] == '0000-00-00 00:00:00' || $array['editedon'] == null) {
+			if (in_array($array['editedon'], array('-001-11-30 00:00:00', '0000-00-00 00:00:00', null))) {
 				$array['editedon'] = '';
 			} else {
-				$array['editedon'] = strftime($this->getProperty('dateFormat', '%b %d, %Y %I:%M %p'), strtotime($object->get('editedon')));
+				$array['editedon'] = strftime($this->getProperty('dateFormat', '%b %d, %Y %I:%M %p'), strtotime($array['editedon']));
 			}
 			
 			return $array;	

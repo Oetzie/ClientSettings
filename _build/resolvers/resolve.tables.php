@@ -8,7 +8,7 @@
 	
 	            $manager = $modx->getManager();
 	
-	            $manager->createObjectContainer('Areas');
+	            $manager->createObjectContainer('Categories');
 	            $manager->createObjectContainer('Settings');
 	            $manager->createObjectContainer('Values');
 	

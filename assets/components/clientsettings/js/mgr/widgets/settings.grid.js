@@ -120,6 +120,7 @@ ClientSettings.grid.Settings = function(config) {
         fields		: ['id', 'category_id', 'category_name', 'key', 'label', 'description', 'xtype', 'exclude', 'value', 'menuindex', 'active', 'editedon'],
         paging		: true,
         pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
+        sortBy		: 'menuindex',
         grouping	: true,
         groupBy		: 'category_name',
         plugins		: expander,

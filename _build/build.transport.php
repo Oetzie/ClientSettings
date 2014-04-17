@@ -48,6 +48,20 @@
 	
 	$category = $modx->newObject('modCategory');
 	$category->fromArray(array('id' => 1, 'category' => PKG_NAME), '', true, true);
+	
+	if (file_exists($sources['data'].'transport.plugins.php')) {	
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in plugins(s) into category...');
+	
+		$plugins = include $sources['data'].'transport.plugins.php';
+	
+		foreach ($plugins as $plugin) {
+			$category->addMany($plugin);
+		}
+
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packed plugins(s) '.count($plugins).' into category.');
+	} else {
+		$modx->log(modX::LOG_LEVEL_INFO, 'No plugins(s) to pack...');
+	}
 
 	if (file_exists($sources['data'].'transport.snippets.php')) {	
 		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in snippet(s) into category...');
