@@ -2,25 +2,29 @@
 
 	$plugins = array();
 	
-	$plugins[0] = $modx->newObject('modPlugin');
-	$plugins[0]->fromArray(array(
-		'id' 			=> 1,
-		'name'			=> PKG_NAME,
-		'description'	=> PKG_NAME.' '.PKG_VERSION.'-'.PKG_RELEASE.' plugin for MODx Revolution',
-		'plugincode'	=> getSnippetContent($sources['plugins'].'/'.PKG_NAME_LOWER.'.plugin.php')
-	));
-	
-	$events = array();
-
-	$events[0]= $modx->newObject('modPluginEvent');
-	$events[0]->fromArray(array(
-	    'event' 		=> 'OnHandleRequest',
-	    'priority' 		=> 0,
-	    'propertyset' 	=> 0
-	), '', true, true);
-
-	$plugins[0]->addMany($events);
-	
+	foreach (glob($sources['plugins'].'/*.php') as $key => $value) {
+		$name = str_replace('.plugin.php', '', substr($value, strrpos($value, '/') + 1, strlen($value)));
+		
+		$plugins[$name] = $modx->newObject('modPlugin');
+		$plugins[$name]->fromArray(array(
+			'id' 			=> 1,
+			'name'			=> ucfirst($name),
+			'description'	=> PKG_NAME.' '.PKG_VERSION.'-'.PKG_RELEASE.' plugin for MODx Revolution',
+			'content'		=> getSnippetContent($value)
+		));
+		
+		if (file_exists(__DIR__.'/events/'.$name.'.events.php')) {
+			$events = array();
+			
+			foreach (include_once __DIR__.'/events/'.$name.'.events.php' as $key => $value) {
+				$events[$key]= $modx->newObject('modPluginEvent');
+				$events[$key]->fromArray($value, '', true, true);
+			}
+			
+			$plugins[$name]->addMany($events);
+		}
+	}
+		
 	return $plugins;
-	
+
 ?>
