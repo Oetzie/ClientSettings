@@ -6,7 +6,7 @@ ClientSettings.page.Client = function(config) {
 	config = config || {};
 	
 	config.buttons = [{
-		process		: 'save',
+		process		: 'mgr/save',
 		method		: 'remote',
 		text		: _('save'),
 		checkDirty	: true,

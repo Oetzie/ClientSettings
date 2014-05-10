@@ -54,6 +54,18 @@
 			
 			return parent::beforeSave();
 		}
+		
+		/**
+		 * @acces public.
+		 * @return Mixed.
+		 */
+		public function initialize() {
+			if (null === $this->getProperty('active')) {
+				$this->setProperty('active', 0);
+			}
+
+			return parent::initialize();
+		}
 	}
 	
 	return 'CLientSettingsCreateProcessor';
