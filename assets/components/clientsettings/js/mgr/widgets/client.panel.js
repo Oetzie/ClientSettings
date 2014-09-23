@@ -124,7 +124,7 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 					},
 		            items		: [{
 			            html			: '<p>' + category.description + '</p>',
-			            bodyCssClass	: 'panel-desc panel-desc-inner'
+			            bodyCssClass	: 'modx-desc'
 		            }, {
 			            layout			: 'form',
 		                cls				: 'main-wrapper form-with-labels',
@@ -145,8 +145,8 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 		        	border 		: false
 		        },
 		        items		: [{
-	            	html			: '<p>' + _('clientsettings.no_settings_desc') + '</p>',
-	            	bodyCssClass	: 'panel-desc panel-desc-inner'
+		            html			: '<p>' + _('clientsettings.no_settings_desc') + '</p>',
+					bodyCssClass	: 'modx-config-error'
 	            }]
 		   }]; 
 	    }

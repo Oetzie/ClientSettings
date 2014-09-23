@@ -183,6 +183,7 @@ ClientSettings.window.CreateCategory = function(config) {
     config = config || {};
     
     Ext.applyIf(config, {
+    	autoHeight	: true,
         title 		: _('clientsettings.category_create'),
         url			: ClientSettings.config.connectorUrl,
         baseParams	: {
@@ -267,6 +268,7 @@ ClientSettings.window.UpdateCategory = function(config) {
     config = config || {};
     
     Ext.applyIf(config, {
+    	autoHeight	: true,
         title 		: _('clientsettings.category_create'),
         url			: ClientSettings.config.connectorUrl,
         baseParams	: {

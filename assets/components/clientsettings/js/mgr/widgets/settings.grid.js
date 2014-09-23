@@ -239,6 +239,7 @@ ClientSettings.window.CreateSetting = function(config) {
     config = config || {};
     
     Ext.applyIf(config, {
+    	autoHeight	: true,
     	width		: 600,
         title 		: _('clientsettings.setting_create'),
         url			: ClientSettings.config.connectorUrl,
@@ -394,6 +395,7 @@ ClientSettings.window.CreateUpdate = function(config) {
     config = config || {};
     
     Ext.applyIf(config, {
+    	autoHeight	: true,
     	width		: 600,
         title 		: _('clientsettings.setting_update'),
         url			: ClientSettings.config.connectorUrl,
