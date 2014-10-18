@@ -24,9 +24,9 @@
 
 	$xpdo_meta_map = array(
 		'xPDOSimpleObject' => array(
-	    	0 => 'Categories',
-	    	1 => 'Settings',
-	    	2 => 'Values'
+	    	0 => 'ClientSettingsCategories',
+	    	1 => 'ClientSettingsSettings',
+	    	2 => 'ClientSettingsValues'
 	    )
 	);
 	

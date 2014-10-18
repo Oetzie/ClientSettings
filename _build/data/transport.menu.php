@@ -14,6 +14,7 @@
 	$menu = $modx->newObject('modMenu');
 	$menu->fromArray(array(
 	    'text' 			=> PKG_NAME_LOWER,
+	    'namespace' 	=> PKG_NAME_LOWER,
 	    'parent' 		=> 'components',
 	    'description' 	=> PKG_NAME_LOWER.'.desc',
 	    'icon' 			=> 'images/icons/plugin.gif',

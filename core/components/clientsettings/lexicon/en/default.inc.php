@@ -28,7 +28,7 @@
 	$_lang['area_clientsettings']							= 'Settings';
 	
 	$_lang['setting_clientsettings_admin_groups']			= 'Usergroups';
-	$_lang['setting_clientsettings_admin_groups_desc']		= 'The usergroups that are allowed to acces the admin panel of the settings, to separate usergroups use a gebruikersgroepen scheiden met een comma.';
+	$_lang['setting_clientsettings_admin_groups_desc']		= 'The usergroups that are allowed to acces the admin panel of the settings, to separate usergroups use a comma.';
 	
 	$_lang['clientsettings.category'] 						= 'Area';
 	$_lang['clientsettings.categories'] 					= 'Areas';
@@ -45,6 +45,7 @@
 	$_lang['clientsettings.setting_update']					= 'Update setting';
 	$_lang['clientsettings.setting_remove']					= 'Delete setting';
 	$_lang['clientsettings.setting_remove_confirm']			= 'Are you sure you want to delete this setting? This might break your MODX installation.';
+	$_lang['clientsettings.setting_duplicate'] 				= 'Duplicate setting';
 	
 	$_lang['clientsettings.label_key']						= 'Key';
 	$_lang['clientsettings.label_key_desc']					= 'The key of the setting. The setting will be avaible by the [[++key]] tags.';
@@ -64,7 +65,8 @@
 	$_lang['clientsettings.label_menuindex_desc']			= '';
 	$_lang['clientsettings.label_value']					= 'Value';
 	$_lang['clientsettings.label_value_desc']				= '';
-	
+	$_lang['clientsettings.label_settings']					= 'Settings';
+	$_lang['clientsettings.label_settings_desc']			= '';
 	
 	$_lang['clientsettings.no_settings']					= 'No settings';
 	$_lang['clientsettings.no_settings_desc']				= 'It seems that there are no settings available.';

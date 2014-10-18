@@ -45,6 +45,7 @@
 	$_lang['clientsettings.setting_update']					= 'Instelling updaten';
 	$_lang['clientsettings.setting_remove']					= 'Instelling verwijderen';
 	$_lang['clientsettings.setting_remove_confirm']			= 'Weet je zeker dat je deze instelling wilt verwijderen? Dit kan jouw MODX website kapot maken.';
+	$_lang['clientsettings.setting_duplicate'] 				= 'Instelling dupliceren';
 	
 	$_lang['clientsettings.label_key']						= 'Key';
 	$_lang['clientsettings.label_key_desc']					= 'De key voor de instelling. De instelling zal beschikbaar zijn via de [[++key]] tags.';
@@ -66,6 +67,8 @@
 	$_lang['clientsettings.label_value_desc']				= '';
 	$_lang['clientsettings.label_active']					= 'Actief';
 	$_lang['clientsettings.label_active_desc']				= '';
+	$_lang['clientsettings.label_settings']					= 'Instellingen';
+	$_lang['clientsettings.label_settings_desc']			= '';
 	
 	$_lang['clientsettings.no_settings']					= 'Geen instellingen';
 	$_lang['clientsettings.no_settings_desc']				= 'Het lijkt erop dat er geen instellingen beschikbaar zijn.';

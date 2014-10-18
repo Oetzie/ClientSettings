@@ -27,7 +27,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Settings';
+		public $classKey = 'ClientSettingsSettings';
 		
 		/**
 		 * @acces public.

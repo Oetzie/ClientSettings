@@ -27,7 +27,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Values';
+		public $classKey = 'ClientSettingsValues';
 		
 		/**
 		 * @acces public.
@@ -39,7 +39,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $objectType = 'clientsettings.settings';
+		public $objectType = 'clientsettings.values';
 		
 		/**
 		 * @acces public

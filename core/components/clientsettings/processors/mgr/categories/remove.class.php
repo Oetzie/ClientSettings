@@ -22,12 +22,12 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	class ClientSettingsRemoveProcessor extends modObjectRemoveProcessor {
+	class CategoriesRemoveProcessor extends modObjectRemoveProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Categories';
+		public $classKey = 'ClientSettingsCategories';
 		
 		/**
 		 * @acces public.
@@ -43,5 +43,5 @@
 	}
 	
 	
-	return 'ClientSettingsRemoveProcessor';
+	return 'CategoriesRemoveProcessor';
 ?>

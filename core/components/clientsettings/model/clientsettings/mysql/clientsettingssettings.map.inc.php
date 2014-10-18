@@ -22,16 +22,22 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	$xpdo_meta_map['Values']= array(
+	$xpdo_meta_map['ClientSettingsSettings']= array(
 		'package' 	=> 'clientsettings',
 		'version' 	=> '1.0',
-		'table' 	=> 'clientsettings_values',
+		'table' 	=> 'clientsettings_settings',
 		'extends' 	=> 'xPDOSimpleObject',
 		'fields' 	=> array(
 			'id'			=> null,
-			'setting'		=> null,
-			'context' 		=> null,
+			'category_id'	=> null,
+			'key' 			=> null,
+			'label'			=> null,
+			'description'	=> null,
+			'xtype'			=> null,
+			'exclude'		=> null,
 			'value' 		=> null,
+			'menuindex' 	=> null,
+			'active'		=> null,
 			'editedon' 		=> null
 		),
 		'fieldMeta'	=> array(
@@ -43,23 +49,59 @@
 				'index' 	=> 'pk',
 				'generated'	=> 'native'
 			),
-			'setting' 	=> array(
-				'dbtype' 	=> 'varchar',
-				'precision' => '75',
-				'phptype' 	=> 'string',
-				'null' 		=> false,
-				'default' 	=> ''
+			'category_id' => array(
+				'dbtype' 	=> 'int',
+				'precision' => '11',
+				'phptype' 	=> 'integer',
+				'null' 		=> false
 			),
-			'context' 	=> array(
+			'key' 		=> array(
 				'dbtype' 	=> 'varchar',
 				'precision' => '75',
 				'phptype' 	=> 'string',
-				'null' 		=> false,
+				'null' 		=> false
+			),
+			'label' 	=> array(
+				'dbtype' 	=> 'varchar',
+				'precision' => '75',
+				'phptype' 	=> 'string',
+				'null' 		=> false
+			),
+			'description' => array(
+				'dbtype' 	=> 'varchar',
+				'precision' => '255',
+				'phptype' 	=> 'string',
+				'null' 		=> false
+			),
+			'xtype' 	=> array(
+				'dbtype' 	=> 'varchar',
+				'precision' => '75',
+				'phptype' 	=> 'string',
+				'null' 		=> false
+			),
+			'exclude' 	=> array(
+				'dbtype' 	=> 'varchar',
+				'precision' => '255',
+				'phptype' 	=> 'string',
+				'null' 		=> false
 			),
 			'value' 	=> array(
 				'dbtype' 	=> 'text',
 				'phptype' 	=> 'string',
+				'null' 		=> false
+			),
+			'menuindex'	=> array(
+				'dbtype' 	=> 'int',
+				'precision' => '11',
+				'phptype' 	=> 'integer',
+				'null' 		=> false
+			),
+			'active'	=> array(
+				'dbtype' 	=> 'int',
+				'precision' => '1',
+				'phptype' 	=> 'integer',
 				'null' 		=> false,
+				'default'	=> 1
 			),
 			'editedon' 	=> array(
 				'dbtype' 	=> 'timestamp',
@@ -82,12 +124,19 @@
 			)
 		),
 		'aggregates' => array(
-			'SettingAlias'	=> array(
-				'local' 		=> 'setting',
-				'class' 		=> 'Settings',
-				'foreign' 		=> 'key',
+			'CategoriesAlias' => array(
+				'local' 		=> 'category_id',
+				'class' 		=> 'ClientSettingsCategories',
+				'foreign' 		=> 'id',
 				'owner' 		=> 'foreign',
 				'cardinality' 	=> 'one'
+			),
+			'ValuesAlias'	=> array(
+				'local' 		=> 'key',
+				'class' 		=> 'ClientSettingsValues',
+				'foreign'		=> 'setting',
+				'owner' 		=> 'local',
+				'cardinality' 	=> 'many'
 			)
 		)
 	);

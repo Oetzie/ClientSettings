@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <model package="clientsettings" baseClass="xPDOObject" platform="mysql" defaultEngine="MyISAM" version="1.0">
-    <object class="Categories" table="clientsettings_categories" extends="xPDOSimpleObject">
+    <object class="ClientSettingsCategories" table="clientsettings_categories" extends="xPDOSimpleObject">
     	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
         <field key="name" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
@@ -12,10 +12,10 @@
                 <column key="id" collation="A" null="false" />
         </index>
         
-        <aggregate alias="SettingsAlias" local="id" class="Settings" foreign="category_id" owner="local" cardinality="many" />
+        <aggregate alias="SettingsAlias" local="id" class="ClientSettingsSettings" foreign="category_id" owner="local" cardinality="many" />
     </object>
     
-    <object class="Settings" table="clientsettings_settings" extends="xPDOSimpleObject">
+    <object class="ClientSettingsSettings" table="clientsettings_settings" extends="xPDOSimpleObject">
     	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
     	<field key="category_id" dbtype="int" precision="11" phptype="integer" null="false" default=""/>
     	<field key="key" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
@@ -32,11 +32,11 @@
                 <column key="id" collation="A" null="false" />
         </index>
         
-        <aggregate alias="CategoriesAlias" local="category_id" class="Categories" foreign="id" owner="foreign" cardinality="one" />
-        <aggregate alias="ValuesAlias" local="id" class="Values" foreign="setting_id" owner="local" cardinality="many" />
+        <aggregate alias="CategoriesAlias" local="category_id" class="ClientSettingsCategories" foreign="id" owner="foreign" cardinality="one" />
+        <aggregate alias="ValuesAlias" local="id" class="ClientSettingsValues" foreign="setting_id" owner="local" cardinality="many" />
     </object>
     
-    <object class="Values" table="clientsettings_values" extends="xPDOSimpleObject">
+    <object class="ClientSettingsValues" table="clientsettings_values" extends="xPDOSimpleObject">
     	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
     	<field key="setting" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
     	<field key="context" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
@@ -47,6 +47,6 @@
                 <column key="id" collation="A" null="false" />
         </index>
 
-        <aggregate alias="SettingAlias" local="setting" class="Settings" foreign="key" owner="foreign" cardinality="one" />
+        <aggregate alias="SettingAlias" local="setting" class="ClientSettingsSettings" foreign="key" owner="foreign" cardinality="one" />
     </object>
 </model>

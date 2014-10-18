@@ -21,21 +21,16 @@
 	 * ClientSettings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
-	 
-	$xpdo_meta_map['Settings']= array(
+
+	$xpdo_meta_map['ClientSettingsCategories']= array(
 		'package' 	=> 'clientsettings',
 		'version' 	=> '1.0',
-		'table' 	=> 'clientsettings_settings',
+		'table' 	=> 'clientsettings_categories',
 		'extends' 	=> 'xPDOSimpleObject',
 		'fields' 	=> array(
 			'id'			=> null,
-			'category_id'	=> null,
-			'key' 			=> null,
-			'label'			=> null,
-			'description'	=> null,
-			'xtype'			=> null,
-			'exclude'		=> null,
-			'value' 		=> null,
+			'name' 			=> null,
+			'description' 	=> null,
 			'menuindex' 	=> null,
 			'active'		=> null,
 			'editedon' 		=> null
@@ -49,43 +44,13 @@
 				'index' 	=> 'pk',
 				'generated'	=> 'native'
 			),
-			'category_id' => array(
-				'dbtype' 	=> 'int',
-				'precision' => '11',
-				'phptype' 	=> 'integer',
-				'null' 		=> false
-			),
-			'key' 		=> array(
-				'dbtype' 	=> 'varchar',
-				'precision' => '75',
-				'phptype' 	=> 'string',
-				'null' 		=> false
-			),
-			'label' 	=> array(
+			'name' 		=> array(
 				'dbtype' 	=> 'varchar',
 				'precision' => '75',
 				'phptype' 	=> 'string',
 				'null' 		=> false
 			),
 			'description' => array(
-				'dbtype' 	=> 'varchar',
-				'precision' => '255',
-				'phptype' 	=> 'string',
-				'null' 		=> false
-			),
-			'xtype' 	=> array(
-				'dbtype' 	=> 'varchar',
-				'precision' => '75',
-				'phptype' 	=> 'string',
-				'null' 		=> false
-			),
-			'exclude' 	=> array(
-				'dbtype' 	=> 'varchar',
-				'precision' => '255',
-				'phptype' 	=> 'string',
-				'null' 		=> false
-			),
-			'value' 	=> array(
 				'dbtype' 	=> 'text',
 				'phptype' 	=> 'string',
 				'null' 		=> false
@@ -124,17 +89,10 @@
 			)
 		),
 		'aggregates' => array(
-			'CategoriesAlias' => array(
-				'local' 		=> 'category_id',
-				'class' 		=> 'Categories',
-				'foreign' 		=> 'id',
-				'owner' 		=> 'foreign',
-				'cardinality' 	=> 'one'
-			),
-			'ValuesAlias'	=> array(
-				'local' 		=> 'key',
-				'class' 		=> 'Values',
-				'foreign'		=> 'setting',
+			'SettingsAlias'	=> array(
+				'local' 		=> 'id',
+				'class' 		=> 'ClientSettingsSettings',
+				'foreign'		=> 'category_id',
 				'owner' 		=> 'local',
 				'cardinality' 	=> 'many'
 			)

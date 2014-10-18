@@ -22,12 +22,12 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class ClientSettingsGetListProcessor extends modObjectGetListProcessor {
+	class CategoriesGetListProcessor extends modObjectGetListProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Categories';
+		public $classKey = 'ClientSettingsCategories';
 		
 		/**
 		 * @acces public.
@@ -91,7 +91,9 @@
 		 * @return Array.
 		 */
 		public function prepareRow(xPDOObject $object) {
-			$array = $object->toArray();
+			$array = array_merge($object->toArray(), array(
+				'count'	=> $this->modx->getCount('ClientSettingsSettings', array('category_id' => $object->id))
+			));
 
 			if (in_array($array['editedon'], array('-001-11-30 00:00:00', '0000-00-00 00:00:00', null))) {
 				$array['editedon'] = '';
@@ -103,6 +105,6 @@
 		}
 	}
 
-	return 'ClientSettingsGetListProcessor';
+	return 'CategoriesGetListProcessor';
 	
 ?>

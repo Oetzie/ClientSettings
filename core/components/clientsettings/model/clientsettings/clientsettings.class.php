@@ -82,11 +82,11 @@
 		public function getSettings() {
 			$settings = array();
 			
-			$query = $this->modx->newQuery('Values', array(
+			$criteria = array(
 				'context' => $this->modx->context->key
-			));
-			
-			foreach ($this->modx->getCollection('Values', $query) as $key => $setting) {
+			);
+
+			foreach ($this->modx->getCollection('ClientSettingsValues', $criteria) as $key => $setting) {
 				$setting = $setting->toArray();
 				
 				$settings[$setting['setting']] = $setting['value'];

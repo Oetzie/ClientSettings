@@ -1,5 +1,5 @@
 <?php
-	
+
 	/**
 	 * ClientSettings
 	 *
@@ -22,8 +22,6 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	require_once (dirname(dirname(__FILE__)) . '/values.class.php');
-	
-	class Values_mysql extends Values {}
+	class ClientSettingsValues extends xPDOSimpleObject {}
 
 ?>

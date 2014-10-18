@@ -27,7 +27,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Settings';
+		public $classKey = 'ClientSettingsSettings';
 		
 		/**
 		 * @acces public.
@@ -64,6 +64,19 @@
 		public function initialize() {
 			if (null === $this->getProperty('active')) {
 				$this->setProperty('active', 0);
+			}
+			
+			if (0 == $this->getProperty('menuindex')) {
+				$criteria = $this->modx->newQuery($this->classKey);
+				$criteria->where(array(
+					'category_id' => $this->getProperty('category_id')
+				));
+				$criteria->sortby('menuindex', 'DESC');
+				$criteria->limit(1);
+				
+				if (null !== ($object = $this->modx->getObject($this->classKey, $criteria))) {
+					$this->setProperty('menuindex', $object->menuindex + 1);
+				}
 			}
 
 			return parent::initialize();

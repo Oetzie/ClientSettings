@@ -68,19 +68,19 @@
 		protected function getCategories() {
 			$categories = array();
 			
-			$query = $this->modx->newQuery('Categories');
+			$query = $this->modx->newQuery('ClientSettingsCategories');
 			$query->where(array(
 				'active' => 1
 			));
 			$query->sortby('menuindex', 'ASC');
 			$query->sortby('name', 'ASC');
 			
-			foreach ($this->modx->getCollection('Categories', $query) as $key => $category) {
+			foreach ($this->modx->getCollection('ClientSettingsCategories', $query) as $key => $category) {
 				$categoryTab = array_merge($category->toArray(), array(
 					'items' => array()
 				));
 				
-				$query = $this->modx->newQuery('Settings');
+				$query = $this->modx->newQuery('ClientSettingsSettings');
 				$query->where(array(
 					'active' => 1
 				));
@@ -92,7 +92,7 @@
 						'values' => array()
 					));
 					
-					foreach ($setting->getMany('ValuesAlias', $this->modx->newQuery('Values')) as $value) {
+					foreach ($setting->getMany('ValuesAlias', $this->modx->newQuery('ClientSettingsValues')) as $value) {
 						$value = $value->toArray();
 						
 						$settingTab['values'][$value['context']] = $value;

@@ -1,5 +1,5 @@
 <?php
-	
+
 	/**
 	 * ClientSettings
 	 *
@@ -22,5 +22,8 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	class Categories extends xPDOSimpleObject {}
+	require_once (dirname(dirname(__FILE__)) . '/clientsettingssettings.class.php');
+	
+	class ClientSettingsSettings_mysql extends ClientSettingsSettings {}
+	
 ?>

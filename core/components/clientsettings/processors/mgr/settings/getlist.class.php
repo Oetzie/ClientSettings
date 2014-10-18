@@ -27,7 +27,7 @@
 	 	 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'Settings';
+		public $classKey = 'ClientSettingsSettings';
 		
 		/**
 		 * @acces public.
@@ -73,9 +73,9 @@
 		 * @return Object.
 		 */
 		public function prepareQueryBeforeCount(xPDOQuery $c) {
-			$c->leftJoin('Categories', 'CategoriesAlias');
-			$c->select($this->modx->getSelectColumns('Settings', 'Settings'));
-			$c->select($this->modx->getSelectColumns('Categories', 'CategoriesAlias', 'category_', array('name')));
+			$c->leftJoin('ClientSettingsCategories', 'CategoriesAlias');
+			$c->select($this->modx->getSelectColumns('ClientSettingsSettings', 'ClientSettingsSettings'));
+			$c->select($this->modx->getSelectColumns('ClientSettingsCategories', 'CategoriesAlias', 'category_', array('name')));
 			
 			$category = $this->getProperty('category');
 			

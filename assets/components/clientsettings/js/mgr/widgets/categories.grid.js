@@ -3,7 +3,9 @@ ClientSettings.grid.Categories = function(config) {
 
 	config.tbar = [{
         text	: _('clientsettings.category_create'),
-        handler	: this.createCategory
+        cls		:'primary-button',
+        handler	: this.createCategory,
+        scope	: this
     }, '->', {
         xtype		: 'textfield',
         name 		: 'clientsettings-filter-search-categories',
@@ -27,6 +29,7 @@ ClientSettings.grid.Categories = function(config) {
         }
     }, {
     	xtype	: 'button',
+    	cls		: 'x-form-filter-clear',
     	id		: 'clientsettings-filter-clear-categories',
     	text	: _('filter_clear'),
     	listeners: {
@@ -43,7 +46,8 @@ ClientSettings.grid.Categories = function(config) {
             dataIndex	: 'name',
             sortable	: true,
             editable	: true,
-            width		: 150,
+            width		: 250,
+            fixed		: true,
             editor		: {
             	xtype		: 'textfield'
             }
@@ -57,13 +61,20 @@ ClientSettings.grid.Categories = function(config) {
             	xtype		: 'textfield'
             }
         }, {
+            header		: _('clientsettings.label_settings'),
+            dataIndex	: 'count',
+            sortable	: true,
+            editable	: false,
+            width		: 100,
+            fixed		: true
+        }, {
             header		: _('clientsettings.label_active'),
             dataIndex	: 'active',
             sortable	: true,
             editable	: true,
             width		: 100,
             fixed		: true,
-			renderer	: this.renderActive,
+			renderer	: this.renderBoolean,
 			editor		: {
             	xtype		: 'modx-combo-boolean'
             }
@@ -86,7 +97,7 @@ ClientSettings.grid.Categories = function(config) {
         },
         autosave	: true,
         save_action	: 'mgr/categories/updateFromGrid',
-        fields		: ['id', 'name', 'description', 'menuindex', 'active', 'editedon'],
+        fields		: ['id', 'name', 'description', 'count', 'menuindex', 'active', 'editedon'],
         paging		: true,
         pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
         sortBy		: 'menuindex'
@@ -108,10 +119,12 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     getMenu: function() {
         return [{
 	        text	: _('clientsettings.category_update'),
-	        handler	: this.updateCategory
+	        handler	: this.updateCategory,
+	        scope	: this
 	    }, '-', {
 		    text	: _('clientsettings.category_remove'),
-		    handler	: this.removeCategory
+		    handler	: this.removeCategory,
+		    scope	: this
 		 }];
     },
     createCategory: function(btn, e) {
@@ -170,7 +183,7 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
             }
     	});
     },
-    renderActive: function(d, c) {
+    renderBoolean: function(d, c) {
     	c.css = 1 == parseInt(d) || d ? 'green' : 'red';
     	
     	return 1 == parseInt(d) || d ? _('yes') : _('no');

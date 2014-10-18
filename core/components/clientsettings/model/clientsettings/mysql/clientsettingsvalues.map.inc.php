@@ -21,18 +21,17 @@
 	 * ClientSettings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
-
-	$xpdo_meta_map['Categories']= array(
+	 
+	$xpdo_meta_map['ClientSettingsValues']= array(
 		'package' 	=> 'clientsettings',
 		'version' 	=> '1.0',
-		'table' 	=> 'clientsettings_categories',
+		'table' 	=> 'clientsettings_values',
 		'extends' 	=> 'xPDOSimpleObject',
 		'fields' 	=> array(
 			'id'			=> null,
-			'name' 			=> null,
-			'description' 	=> null,
-			'menuindex' 	=> null,
-			'active'		=> null,
+			'setting'		=> null,
+			'context' 		=> null,
+			'value' 		=> null,
 			'editedon' 		=> null
 		),
 		'fieldMeta'	=> array(
@@ -44,29 +43,23 @@
 				'index' 	=> 'pk',
 				'generated'	=> 'native'
 			),
-			'name' 		=> array(
+			'setting' 	=> array(
 				'dbtype' 	=> 'varchar',
 				'precision' => '75',
 				'phptype' 	=> 'string',
-				'null' 		=> false
+				'null' 		=> false,
+				'default' 	=> ''
 			),
-			'description' => array(
+			'context' 	=> array(
+				'dbtype' 	=> 'varchar',
+				'precision' => '75',
+				'phptype' 	=> 'string',
+				'null' 		=> false,
+			),
+			'value' 	=> array(
 				'dbtype' 	=> 'text',
 				'phptype' 	=> 'string',
-				'null' 		=> false
-			),
-			'menuindex'	=> array(
-				'dbtype' 	=> 'int',
-				'precision' => '11',
-				'phptype' 	=> 'integer',
-				'null' 		=> false
-			),
-			'active'	=> array(
-				'dbtype' 	=> 'int',
-				'precision' => '1',
-				'phptype' 	=> 'integer',
 				'null' 		=> false,
-				'default'	=> 1
 			),
 			'editedon' 	=> array(
 				'dbtype' 	=> 'timestamp',
@@ -89,12 +82,12 @@
 			)
 		),
 		'aggregates' => array(
-			'SettingsAlias'	=> array(
-				'local' 		=> 'id',
-				'class' 		=> 'Settings',
-				'foreign'		=> 'category_id',
-				'owner' 		=> 'local',
-				'cardinality' 	=> 'many'
+			'SettingAlias'	=> array(
+				'local' 		=> 'setting',
+				'class' 		=> 'ClientSettingsSettings',
+				'foreign' 		=> 'key',
+				'owner' 		=> 'foreign',
+				'cardinality' 	=> 'one'
 			)
 		)
 	);

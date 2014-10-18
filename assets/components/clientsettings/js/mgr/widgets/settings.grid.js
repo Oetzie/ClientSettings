@@ -1,15 +1,11 @@
 ClientSettings.grid.Settings = function(config) {
     config = config || {};
-    
-    expander = new Ext.grid.RowExpander({
-        tpl : new Ext.Template(
-            '<p class="desc">{description}</p>'
-        )
-    });
 
 	config.tbar = [{
         text	: _('clientsettings.setting_create'),
-        handler	: this.createSetting
+        cls		:'primary-button',
+        handler	: this.createSetting,
+        scope	: this
     }, '->', {
     	xtype		: 'clientsettings-combo-categories',
     	name		: 'clientsettings-filter-categories',
@@ -45,6 +41,7 @@ ClientSettings.grid.Settings = function(config) {
         }
     }, {
     	xtype	: 'button',
+    	cls		: 'x-form-filter-clear',
     	id		: 'clientsettings-filter-clear-settings',
     	text	: _('filter_clear'),
     	listeners: {
@@ -54,6 +51,12 @@ ClientSettings.grid.Settings = function(config) {
         	}
         }
     }];
+    
+    expander = new Ext.grid.RowExpander({
+        tpl : new Ext.Template(
+            '<p class="desc">{description}</p>'
+        )
+    });
     
     columns = new Ext.grid.ColumnModel({
         columns: [expander, {
@@ -88,7 +91,7 @@ ClientSettings.grid.Settings = function(config) {
             editable	: true,
             width		: 100,
             fixed		: true,
-			renderer	: this.renderActive,
+			renderer	: this.renderBoolean,
 			editor		: {
             	xtype		: 'modx-combo-boolean'
             }
@@ -162,10 +165,16 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
     getMenu: function() {
         return [{
 	        text	: _('clientsettings.setting_update'),
-	        handler	: this.updateSetting
+	        handler	: this.updateSetting,
+	        scope	: this
+	    }, {
+	        text	: _('clientsettings.setting_duplicate'),
+	        handler	: this.duplicateSetting,
+	        scope	: this
 	    }, '-',  {
 		    text	: _('clientsettings.setting_remove'),
-		    handler	: this.removeSetting
+		    handler	: this.removeSetting,
+		    scope	: this
 		 }];
     },
     createSetting: function(btn, e) {
@@ -184,16 +193,40 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 	         }
         });
         
-        
         this.createSettingWindow.show(e.target);
+    },
+    duplicateSetting: function(btn, e) {
+    	if (this.duplicateSettingWindow) {
+	        this.duplicateSettingWindow.destroy();
+        }
+        
+        var duplicate = Ext.apply({}, this.menu.record);
+        
+        Ext.apply(duplicate, {
+        	key			: 'copy_' + this.menu.record.key,
+        	menuindex	: 0
+        });
+        
+        this.duplicateSettingWindow = MODx.load({
+	        xtype		: 'clientsettings-window-setting-duplicate',
+	        record		: duplicate,
+	        closeAction	:'close',
+	        listeners	: {
+		        'success'	: {
+		        	fn			:this.refresh,
+		        	scope		:this
+		        }
+	         }
+        });
+
+        this.duplicateSettingWindow.setValues(duplicate);
+        this.duplicateSettingWindow.show(e.target);
     },
     updateSetting: function(btn, e) {
     	if (this.updateSettingWindow) {
 	        this.updateSettingWindow.destroy();
         }
-        
-        console.log(this.menu.record);
-        
+
         this.updateSettingWindow = MODx.load({
 	        xtype		: 'clientsettings-window-setting-update',
 	        record		: this.menu.record,
@@ -226,7 +259,7 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
             }
     	});
     },
-    renderActive: function(d, c) {
+    renderBoolean: function(d, c) {
     	c.css = 1 == parseInt(d) || d ? 'green' : 'red';
     	
     	return 1 == parseInt(d) || d ? _('yes') : _('no');
@@ -391,7 +424,161 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window);
 
 Ext.reg('clientsettings-window-setting-create', ClientSettings.window.CreateSetting);
 
-ClientSettings.window.CreateUpdate = function(config) {
+ClientSettings.window.DuplicateSetting = function(config) {
+    config = config || {};
+ 
+    Ext.applyIf(config, {
+    	autoHeight	: true,
+    	width		: 600,
+        title 		: _('clientsettings.setting_duplicate'),
+        url			: ClientSettings.config.connectorUrl,
+        baseParams	: {
+            action		: 'mgr/settings/create'
+        },
+        defauls		: {
+	        labelAlign	: 'top',
+            border		: false
+        },
+        fields		: [{
+            layout		: 'column',
+            border		: false,
+            defaults	: {
+                layout		: 'form',
+                labelSeparator : ''
+            },
+            items: [{
+                columnWidth	: .5,
+                items		: [{
+		        	layout		: 'column',
+		        	border		: false,
+		            defaults	: {
+		                layout		: 'form',
+		                labelSeparator : ''
+		            },
+		        	items		: [{
+			        	columnWidth	: .8,
+			        	items		: [{
+				        	xtype		: 'textfield',
+				        	fieldLabel	: _('clientsettings.label_key'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_key_desc'),
+				        	name		: 'key',
+				           	anchor		: '100%',
+				        	allowBlank	: false,
+				        	maxLength	: 75
+				        }, {
+				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+				            html		: _('clientsettings.label_key_desc'),
+				            cls			: 'desc-under'
+				        }]
+				    }, {
+					    columnWidth	: .2,
+					        style		: 'margin-right: 0;',
+					        items		: [{
+						        xtype		: 'checkbox',
+					            fieldLabel	: _('clientsettings.label_active'),
+					            description	: MODx.expandHelp ? '' : _('clientsettings.label_active_desc'),
+					            name		: 'active',
+					            inputValue	: 1
+					        }, {
+					        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+					            html		: _('clientsettings.label_active_desc'),
+					            cls			: 'desc-under'
+					        }]
+
+				    }]
+				}, {
+		        	xtype		: 'textfield',
+		        	fieldLabel	: _('clientsettings.label_label'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_label_desc'),
+		        	name		: 'label',
+		           	anchor		: '100%',
+		        	allowBlank	: false,
+		        	maxLength	: 75
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		            html		: _('clientsettings.label_label_desc'),
+		            cls			: 'desc-under'
+		        }, {
+		        	xtype		: 'textarea',
+		        	fieldLabel	: _('clientsettings.label_description'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_description_desc'),
+		        	name		: 'description',
+		        	anchor		: '100%'
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		        	html		: _('clientsettings.label_description_desc'),
+		        	cls			: 'desc-under'
+		        }, {
+		            xtype		: 'clientsettings-combo-categories',
+		            fieldLabel	: _('clientsettings.label_category'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_category_desc'),
+		            name		: 'category_id',
+		            anchor		: '100%',
+		            allowBlank	: false
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		            html		: _('clientsettings.label_category_desc'),
+		            cls			: 'desc-under'
+		        }]
+		    }, {
+		    	columnWidth	: .5,
+		    	style		: 'margin-right: 0;',
+                items		: [{
+		        	xtype		: 'clientsettings-combo-xtype',
+		        	fieldLabel	: _('clientsettings.label_xtype'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_xtype_desc'),
+		        	name		: 'xtype',
+		        	anchor		: '100%',
+		        	allowBlank	: false
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		            html		: _('clientsettings.label_xtype_desc'),
+		            cls			: 'desc-under'
+		        }, {
+			        xtype		: 'textfield',
+		            fieldLabel	: _('clientsettings.label_exclude'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_exclude_desc'),
+		            name		: 'exclude',
+		            anchor		: '100%'
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		            html		: _('clientsettings.label_exclude_desc'),
+		            cls			: 'desc-under'
+		        }, {
+			        xtype		: 'numberfield',
+		            fieldLabel	: _('clientsettings.label_menuindex'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_menuindex_desc'),
+		            name		: 'menuindex',
+		            anchor		: '100%',
+		            allowBlank	: false,
+		            minValue	: 0
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		            html		: _('clientsettings.label_menuindex_desc'),
+		            cls			: 'desc-under'
+		        }, {
+		        	xtype		: 'textarea',
+		        	fieldLabel	: _('clientsettings.label_value'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_value_desc'),
+		        	name		: 'value',
+		        	anchor		: '100%'
+		        }, {
+		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+		        	html		: _('clientsettings.label_value_desc'),
+		        	cls			: 'desc-under'
+		        }]    
+		    }]
+	    }]
+    });
+    
+    ClientSettings.window.DuplicateSetting.superclass.constructor.call(this, config);
+};
+
+Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window);
+
+Ext.reg('clientsettings-window-setting-duplicate', ClientSettings.window.DuplicateSetting);
+
+ClientSettings.window.UpdateSetting = function(config) {
     config = config || {};
     
     Ext.applyIf(config, {
@@ -541,12 +728,12 @@ ClientSettings.window.CreateUpdate = function(config) {
 	    }]
     });
     
-    ClientSettings.window.CreateUpdate.superclass.constructor.call(this, config);
+    ClientSettings.window.UpdateSetting.superclass.constructor.call(this, config);
 };
 
-Ext.extend(ClientSettings.window.CreateUpdate, MODx.Window);
+Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window);
 
-Ext.reg('clientsettings-window-setting-update', ClientSettings.window.CreateUpdate);
+Ext.reg('clientsettings-window-setting-update', ClientSettings.window.UpdateSetting);
 
 ClientSettings.combo.Categories = function(config) {
     config = config || {};
