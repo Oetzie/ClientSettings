@@ -3,6 +3,13 @@ ClientSettings
 ----------------------
 
 ----------------------
+Version: 1.0.2-pl
+Released: 2015-02-10
+----------------------
+- Bug fixed
+- New 'Select from resource tree' function added.
+
+----------------------
 Version: 1.0.1-pl
 Released: 2014-04-14
 ----------------------

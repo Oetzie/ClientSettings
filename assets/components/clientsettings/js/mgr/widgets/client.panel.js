@@ -48,34 +48,35 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 		Ext.each(ClientSettings.config.contexts, function(context) {
 			contexts.push({
 				xtype		: 'modx-vtabs',
-				title		: context.key,
+				title		: context.name,
 	            defaults	: {
 	            	autoHeight	: true,
 	            	autoWidth	: true,
 	            	border		: false
 	            },
-	            items		: _this.categories(context)
+	            items		: _this.settings(context)
 	        });
 		});
 		
 		return contexts;
 	},
-    categories: function(context) {
+    settings: function(context) {
     	var categories = [];
+    	var _settings = ClientSettings.config.settings;
     	var _this = this;
 
-	    Ext.each(ClientSettings.config.categories, function(category) {
+	    Ext.each(_settings.settings, function(category) {
 	    	var settings = [];
-
-	    	Ext.iterate(category.items, function(setting) {
+	    	
+	    	Ext.iterate(category.settings, function(setting) {
 	    		var exclude = setting.exclude.split(',');
 
 	    		if (-1 == exclude.indexOf(context.key)) {
+		    		var tmpName = context.key + ':' + setting.key;
+		    		
 		    		var element = {
-	                    name		: context.key + ':' + setting.key,
 	                    xtype		: setting.xtype,
 	                    fieldLabel	: setting.label,
-	                    value		: undefined !== setting.values[context.key] ? setting.values[context.key].value : '',
 	                    description	: '<b>[[++' + setting.key + ']]</b>',
 	                    anchor		: '60%'
 	                }
@@ -100,18 +101,39 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 								data			: options
 							}),
 							mode 			: 'local',
-							hiddenName		: context.key + ':' + setting.key,
+							hiddenName		: tmpName,
 							valueField		: 'value',
 							displayField	: 'label'
 						});
+					} else if (setting.xtype == 'modx-field-parent-change') {
+						Ext.applyIf(element, {
+							name		: tmpName + '_alias_ignore',
+							formpanel	: 'clientsettings-panel-client',
+							parentcmp	: tmpName + '_id',
+							contextcmp	: null,
+							currentid	: 0,
+							value		: undefined == _settings.values[tmpName + '_alias_ignore'] ? '' : _settings.values[tmpName + '_alias_ignore'].value
+						});
+						
+						settings.push({
+							name		: tmpName,
+							xtype		: 'hidden',
+							value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
+							id			: tmpName + '_id',
+						});
 					}
+					
+					Ext.applyIf(element, {
+						name		: tmpName,
+						value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
+					});
 	                
 	                settings.push(element, {
 			        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
 			            html		: setting.description,
 			            cls			: 'desc-under'
 			        });
-			     }
+			    }
             });
 	    	
 	    	if (settings.length > 0) {

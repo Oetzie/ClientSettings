@@ -75,6 +75,7 @@
 	$_lang['clientsettings.client_view']					= 'Normale weergave';
 	$_lang['clientsettings.admin_view']						= 'Admin weergave';
 	$_lang['clientsettings.number']							= 'Nummer';
+	$_lang['clientsettings.resource']						= 'Pagina';
 	$_lang['clientsettings.setting_error_character']		= 'Instelling key bevat niet toegestane tekens. Definieer een andere keynaam.';
 	$_lang['clientsettings.setting_error_exists']			= 'Instelling met deze key bestaat reeds. Definieer een andere keynaam';
 	

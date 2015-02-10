@@ -31,7 +31,7 @@
 			$this->addHtml('<script type="text/javascript">
 				Ext.onReady(function() {
 					ClientSettings.config.contexts = '.$this->modx->toJSON($this->getContext()).';
-					ClientSettings.config.categories = '.$this->modx->toJSON($this->getCategories()).';
+					ClientSettings.config.settings = '.$this->modx->toJSON($this->getSettings()).';
 				});
 			</script>');
 		}
@@ -65,46 +65,43 @@
 		 * @acces protected.
 		 * @return Array.
 		 */
-		protected function getCategories() {
-			$categories = array();
+		protected function getSettings() {
+			$settings = array(
+				'settings'	=> array(),
+				'values'	=> array()
+			);
 			
-			$query = $this->modx->newQuery('ClientSettingsCategories');
-			$query->where(array(
-				'active' => 1
+			$criteria = $this->modx->newQuery('ClientSettingsCategories');
+			$criteria->where(array(
+				'active' 	=> 1
 			));
-			$query->sortby('menuindex', 'ASC');
-			$query->sortby('name', 'ASC');
+			$criteria->sortby('menuindex', 'ASC');
+			$criteria->sortby('name', 'ASC');
 			
-			foreach ($this->modx->getCollection('ClientSettingsCategories', $query) as $key => $category) {
-				$categoryTab = array_merge($category->toArray(), array(
-					'items' => array()
+			foreach ($this->modx->getCollection('ClientSettingsCategories', $criteria) as $category) {
+				$categorySettings = array_merge($category->toArray(), array(
+					'settings' 	=> array()
 				));
 				
-				$query = $this->modx->newQuery('ClientSettingsSettings');
-				$query->where(array(
-					'active' => 1
+				$criteria = $this->modx->newQuery('ClientSettingsSettings');
+				$criteria->where(array(
+					'active' 	=> 1
 				));
-				$query->sortby('menuindex', 'ASC');
-				$query->sortby('label', 'ASC');
+				$criteria->sortby('menuindex', 'ASC');
+				$criteria->sortby('label', 'ASC');
 				
-				foreach ($category->getMany('SettingsAlias', $query) as $setting) {
-					$settingTab = array_merge($setting->toArray(), array(
-						'values' => array()
-					));
-					
-					foreach ($setting->getMany('ValuesAlias', $this->modx->newQuery('ClientSettingsValues')) as $value) {
-						$value = $value->toArray();
-						
-						$settingTab['values'][$value['context']] = $value;
-					}
-					
-					$categoryTab['items'][] = $settingTab;
+				foreach ($category->getMany('SettingsAlias', $criteria) as $setting) {
+					$categorySettings['settings'][] = $setting->toArray(); 
 				}
 				
-				$categories[] = $categoryTab;
+				$settings['settings'][] = $categorySettings;
 			}
 			
-			return $categories;
+			foreach ($this->modx->getCollection('ClientSettingsValues') as $key => $value) {
+				$settings['values'][$value->context.':'.$value->setting] = $value->toArray();
+			}
+			
+			return $settings;
 		}
 		
 		/**
@@ -113,15 +110,9 @@
 		 */
 		protected function getContext() {
 			$contexts = array();
-			
-			$query = $this->modx->newQuery('modContext', array(
-				'key:NOT IN' => array('mgr')
-			));
-			
-			foreach ($this->modx->getCollection('modContext', $query) as $key => $context) {
-				$contexts[] = array(
-					'key' => $key
-				);
+
+			foreach ($this->modx->getCollection('modContext', array('key:NOT IN' => array('mgr'))) as $context) {
+				$contexts[] = $context->toArray();
 			}
 			
 			return $contexts;

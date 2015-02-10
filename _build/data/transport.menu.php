@@ -17,7 +17,7 @@
 	    'namespace' 	=> PKG_NAME_LOWER,
 	    'parent' 		=> 'components',
 	    'description' 	=> PKG_NAME_LOWER.'.desc',
-	    'icon' 			=> 'images/icons/plugin.gif',
+	    'icon' 			=> 'gear',
 	    'menuindex' 	=> 0,
 	    'params' 		=> '',
 	    'handler' 		=> '',

@@ -73,6 +73,7 @@
 	$_lang['clientsettings.client_view']					= 'Normal view';
 	$_lang['clientsettings.admin_view']						= 'Admin view';
 	$_lang['clientsettings.number']							= 'Number';
+	$_lang['clientsettings.resource']						= 'Resource';
 	$_lang['clientsettings.setting_error_character']		= 'Setting key contains forbidden characters. Please specify another keyname.';
 	$_lang['clientsettings.setting_error_exists']			= 'Setting with that key already exists. Please specify another keyname.';
 	

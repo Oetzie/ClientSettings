@@ -771,7 +771,8 @@ ClientSettings.combo.FieldTypes = function(config) {
                 ['combo-boolean', _('yesno')],
                 ['text-password', _('password')],
                 ['numberfield', _('clientsettings.number')],
-                ['modx-combo', _('list')]
+                ['modx-combo', _('list')],
+                ['modx-field-parent-change', _('clientsettings.resource')]
             ]
         }),
         remoteSort	: ['label', 'asc'],

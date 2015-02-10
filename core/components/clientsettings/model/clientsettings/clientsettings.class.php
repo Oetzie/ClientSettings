@@ -81,15 +81,11 @@
 		 */
 		public function getSettings() {
 			$settings = array();
-			
-			$criteria = array(
-				'context' => $this->modx->context->key
-			);
 
-			foreach ($this->modx->getCollection('ClientSettingsValues', $criteria) as $key => $setting) {
-				$setting = $setting->toArray();
-				
-				$settings[$setting['setting']] = $setting['value'];
+			foreach ($this->modx->getCollection('ClientSettingsValues', array('context' => $this->modx->context->key)) as $setting) {
+				if (!preg_match('/_ignore$/si', $setting->setting)) {
+					$settings[$setting->setting] = $setting->value;
+				}
 			}
 			
 			return $settings;

@@ -54,13 +54,13 @@
 					
 					$value = array('value' => $value);
 					$setting = array('setting' => $setting, 'context' => $context);
-					
-					if (!$object = $this->modx->getObject($this->classKey, $setting)) {
+				
+					if (null === ($object = $this->modx->getObject($this->classKey, $setting))) {
 						$object = $this->modx->newObject($this->classKey, array_merge($setting, $value));
 					} else {
 						$object->fromArray($value);	
 					}
-					
+				
 					$object->save();
 				}
 			}
