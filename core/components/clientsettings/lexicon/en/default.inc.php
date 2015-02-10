@@ -63,8 +63,10 @@
 	$_lang['clientsettings.label_exclude_desc']				= 'Exclude setting for context. Separate contexts with a comma.';
 	$_lang['clientsettings.label_menuindex']				= 'Menuindex';
 	$_lang['clientsettings.label_menuindex_desc']			= '';
-	$_lang['clientsettings.label_value']					= 'Value';
-	$_lang['clientsettings.label_value_desc']				= '';
+	$_lang['clientsettings.label_value']					= 'Extra settings';
+	$_lang['clientsettings.label_value_desc']				= 'A valid JSON string with extra configuration settings.';
+	$_lang['clientsettings.label_active']					= 'Active';
+	$_lang['clientsettings.label_active_desc']				= '';
 	$_lang['clientsettings.label_settings']					= 'Settings';
 	$_lang['clientsettings.label_settings_desc']			= '';
 	
@@ -72,8 +74,12 @@
 	$_lang['clientsettings.no_settings_desc']				= 'It seems that there are no settings available.';
 	$_lang['clientsettings.client_view']					= 'Normal view';
 	$_lang['clientsettings.admin_view']						= 'Admin view';
+	$_lang['clientsettings.datefield']						= 'Datefield';
+	$_lang['clientsettings.timefield']						= 'Timefield';
+	$_lang['clientsettings.xdatetime']						= 'Date- and timefield';
 	$_lang['clientsettings.number']							= 'Number';
 	$_lang['clientsettings.resource']						= 'Resource';
+	$_lang['clientsettings.browser']						= 'Media browser';
 	$_lang['clientsettings.setting_error_character']		= 'Setting key contains forbidden characters. Please specify another keyname.';
 	$_lang['clientsettings.setting_error_exists']			= 'Setting with that key already exists. Please specify another keyname.';
 	

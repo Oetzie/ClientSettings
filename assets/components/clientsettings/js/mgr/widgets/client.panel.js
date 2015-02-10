@@ -121,8 +121,48 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 							value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
 							id			: tmpName + '_id',
 						});
+					} else if (setting.xtype == 'modx-combo-browser') {
+						Ext.applyIf(element, {
+							name		: tmpName + '_alias_ignore',
+							value		: undefined == _settings.values[tmpName + '_alias_ignore'] ? '' : _settings.values[tmpName + '_alias_ignore'].value,
+							listeners : {
+								'select'	: {
+									fn	: function(data) {
+										Ext.getCmp(tmpName + '_image').setValue(data.fullRelativeUrl);
+									}
+								}
+							}
+						});
+						
+						settings.push({
+							name		: tmpName,
+							xtype		: 'hidden',
+							value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
+							id			: tmpName + '_image',
+						});
+					} else if (setting.xtype == 'datefield') {
+						Ext.applyIf(element, {
+							format	: MODx.config.manager_date_format,
+							startDay	: parseInt(MODx.config.manager_week_start),
+						});
+					} else if (setting.xtype == 'timefield') {	
+						Ext.applyIf(element, {
+							format		: MODx.config.manager_time_format,
+							offset_time	: MODx.config.server_offset_time
+						});
+					} else if (setting.xtype == 'xdatetime') {	
+						Ext.applyIf(element, {
+							dateFormat	: MODx.config.manager_date_format,
+							timeFormat	: MODx.config.manager_time_format,
+							startDay	: parseInt(MODx.config.manager_week_start),
+							offset_time	: MODx.config.server_offset_time
+						});
 					}
 					
+					if (/^\{(.+?)\}$/.test(setting.value)) {
+						Ext.applyIf(element, Ext.decode(setting.value));
+					}
+
 					Ext.applyIf(element, {
 						name		: tmpName,
 						value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,

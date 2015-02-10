@@ -63,8 +63,8 @@
 	$_lang['clientsettings.label_exclude_desc']				= 'Instelling uitsluiten voor context. Contexten scheiden met een komma.';
 	$_lang['clientsettings.label_menuindex']				= 'Sorteervolgorde';
 	$_lang['clientsettings.label_menuindex_desc']			= '';
-	$_lang['clientsettings.label_value']					= 'Waarde';
-	$_lang['clientsettings.label_value_desc']				= '';
+	$_lang['clientsettings.label_value']					= 'Extra instellingen';
+	$_lang['clientsettings.label_value_desc']				= 'Een geldige JSON string met extra configuratie instellingen.';
 	$_lang['clientsettings.label_active']					= 'Actief';
 	$_lang['clientsettings.label_active_desc']				= '';
 	$_lang['clientsettings.label_settings']					= 'Instellingen';
@@ -74,8 +74,12 @@
 	$_lang['clientsettings.no_settings_desc']				= 'Het lijkt erop dat er geen instellingen beschikbaar zijn.';
 	$_lang['clientsettings.client_view']					= 'Normale weergave';
 	$_lang['clientsettings.admin_view']						= 'Admin weergave';
+	$_lang['clientsettings.datefield']						= 'Datumveld';
+	$_lang['clientsettings.timefield']						= 'Tijdveld';
+	$_lang['clientsettings.xdatetime']						= 'Datum- en tijdveld';
 	$_lang['clientsettings.number']							= 'Nummer';
 	$_lang['clientsettings.resource']						= 'Pagina';
+	$_lang['clientsettings.browser']						= 'Media browser';
 	$_lang['clientsettings.setting_error_character']		= 'Instelling key bevat niet toegestane tekens. Definieer een andere keynaam.';
 	$_lang['clientsettings.setting_error_exists']			= 'Instelling met deze key bestaat reeds. Definieer een andere keynaam';
 	

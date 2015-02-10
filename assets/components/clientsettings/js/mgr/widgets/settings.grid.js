@@ -767,12 +767,16 @@ ClientSettings.combo.FieldTypes = function(config) {
             fields	: ['xtype','label'],
             data	: [
                	['textfield', _('textfield')],
+               	['datefield', _('clientsettings.datefield')],
+				['timefield', _('clientsettings.timefield')],
+				['xdatetime', _('clientsettings.xdatetime')],
                 ['textarea', _('textarea')],
                 ['combo-boolean', _('yesno')],
                 ['text-password', _('password')],
                 ['numberfield', _('clientsettings.number')],
                 ['modx-combo', _('list')],
-                ['modx-field-parent-change', _('clientsettings.resource')]
+                ['modx-field-parent-change', _('clientsettings.resource')],
+                ['modx-combo-browser', _('clientsettings.browser')]
             ]
         }),
         remoteSort	: ['label', 'asc'],
