@@ -74,14 +74,17 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 	    		if (-1 == exclude.indexOf(context.key)) {
 		    		var tmpName = context.key + ':' + setting.key;
 		    		
-		    		var element = {
+		    		var element = {};
+		    		
+		    		element = Ext.applyIf(element, {
 	                    xtype		: setting.xtype,
 	                    fieldLabel	: setting.label,
 	                    description	: '<b>[[++' + setting.key + ']]</b>',
-	                    anchor		: '60%'
-	                }
+	                    anchor		: '60%',
+	                    value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value
+	                });
 	
-			        if (setting.xtype == 'modx-combo') {
+			        if ('modx-combo' == setting.xtype) {
 	                   var options = [];
 	                    
 					   Ext.each(setting.value.split('||'), function(option) {
@@ -94,7 +97,7 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 							}
 						});
 	                   
-					   	Ext.applyIf(element, {
+						element = Ext.applyIf({
 					   		store			: new Ext.data.ArrayStore({
 	                    		mode			: 'local',
 								fields			: ['value','label'],
@@ -104,25 +107,32 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 							hiddenName		: tmpName,
 							valueField		: 'value',
 							displayField	: 'label'
-						});
-					} else if (setting.xtype == 'modx-field-parent-change') {
-						Ext.applyIf(element, {
-							name		: tmpName + '_alias_ignore',
-							formpanel	: 'clientsettings-panel-client',
-							parentcmp	: tmpName + '_id',
-							contextcmp	: null,
-							currentid	: 0,
-							value		: undefined == _settings.values[tmpName + '_alias_ignore'] ? '' : _settings.values[tmpName + '_alias_ignore'].value
-						});
-						
+						}, element);
+					} else if ('modx-field-parent-change' == setting.xtype) {
 						settings.push({
 							name		: tmpName,
 							xtype		: 'hidden',
 							value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
 							id			: tmpName + '_id',
 						});
-					} else if (setting.xtype == 'modx-combo-browser') {
-						Ext.applyIf(element, {
+						
+						element = Ext.applyIf({
+							name		: tmpName + '_alias_ignore',
+							formpanel	: 'clientsettings-panel-client',
+							parentcmp	: tmpName + '_id',
+							contextcmp	: null,
+							currentid	: 0,
+							value		: undefined == _settings.values[tmpName + '_alias_ignore'] ? '' : _settings.values[tmpName + '_alias_ignore'].value
+						}, element);
+					} else if ('modx-combo-browser' == setting.xtype) {
+						settings.push({
+							name		: tmpName,
+							xtype		: 'hidden',
+							value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
+							id			: tmpName + '_image',
+						});
+						
+						element = Ext.applyIf({
 							name		: tmpName + '_alias_ignore',
 							value		: undefined == _settings.values[tmpName + '_alias_ignore'] ? '' : _settings.values[tmpName + '_alias_ignore'].value,
 							listeners : {
@@ -132,42 +142,30 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 									}
 								}
 							}
-						});
-						
-						settings.push({
-							name		: tmpName,
-							xtype		: 'hidden',
-							value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
-							id			: tmpName + '_image',
-						});
-					} else if (setting.xtype == 'datefield') {
-						Ext.applyIf(element, {
-							format	: MODx.config.manager_date_format,
+						}, element);
+					} else if ('datefield' == setting.xtype) {
+						element = Ext.applyIf({
+							format		: MODx.config.manager_date_format,
 							startDay	: parseInt(MODx.config.manager_week_start),
-						});
-					} else if (setting.xtype == 'timefield') {	
-						Ext.applyIf(element, {
+						}, element);
+					} else if ('timefield' == setting.xtype) {	
+						element = Ext.applyIf({
 							format		: MODx.config.manager_time_format,
 							offset_time	: MODx.config.server_offset_time
-						});
-					} else if (setting.xtype == 'xdatetime') {	
-						Ext.applyIf(element, {
+						}, element);
+					} else if ('xdatetime' == setting.xtype) {	
+						element = Ext.applyIf({
 							dateFormat	: MODx.config.manager_date_format,
 							timeFormat	: MODx.config.manager_time_format,
 							startDay	: parseInt(MODx.config.manager_week_start),
 							offset_time	: MODx.config.server_offset_time
-						});
+						}, element);
 					}
 					
 					if (/^\{(.+?)\}$/.test(setting.value)) {
-						Ext.applyIf(element, Ext.decode(setting.value));
+						element = Ext.applyIf(Ext.decode(setting.value), element);
 					}
 
-					Ext.applyIf(element, {
-						name		: tmpName,
-						value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value,
-					});
-	                
 	                settings.push(element, {
 			        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
 			            html		: setting.description,
