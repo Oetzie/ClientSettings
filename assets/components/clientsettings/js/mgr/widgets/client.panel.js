@@ -79,6 +79,7 @@ Ext.extend(ClientSettings.panel.Client, MODx.FormPanel, {
 		    		element = Ext.applyIf(element, {
 	                    xtype		: setting.xtype,
 	                    fieldLabel	: setting.label,
+	                    name		: tmpName,
 	                    description	: '<b>[[++' + setting.key + ']]</b>',
 	                    anchor		: '60%',
 	                    value		: undefined == _settings.values[tmpName] ? '' : _settings.values[tmpName].value
