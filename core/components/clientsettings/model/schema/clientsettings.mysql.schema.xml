@@ -12,7 +12,7 @@
                 <column key="id" collation="A" null="false" />
         </index>
         
-        <aggregate alias="SettingsAlias" local="id" class="ClientSettingsSettings" foreign="category_id" owner="local" cardinality="many" />
+        <aggregate alias="ClientSettingsSettings" local="id" class="ClientSettingsSettings" foreign="category_id" owner="local" cardinality="many" />
     </object>
     
     <object class="ClientSettingsSettings" table="clientsettings_settings" extends="xPDOSimpleObject">
@@ -23,7 +23,7 @@
         <field key="description" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
         <field key="xtype" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
         <field key="exclude" dbtype="varchar" precision="255" phptype="string" null="false" default=""/>
-        <field key="value" dbtype="text" phptype="string" null="false" default=""/>
+        <field key="extra" dbtype="text" phptype="string" null="false" default=""/>
         <field key="menuindex" dbtype="int" precision="11" phptype="integer" null="false" default=""/>
         <field key="active" dbtype="int" precision="1" phptype="integer" null="false" default="1"/>
         <field key="editedon" dbtype="timestamp" phptype="timestamp" attributes="ON UPDATE CURRENT_TIMESTAMP" null="false" default=""/>
@@ -32,13 +32,14 @@
                 <column key="id" collation="A" null="false" />
         </index>
         
-        <aggregate alias="CategoriesAlias" local="category_id" class="ClientSettingsCategories" foreign="id" owner="foreign" cardinality="one" />
-        <aggregate alias="ValuesAlias" local="id" class="ClientSettingsValues" foreign="setting_id" owner="local" cardinality="many" />
+        <aggregate alias="ClientSettingsCategories" local="category_id" class="ClientSettingsCategories" foreign="id" owner="foreign" cardinality="one" />
+        <aggregate alias="ClientSettingsValues" local="id" class="ClientSettingsValues" foreign="setting_id" owner="local" cardinality="many" />
     </object>
     
     <object class="ClientSettingsValues" table="clientsettings_values" extends="xPDOSimpleObject">
     	<field key="id" dbtype="int" precision="11" phptype="integer" null="false" index="pk" generated="native"/>
     	<field key="setting" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
+    	<field key="key" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
     	<field key="context" dbtype="varchar" precision="75" phptype="string" null="false" default=""/>
     	<field key="value" dbtype="text" phptype="string" null="false" default=""/>
     	<field key="editedon" dbtype="timestamp" phptype="timestamp" attributes="ON UPDATE CURRENT_TIMESTAMP" null="false" default=""/>
@@ -47,6 +48,6 @@
                 <column key="id" collation="A" null="false" />
         </index>
 
-        <aggregate alias="SettingAlias" local="setting" class="ClientSettingsSettings" foreign="key" owner="foreign" cardinality="one" />
+        <aggregate alias="ClientSettingsSettings" local="setting_id" class="ClientSettingsSettings" foreign="id" owner="foreign" cardinality="one" />
     </object>
 </model>

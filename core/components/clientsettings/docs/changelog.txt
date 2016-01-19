@@ -1,6 +1,14 @@
 ----------------------
-ClientSettings
+Client Settings
 ----------------------
+
+----------------------
+Version: 1.0.3-pl
+Released: 2016-01-19
+----------------------
+- Bug and code fixes
+- New settings types added
+	- extra setting values added
 
 ----------------------
 Version: 1.0.2-pl

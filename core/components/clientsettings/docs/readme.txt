@@ -1,12 +1,12 @@
 ----------------------
-ClientSettings
+Client Settings
 ----------------------
-Version: 1.0.2
+Version: 1.0.3
 Author: Oene Tjeerd de Bruin
 Contact: info@oetzie.nl
 ----------------------
 
-ClientSettings gives your client a user-friendly interface for making site
+Client Settings gives your client a user-friendly interface for making site
 wide changes, while you as the administrator set up the different options
 available to the end-user.
 

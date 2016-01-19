@@ -6,15 +6,19 @@ ClientSettings.page.Client = function(config) {
 	config = config || {};
 	
 	config.buttons = [{
-		process		: 'mgr/save',
-		method		: 'remote',
 		text		: _('save'),
+		cls			:'primary-button',
+		method		: 'remote',
+		process 	: 'mgr/save',
 		checkDirty	: true,
 		keys		: [{
 			ctrl		: true,
 			key			: MODx.config.keymap_save || 's'
 		}]
-	}, '-'];
+	}, {
+        text		: _('cancel'),
+        id			: 'modx-abtn-cancel'
+    }, '-'];
 	
 	if (ClientSettings.config.admin) {
 		config.buttons.push({
@@ -34,6 +38,8 @@ ClientSettings.page.Client = function(config) {
 		formpanel	: 'clientsettings-panel-client',
 		components	: [{
 			xtype		: 'clientsettings-panel-client',
+			contexts	: ClientSettings.config.contexts,
+			categories	: ClientSettings.config.categories,
 			renderTo	: 'clientsettings-panel-client-div'
 		}]
 	});

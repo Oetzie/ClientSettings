@@ -1,24 +1,24 @@
 <?php
 
 	/**
-	 * ClientSettings
+	 * Client Settings
 	 *
-	 * Copyright 2013 by Oene Tjeerd de Bruin <info@oetzie.nl>
+	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
 	 *
-	 * This file is part of ClientSettings, a real estate property listings component
+	 * This file is part of Client Settings, a real estate property listings component
 	 * for MODX Revolution.
 	 *
-	 * ClientSettings is free software; you can redistribute it and/or modify it under
+	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
 	 * Foundation; either version 2 of the License, or (at your option) any later
 	 * version.
 	 *
-	 * ClientSettings is distributed in the hope that it will be useful, but WITHOUT ANY
+	 * Client Settings is distributed in the hope that it will be useful, but WITHOUT ANY
 	 * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 	 * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 	 *
 	 * You should have received a copy of the GNU General Public License along with
-	 * ClientSettings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+	 * Client Settings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
@@ -35,7 +35,7 @@
 			'description'	=> null,
 			'xtype'			=> null,
 			'exclude'		=> null,
-			'value' 		=> null,
+			'extra' 		=> null,
 			'menuindex' 	=> null,
 			'active'		=> null,
 			'editedon' 		=> null
@@ -85,7 +85,7 @@
 				'phptype' 	=> 'string',
 				'null' 		=> false
 			),
-			'value' 	=> array(
+			'extra' 	=> array(
 				'dbtype' 	=> 'text',
 				'phptype' 	=> 'string',
 				'null' 		=> false
@@ -124,17 +124,17 @@
 			)
 		),
 		'aggregates' => array(
-			'CategoriesAlias' => array(
+			'ClientSettingsCategories' => array(
 				'local' 		=> 'category_id',
 				'class' 		=> 'ClientSettingsCategories',
 				'foreign' 		=> 'id',
 				'owner' 		=> 'foreign',
 				'cardinality' 	=> 'one'
 			),
-			'ValuesAlias'	=> array(
-				'local' 		=> 'key',
+			'ClientSettingsValues'	=> array(
+				'local' 		=> 'id',
 				'class' 		=> 'ClientSettingsValues',
-				'foreign'		=> 'setting',
+				'foreign'		=> 'setting_id',
 				'owner' 		=> 'local',
 				'cardinality' 	=> 'many'
 			)

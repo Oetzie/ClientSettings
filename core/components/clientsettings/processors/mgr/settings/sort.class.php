@@ -22,12 +22,12 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class ValuesSaveProcessor extends modObjectProcessor {
+	class SettingsSortProcessor extends modObjectProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
 		 */
-		public $classKey = 'ClientSettingsValues';
+		public $classKey = 'ClientSettingsSettings';
 		
 		/**
 		 * @acces public.
@@ -39,7 +39,7 @@
 		 * @acces public.
 		 * @var String.
 		 */
-		public $objectType = 'clientsettings.values';
+		public $objectType = 'clientsettings.settings';
 		
 		/**
 		 * @acces public.
@@ -62,49 +62,23 @@
 		 * @return Mixed.
 		 */
 		public function process() {
-			$this->modx->cacheManager->clearCache();
-			
-			foreach ($this->getProperties() as $key => $value) {
-				if (false !== strpos($key, ':')) {
-					list($context, $setting) = explode(':', $key);
-					
-					if (false !== strpos($setting, '-')) {
-						list($setting, $key) = explode('-', $setting);
-						
-						if ('ignore' == $key) {
-							continue;
-						}
-						
-						$key = '-'.$key;
-					} else {
-						$key = '';
-					}
-					
-					$value = array(
-						'key'			=> $key,
-						'value' 		=> serialize($value)
-					);
+			$sort = $this->modx->fromJSON($this->getProperty('sort'));
 
-					$setting = array(
-						'setting_id' 	=> $setting,
-						'key'			=> $key,
-						'context' 		=> $context
-					);
-				
-					if (null === ($object = $this->modx->getObject($this->classKey, $setting))) {
-						$object = $this->modx->newObject($this->classKey, array_merge($setting, $value));
-					} else {
-						$object->fromArray($value);	
-					}
-				
+			foreach ($sort as $key => $value) {
+				if (null !== ($object = $this->modx->getObject($this->classKey, $value['id']))) {
+					$object->fromArray(array(
+						'category_id'	=> $value['category_id'],
+						'menuindex' 	=> $key
+					));
+					
 					$object->save();
 				}
 			}
-
+			
 			return $this->hasErrors() ? $this->failure() : $this->success();
 		}
 	}
 	
-	return 'ValuesSaveProcessor';
+	return 'SettingsSortProcessor';
 	
 ?>

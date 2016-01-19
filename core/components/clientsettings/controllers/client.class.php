@@ -1,24 +1,24 @@
 <?php
 
 	/**
-	 * ClientSettings
+	 * Client Settings
 	 *
-	 * Copyright 2013 by Oene Tjeerd de Bruin <info@oetzie.nl>
+	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
 	 *
-	 * This file is part of ClientSettings, a real estate property listings component
+	 * This file is part of Client Settings, a real estate property listings component
 	 * for MODX Revolution.
 	 *
-	 * ClientSettings is free software; you can redistribute it and/or modify it under
+	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
 	 * Foundation; either version 2 of the License, or (at your option) any later
 	 * version.
 	 *
-	 * ClientSettings is distributed in the hope that it will be useful, but WITHOUT ANY
+	 * Client Settings is distributed in the hope that it will be useful, but WITHOUT ANY
 	 * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
 	 * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 	 *
 	 * You should have received a copy of the GNU General Public License along with
-	 * ClientSettings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
+	 * Client Settings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
@@ -28,21 +28,38 @@
 		 * @param Array $scriptProperties.
 		 */
 		public function process(array $scriptProperties = array()) {
-			$this->addHtml('<script type="text/javascript">
-				Ext.onReady(function() {
-					ClientSettings.config.contexts = '.$this->modx->toJSON($this->getContext()).';
-					ClientSettings.config.settings = '.$this->modx->toJSON($this->getSettings()).';
-				});
-			</script>');
+			if ($this->modx->getOption('use_editor') && $richtext = $this->modx->getOption('which_editor')) {
+				$properties = array(
+					'editor' 	=> $richtext,
+					'elements' 	=> array()
+				);
+
+				$onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', $properties);
+	            
+	            if (is_array($onRichTextEditorInit)) {
+					$onRichTextEditorInit = implode('', $onRichTextEditorInit);
+            	}
+            	
+            	$this->addHtml($onRichTextEditorInit);
+			}
 		}
 		
 		/**
 		 * @acces public.
 		 */
 		public function loadCustomCssJs() {
-			$this->addCss($this->clientsettings->config['cssUrl'].'mgr/clientsettings.css');
-			$this->addJavascript($this->clientsettings->config['jsUrl'].'mgr/widgets/client.panel.js');
-			$this->addLastJavascript($this->clientsettings->config['jsUrl'].'mgr/sections/client.js');
+			$this->addCss($this->modx->getOption('css_url', $this->clientsettings->config).'mgr/clientsettings.css');
+			
+			$this->addJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/widgets/client.panel.js');
+			
+			$this->addLastJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/sections/client.js');
+			
+			$this->addHtml('<script type="text/javascript">
+				Ext.onReady(function() {
+					ClientSettings.config.contexts 		= '.$this->modx->toJSON($this->clientsettings->getContext()).';
+					ClientSettings.config.categories 	= '.$this->modx->toJSON($this->clientsettings->getCategories()).';
+				});
+			</script>');
 		}
 		
 		/**
@@ -58,64 +75,7 @@
 		 * @return String.
 		 */
 		public function getTemplateFile() {
-			return $this->clientsettings->config['templatesPath'].'client.tpl';
-		}
-		
-		/**
-		 * @acces protected.
-		 * @return Array.
-		 */
-		protected function getSettings() {
-			$settings = array(
-				'settings'	=> array(),
-				'values'	=> array()
-			);
-			
-			$criteria = $this->modx->newQuery('ClientSettingsCategories');
-			$criteria->where(array(
-				'active' 	=> 1
-			));
-			$criteria->sortby('menuindex', 'ASC');
-			$criteria->sortby('name', 'ASC');
-			
-			foreach ($this->modx->getCollection('ClientSettingsCategories', $criteria) as $category) {
-				$categorySettings = array_merge($category->toArray(), array(
-					'settings' 	=> array()
-				));
-				
-				$criteria = $this->modx->newQuery('ClientSettingsSettings');
-				$criteria->where(array(
-					'active' 	=> 1
-				));
-				$criteria->sortby('menuindex', 'ASC');
-				$criteria->sortby('label', 'ASC');
-				
-				foreach ($category->getMany('SettingsAlias', $criteria) as $setting) {
-					$categorySettings['settings'][] = $setting->toArray(); 
-				}
-				
-				$settings['settings'][] = $categorySettings;
-			}
-			
-			foreach ($this->modx->getCollection('ClientSettingsValues') as $key => $value) {
-				$settings['values'][$value->context.':'.$value->setting] = $value->toArray();
-			}
-			
-			return $settings;
-		}
-		
-		/**
-		 * @acces protected.
-		 * @return Array.
-		 */
-		protected function getContext() {
-			$contexts = array();
-
-			foreach ($this->modx->getCollection('modContext', array('key:NOT IN' => array('mgr'))) as $context) {
-				$contexts[] = $context->toArray();
-			}
-			
-			return $contexts;
+			return $this->modx->getOption('templates_path', $this->newsletter->config).'client.tpl';
 		}
     }
 

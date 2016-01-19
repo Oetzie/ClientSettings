@@ -23,6 +23,10 @@
 			
 			$plugins[$name]->addMany($events);
 		}
+		
+		if (file_exists(__DIR__.'/properties/'.$name.'.plugin.properties.php')) {
+			$plugins[$name]->setProperties(include_once __DIR__.'/properties/'.$name.'.plugin.properties.php');
+		}
 	}
 		
 	return $plugins;

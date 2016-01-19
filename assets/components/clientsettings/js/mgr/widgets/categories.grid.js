@@ -42,7 +42,7 @@ ClientSettings.grid.Categories = function(config) {
 
     columns = new Ext.grid.ColumnModel({
         columns: [{
-            header		: _('clientsettings.label_name'),
+            header		: _('clientsettings.category_label_name'),
             dataIndex	: 'name',
             sortable	: true,
             editable	: true,
@@ -52,7 +52,7 @@ ClientSettings.grid.Categories = function(config) {
             	xtype		: 'textfield'
             }
         }, {
-            header		: _('clientsettings.label_description'),
+            header		: _('clientsettings.category_label_description'),
             dataIndex	: 'description',
             sortable	: true,
             editable	: true,
@@ -61,8 +61,8 @@ ClientSettings.grid.Categories = function(config) {
             	xtype		: 'textfield'
             }
         }, {
-            header		: _('clientsettings.label_settings'),
-            dataIndex	: 'count',
+            header		: _('clientsettings.category_label_settings'),
+            dataIndex	: 'settings',
             sortable	: true,
             editable	: false,
             width		: 100,
@@ -91,19 +91,29 @@ ClientSettings.grid.Categories = function(config) {
     Ext.applyIf(config, {
     	cm			: columns,
         id			: 'clientsettings-grid-admin-categories',
-        url			: ClientSettings.config.connectorUrl,
+        url			: ClientSettings.config.connector_url,
         baseParams	: {
         	action		: 'mgr/categories/getList'
         },
         autosave	: true,
         save_action	: 'mgr/categories/updateFromGrid',
-        fields		: ['id', 'name', 'description', 'count', 'menuindex', 'active', 'editedon'],
+        fields		: ['id', 'name', 'description', 'settings', 'menuindex', 'active', 'editedon'],
         paging		: true,
         pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
-        sortBy		: 'menuindex'
+        sortBy		: 'menuindex',
+        enableDragDrop : true,
+	    ddGroup 	: 'clientsettings-grid-admin-categories',
+	    listeners	: {
+	        'afterrender' : {
+	           fn			: this.moveCategory,
+	           scope		: this
+	    	}
+		}
     });
     
     ClientSettings.grid.Categories.superclass.constructor.call(this, config);
+    
+    this.on('afterrender', this.moveCategory, this);
 };
 
 Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
@@ -137,7 +147,12 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn			:this.refresh,
+		        	fn		: function() {
+	            		Ext.getCmp('clientsettings-grid-admin-settings').refresh();
+	            		
+            			this.getSelectionModel().clearSelections(true);
+            			this.refresh();
+            		},
 		        	scope		:this
 		        }
 	         }
@@ -157,7 +172,12 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn			:this.refresh,
+		        	fn		: function() {
+	            		Ext.getCmp('clientsettings-grid-admin-settings').refresh();
+	            		
+            			this.getSelectionModel().clearSelections(true);
+            			this.refresh();
+            		},
 		        	scope		:this
 		        }
 	         }
@@ -170,19 +190,66 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     	MODx.msg.confirm({
         	title 	: _('clientsettings.category_remove'),
         	text	: _('clientsettings.category_remove_confirm'),
-        	url		: this.config.url,
+        	url		: ClientSettings.config.connector_url,
         	params	: {
             	action	: 'mgr/categories/remove',
             	id		: this.menu.record.id
             },
             listeners: {
             	'success': {
-            		fn		: this.refresh,
-            		scope	: this
+            		fn		: function() {
+	            		Ext.getCmp('clientsettings-grid-admin-settings').refresh();
+	            		
+            			this.getSelectionModel().clearSelections(true);
+            			this.refresh();
+            		},
+		        	scope		:this
             	}
             }
     	});
     },
+    moveCategory: function() {
+	    var grid = this;
+
+		var ddrow = new Ext.dd.DropTarget(this.getView().mainBody, {
+        	ddGroup 	: grid.config.ddGroup,
+            notifyDrop 	: function(dd, e, data) {
+            	var sm = grid.getSelectionModel();
+                var sels = sm.getSelections();
+                var cindex = dd.getDragData(e).rowIndex;
+                
+                if (sm.hasSelection()) {
+                	for (i = 0; i < sels.length; i++) {
+                    	grid.getStore().remove(grid.getStore().getById(sels[i].id));
+                        grid.getStore().insert(cindex, sels[i]);
+                    }
+                    
+                    sm.selectRecords(sels);
+                }
+                
+                var sm = grid.getStore().data.items;
+                var sort = new Array();
+                
+                for (var i = 0; i < sm.length; i++) {
+	                sort.push(sm[i].id);
+                }
+
+                Ext.Ajax.request({
+	                url		: ClientSettings.config.connector_url,
+	                params 	: {
+		                action	: 'mgr/categories/sort',
+		                sort 	: Ext.encode(sort)
+	                },
+	                success: function(r) {
+		            	Ext.getCmp('clientsettings-grid-admin-settings').refresh();
+	            		
+            			grid.getSelectionModel().clearSelections(true);
+            			grid.refresh();
+		            }
+	            });
+            }
+        });
+	},
     renderBoolean: function(d, c) {
     	c.css = 1 == parseInt(d) || d ? 'green' : 'red';
     	
@@ -198,7 +265,7 @@ ClientSettings.window.CreateCategory = function(config) {
     Ext.applyIf(config, {
     	autoHeight	: true,
         title 		: _('clientsettings.category_create'),
-        url			: ClientSettings.config.connectorUrl,
+        url			: ClientSettings.config.connector_url,
         baseParams	: {
             action		: 'mgr/categories/create'
         },
@@ -217,15 +284,14 @@ ClientSettings.window.CreateCategory = function(config) {
 	        	columnWidth	: .9,
 	        	items		: [{
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.label_name'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_name_desc'),
+		        	fieldLabel	: _('clientsettings.category_label_name'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_name_desc'),
 		        	name		: 'name',
 		        	anchor		: '100%',
-		        	allowBlank	: false,
-		        	maxLength	: 75
+		        	allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.label_name_desc'),
+		            html		: _('clientsettings.category_label_name_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }, {
@@ -245,27 +311,14 @@ ClientSettings.window.CreateCategory = function(config) {
 		        }]
 	        }]	
 	    }, {
-	        xtype		: 'numberfield',
-            fieldLabel	: _('clientsettings.label_menuindex'),
-            description	: MODx.expandHelp ? '' : _('clientsettings.label_menuindex_desc'),
-            name		: 'menuindex',
-            anchor		: '100%',
-            allowBlank	: false,
-            minValue	: 0,
-            value		: 0
-        }, {
-        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-            html		: _('clientsettings.label_menuindex_desc'),
-            cls			: 'desc-under'
-        }, {
         	xtype		: 'textarea',
-        	fieldLabel	: _('clientsettings.label_description'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.label_description_desc'),
+        	fieldLabel	: _('clientsettings.category_label_description'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_description_desc'),
         	name		: 'description',
         	anchor		: '100%'
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-        	html		: _('clientsettings.label_description_desc'),
+        	html		: _('clientsettings.category_label_description_desc'),
         	cls			: 'desc-under'
         }]
     });
@@ -283,7 +336,7 @@ ClientSettings.window.UpdateCategory = function(config) {
     Ext.applyIf(config, {
     	autoHeight	: true,
         title 		: _('clientsettings.category_create'),
-        url			: ClientSettings.config.connectorUrl,
+        url			: ClientSettings.config.connector_url,
         baseParams	: {
             action		: 'mgr/categories/update'
         },
@@ -305,15 +358,14 @@ ClientSettings.window.UpdateCategory = function(config) {
 	        	columnWidth	: .9,
 	        	items		: [{
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.label_name'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_name_desc'),
+		        	fieldLabel	: _('clientsettings.category_label_name'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_name_desc'),
 		        	name		: 'name',
 		        	anchor		: '100%',
-		        	allowBlank	: false,
-		        	maxLength	: 75
+		        	allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.label_name_desc'),
+		            html		: _('clientsettings.category_label_name_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }, {
@@ -321,37 +373,25 @@ ClientSettings.window.UpdateCategory = function(config) {
 		        style		: 'margin-right: 0;',
 		        items		: [{
 			        xtype		: 'checkbox',
-		            fieldLabel	: _('clientsettings.label_active'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.label_active_desc'),
+		            fieldLabel	: _('clientsettings.category_label_active'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.category_label_active_desc'),
 		            name		: 'active',
 		            inputValue	: 1
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.label_active_desc'),
+		            html		: _('clientsettings.category_label_active_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }]	
 	    }, {
-	        xtype		: 'numberfield',
-            fieldLabel	: _('clientsettings.label_menuindex'),
-            description	: MODx.expandHelp ? '' : _('clientsettings.label_menu_desc'),
-            name		: 'menuindex',
-            anchor		: '100%',
-            allowBlank	: false,
-            minValue	: 0
-        }, {
-        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-            html		: _('clientsettings.label_menuindex_desc'),
-            cls			: 'desc-under'
-        }, {
         	xtype		: 'textarea',
         	fieldLabel	: _('clientsettings.label_description'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.label_description_desc'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_description_desc'),
         	name		: 'description',
         	anchor		: '100%'
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-        	html		: _('clientsettings.label_description_desc'),
+        	html		: _('clientsettings.category_label_description_desc'),
         	cls			: 'desc-under'
         }]
     });

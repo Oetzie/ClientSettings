@@ -8,9 +8,9 @@
 	
 	            $manager = $modx->getManager();
 	
-	            $manager->createObjectContainer('Categories');
-	            $manager->createObjectContainer('Settings');
-	            $manager->createObjectContainer('Values');
+	            $manager->createObjectContainer('ClientSettingsCategories');
+	            $manager->createObjectContainer('ClientSettingsSettings');
+	            $manager->createObjectContainer('ClientSettingsValues');
 	
 	            break;
 	        case xPDOTransport::ACTION_UPGRADE:
