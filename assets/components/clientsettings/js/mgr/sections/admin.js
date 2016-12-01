@@ -6,8 +6,8 @@ ClientSettings.page.Admin = function(config) {
 	config = config || {};
 	
 	config.buttons = [{
-		text		: _('clientsettings.client_view'),
-		handler		: this.toClientView,
+		text		: _('clientsettings.default_view'),
+		handler		: this.toDefaultView,
 		scope		: this
 	}, '-', {
 		text		: _('help_ex'),
@@ -26,7 +26,7 @@ ClientSettings.page.Admin = function(config) {
 };
 
 Ext.extend(ClientSettings.page.Admin, MODx.Component, {
-	toClientView: function() {
+	toDefaultView: function() {
 		MODx.loadPage(MODx.request.a);
 	}
 });

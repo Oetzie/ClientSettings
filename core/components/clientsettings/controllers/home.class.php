@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class ClientSettingsClientManagerController extends ClientSettingsManagerController {
+	class ClientSettingsHomeManagerController extends ClientSettingsManagerController {
 		/**
 		 * @acces public.
 		 * @param Array $scriptProperties.
@@ -48,12 +48,12 @@
 		 * @acces public.
 		 */
 		public function loadCustomCssJs() {
-			$this->addCss($this->modx->getOption('css_url', $this->clientsettings->config).'mgr/clientsettings.css');
+			$this->addCss($this->clientsettings->config['css_url'].'mgr/clientsettings.css');
 			
-			$this->addJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/widgets/client.panel.js');
+			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/home.panel.js');
 			
-			$this->addLastJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/sections/client.js');
-			
+			$this->addLastJavascript($this->clientsettings->config['js_url'].'mgr/sections/home.js');
+
 			$this->addHtml('<script type="text/javascript">
 				Ext.onReady(function() {
 					ClientSettings.config.contexts 		= '.$this->modx->toJSON($this->clientsettings->getContext()).';
@@ -75,7 +75,7 @@
 		 * @return String.
 		 */
 		public function getTemplateFile() {
-			return $this->modx->getOption('templates_path', $this->newsletter->config).'client.tpl';
+			return $this->clientsettings->config['templates_path'].'home.tpl';
 		}
     }
 

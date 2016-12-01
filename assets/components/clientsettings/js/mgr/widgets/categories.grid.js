@@ -16,7 +16,7 @@ ClientSettings.grid.Categories = function(config) {
 	        	fn			: this.filterSearch,
 	        	scope		: this
 	        },
-	        'render'		: {
+	        'render'	: {
 		        fn			: function(cmp) {
 			        new Ext.KeyMap(cmp.getEl(), {
 				        key		: Ext.EventObject.ENTER,
@@ -24,51 +24,45 @@ ClientSettings.grid.Categories = function(config) {
 				        scope	: cmp
 			        });
 		        },
-		        scope	: this
+		        scope		: this
 	        }
         }
     }, {
-    	xtype	: 'button',
-    	cls		: 'x-form-filter-clear',
-    	id		: 'clientsettings-filter-clear-categories',
-    	text	: _('filter_clear'),
-    	listeners: {
-        	'click': {
-        		fn		: this.clearFilter,
-        		scope	: this
+    	xtype		: 'button',
+    	cls			: 'x-form-filter-clear',
+    	id			: 'clientsettings-filter-clear-categories',
+    	text		: _('filter_clear'),
+    	listeners	: {
+        	'click'		: {
+        		fn			: this.clearFilter,
+        		scope		: this
         	}
         }
     }];
 
     columns = new Ext.grid.ColumnModel({
         columns: [{
-            header		: _('clientsettings.category_label_name'),
-            dataIndex	: 'name',
+            header		: _('clientsettings.label_category_name'),
+            dataIndex	: 'name_formatted',
             sortable	: true,
-            editable	: true,
+            editable	: false,
             width		: 250,
-            fixed		: true,
-            editor		: {
-            	xtype		: 'textfield'
-            }
+            fixed		: true
         }, {
-            header		: _('clientsettings.category_label_description'),
-            dataIndex	: 'description',
+            header		: _('clientsettings.label_category_description'),
+            dataIndex	: 'description_formatted',
             sortable	: true,
-            editable	: true,
-            width		: 250,
-            editor		: {
-            	xtype		: 'textfield'
-            }
+            editable	: false,
+            width		: 250
         }, {
-            header		: _('clientsettings.category_label_settings'),
+            header		: _('clientsettings.label_category_settings'),
             dataIndex	: 'settings',
             sortable	: true,
             editable	: false,
             width		: 100,
             fixed		: true
         }, {
-            header		: _('clientsettings.label_active'),
+            header		: _('clientsettings.label_category_active'),
             dataIndex	: 'active',
             sortable	: true,
             editable	: true,
@@ -84,7 +78,8 @@ ClientSettings.grid.Categories = function(config) {
             sortable	: true,
             editable	: false,
             fixed		: true,
-			width		: 200
+			width		: 200,
+			renderer	: this.renderDate
         }]
     });
     
@@ -93,19 +88,20 @@ ClientSettings.grid.Categories = function(config) {
         id			: 'clientsettings-grid-admin-categories',
         url			: ClientSettings.config.connector_url,
         baseParams	: {
-        	action		: 'mgr/categories/getList'
+        	action		: 'mgr/categories/getlist'
         },
         autosave	: true,
-        save_action	: 'mgr/categories/updateFromGrid',
-        fields		: ['id', 'name', 'description', 'settings', 'menuindex', 'active', 'editedon'],
+        save_action	: 'mgr/categories/updatefromgrid',
+        fields		: ['id', 'name', 'name_formatted', 'description', 'description_formatted', 'exclude', 'settings', 'menuindex', 'active', 'editedon'],
         paging		: true,
         pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
         sortBy		: 'menuindex',
+        refreshCmp 	: '',
         enableDragDrop : true,
 	    ddGroup 	: 'clientsettings-grid-admin-categories',
 	    listeners	: {
 	        'afterrender' : {
-	           fn			: this.moveCategory,
+	           fn			: this.sortCategory,
 	           scope		: this
 	    	}
 		}
@@ -113,17 +109,20 @@ ClientSettings.grid.Categories = function(config) {
     
     ClientSettings.grid.Categories.superclass.constructor.call(this, config);
     
-    this.on('afterrender', this.moveCategory, this);
+    this.on('afterrender', this.sortCategory, this);
 };
 
 Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     filterSearch: function(tf, nv, ov) {
         this.getStore().baseParams.query = tf.getValue();
+        
         this.getBottomToolbar().changePage(1);
     },
     clearFilter: function() {
 	    this.getStore().baseParams.query = '';
+	    
 	    Ext.getCmp('clientsettings-filter-search-categories').reset();
+	    
         this.getBottomToolbar().changePage(1);
     },
     getMenu: function() {
@@ -135,7 +134,16 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 		    text	: _('clientsettings.category_remove'),
 		    handler	: this.removeCategory,
 		    scope	: this
-		 }];
+		}];
+    },
+    rRefresh : function() {
+	    if ('string' == typeof this.config.refreshCmp) {
+		    Ext.getCmp(this.config.refreshCmp).refresh();
+	    } else {
+		    for (var i = 0; i < this.config.refreshCmp.length; i++) {
+			    Ext.getCmp(this.config.refreshCmp[i]).refresh();
+		    }
+		}
     },
     createCategory: function(btn, e) {
         if (this.updateCategoryWindow) {
@@ -147,13 +155,13 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-settings').refresh();
-	            		
+		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
 		        }
 	         }
         });
@@ -172,13 +180,13 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-settings').refresh();
-	            		
+		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
 		        }
 	         }
         });
@@ -188,27 +196,27 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     },
     removeCategory: function() {
     	MODx.msg.confirm({
-        	title 	: _('clientsettings.category_remove'),
-        	text	: _('clientsettings.category_remove_confirm'),
-        	url		: ClientSettings.config.connector_url,
-        	params	: {
-            	action	: 'mgr/categories/remove',
-            	id		: this.menu.record.id
+        	title 		: _('clientsettings.category_remove'),
+        	text		: _('clientsettings.category_remove_confirm'),
+        	url			: ClientSettings.config.connector_url,
+        	params		: {
+            	action		: 'mgr/categories/remove',
+            	id			: this.menu.record.id
             },
-            listeners: {
-            	'success': {
-            		fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-settings').refresh();
-	            		
+            listeners	: {
+            	'success'	: {
+            		fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
             	}
             }
     	});
     },
-    moveCategory: function() {
+    sortCategory: function() {
 	    var grid = this;
 
 		var ddrow = new Ext.dd.DropTarget(this.getView().mainBody, {
@@ -241,9 +249,9 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 		                sort 	: Ext.encode(sort)
 	                },
 	                success: function(r) {
-		            	Ext.getCmp('clientsettings-grid-admin-settings').refresh();
-	            		
             			grid.getSelectionModel().clearSelections(true);
+            			
+            			grid.rRefresh();
             			grid.refresh();
 		            }
 	            });
@@ -254,6 +262,13 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     	c.css = 1 == parseInt(d) || d ? 'green' : 'red';
     	
     	return 1 == parseInt(d) || d ? _('yes') : _('no');
+    },
+    renderDate: function(a) {
+        if (Ext.isEmpty(a)) {
+            return '—';
+        }
+
+        return a;
     }
 });
 
@@ -269,10 +284,6 @@ ClientSettings.window.CreateCategory = function(config) {
         baseParams	: {
             action		: 'mgr/categories/create'
         },
-        defauls		: {
-	        labelAlign	: 'top',
-            border		: false
-        },
         fields		: [{
         	layout		: 'column',
         	border		: false,
@@ -281,45 +292,55 @@ ClientSettings.window.CreateCategory = function(config) {
                 labelSeparator : ''
             },
         	items		: [{
-	        	columnWidth	: .9,
+	        	columnWidth	: .8,
 	        	items		: [{
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.category_label_name'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_name_desc'),
+		        	fieldLabel	: _('clientsettings.label_category_name'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_category_name_desc'),
 		        	name		: 'name',
 		        	anchor		: '100%',
 		        	allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.category_label_name_desc'),
+		            html		: _('clientsettings.label_category_name_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }, {
-		        columnWidth	: .1,
+		        columnWidth	: .2,
 		        style		: 'margin-right: 0;',
 		        items		: [{
 			        xtype		: 'checkbox',
-		            fieldLabel	: _('clientsettings.label_active'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.label_active_desc'),
+		            fieldLabel	: _('clientsettings.label_category_active'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_category_active_desc'),
 		            name		: 'active',
 		            inputValue	: 1,
 		            checked		: true
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.label_active_desc'),
+		            html		: _('clientsettings.label_category_active_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }]	
 	    }, {
         	xtype		: 'textarea',
-        	fieldLabel	: _('clientsettings.category_label_description'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_description_desc'),
+        	fieldLabel	: _('clientsettings.label_category_description'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_category_description_desc'),
         	name		: 'description',
         	anchor		: '100%'
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-        	html		: _('clientsettings.category_label_description_desc'),
+        	html		: _('clientsettings.label_category_description_desc'),
         	cls			: 'desc-under'
+        }, {
+        	xtype		: 'textfield',
+        	fieldLabel	: _('clientsettings.label_category_exclude'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_category_exclude_desc'),
+        	name		: 'exclude',
+        	anchor		: '100%'
+        }, {
+        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+            html		: _('clientsettings.label_category_exclude_desc'),
+            cls			: 'desc-under'
         }]
     });
     
@@ -340,10 +361,6 @@ ClientSettings.window.UpdateCategory = function(config) {
         baseParams	: {
             action		: 'mgr/categories/update'
         },
-        defauls		: {
-	        labelAlign	: 'top',
-            border		: false
-        },
         fields		: [{
             xtype		: 'hidden',
             name		: 'id'
@@ -355,44 +372,54 @@ ClientSettings.window.UpdateCategory = function(config) {
                 labelSeparator : ''
             },
         	items		: [{
-	        	columnWidth	: .9,
+	        	columnWidth	: .8,
 	        	items		: [{
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.category_label_name'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_name_desc'),
+		        	fieldLabel	: _('clientsettings.label_category_name'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_category_name_desc'),
 		        	name		: 'name',
 		        	anchor		: '100%',
 		        	allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.category_label_name_desc'),
+		            html		: _('clientsettings.label_category_name_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }, {
-		        columnWidth	: .1,
+		        columnWidth	: .2,
 		        style		: 'margin-right: 0;',
 		        items		: [{
 			        xtype		: 'checkbox',
-		            fieldLabel	: _('clientsettings.category_label_active'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.category_label_active_desc'),
+		            fieldLabel	: _('clientsettings.label_category_active'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_category_active_desc'),
 		            name		: 'active',
 		            inputValue	: 1
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.category_label_active_desc'),
+		            html		: _('clientsettings.label_category_active_desc'),
 		            cls			: 'desc-under'
 		        }]
 	        }]	
 	    }, {
         	xtype		: 'textarea',
-        	fieldLabel	: _('clientsettings.label_description'),
-        	description	: MODx.expandHelp ? '' : _('clientsettings.category_label_description_desc'),
+        	fieldLabel	: _('clientsettings.label_category_description'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_category_description_desc'),
         	name		: 'description',
         	anchor		: '100%'
         }, {
         	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-        	html		: _('clientsettings.category_label_description_desc'),
+        	html		: _('clientsettings.label_category_description_desc'),
         	cls			: 'desc-under'
+        }, {
+        	xtype		: 'textfield',
+        	fieldLabel	: _('clientsettings.label_category_exclude'),
+        	description	: MODx.expandHelp ? '' : _('clientsettings.label_category_exclude_desc'),
+        	name		: 'exclude',
+        	anchor		: '100%'
+        }, {
+        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
+            html		: _('clientsettings.label_category_exclude_desc'),
+            cls			: 'desc-under'
         }]
     });
     

@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class SettingsCreateProcessor extends modObjectCreateProcessor {
+	class ClientSettingsSettingsCreateProcessor extends modObjectCreateProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -54,6 +54,18 @@
 		public function initialize() {
 			$this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 		
+			if (null !== ($key = $this->getProperty('key'))) {
+				$this->setProperty('key', strtolower(str_replace(array(' ', '-'), '_', $key)));	
+			}
+
+			if ('' == $this->getProperty('label')) {
+				$this->setProperty('label', 'setting_clientsettings.'.$this->getProperty('key'));
+			}
+			
+			if ('' == $this->getProperty('description')) {
+				$this->setProperty('description', 'setting_clientsettings.'.$this->getProperty('key').'_desc');
+			}
+			
 			if (null === $this->getProperty('active')) {
 				$this->setProperty('active', 0);
 			}
@@ -111,14 +123,14 @@
 					case 'checkboxgroup':
 					case 'radiogroup':
 						$extra = array(
-							'values'	=> $this->modx->fromJSON($this->getProperty('values'))
+							'values'		=> $this->modx->fromJSON($this->getProperty('values'))
 						);
 						
 						break;
 					case 'browser':
 						$extra = array(
-							'browser'	=> $this->getProperty('browser'),
-							'openTo'	=> $this->getProperty('openTo'),
+							'browser'		=> $this->getProperty('browser'),
+							'openTo'		=> $this->getProperty('openTo'),
 							'allowedFileTypes'	=> $this->getProperty('allowedFileTypes')
 						);
 
@@ -140,11 +152,13 @@
 		 * @return Mixed.
 		 */
 		public function beforeSave() {
-			$key = $this->getProperty('key');
+			$criteria = array(
+				'key' => $this->getProperty('key')	
+			);
 			
-			if (!preg_match('/^([a-zA-Z0-9\_\-]+)$/si', $key)) {
+			if (!preg_match('/^([a-zA-Z0-9\_\-]+)$/si', $this->getProperty('key'))) {
 				$this->addFieldError('key', $this->modx->lexicon('clientsettings.setting_error_character'));
-			} else if ($this->doesAlreadyExist(array('key' => $key))) {
+			} else if ($this->doesAlreadyExist($criteria)) {
 				$this->addFieldError('key', $this->modx->lexicon('clientsettings.setting_error_exists'));
 			}
 			
@@ -152,6 +166,6 @@
 		}
 	}
 	
-	return 'SettingsCreateProcessor';
+	return 'ClientSettingsSettingsCreateProcessor';
 	
 ?>

@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class CategoriesUpdateProcessor extends modObjectUpdateProcessor {
+	class ClientSettingsCategoriesUpdateProcessor extends modObjectUpdateProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -62,6 +62,6 @@
 		}
 	}
 	
-	return 'CategoriesUpdateProcessor';
+	return 'ClientSettingsCategoriesUpdateProcessor';
 	
 ?>

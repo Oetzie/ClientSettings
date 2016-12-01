@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	class SettingsGetListProcessor extends modObjectGetListProcessor {
+	class ClientSettingsSettingsGetListProcessor extends modObjectGetListProcessor {
 		/**
 	 	 * @acces public.
 		 * @var String.
@@ -33,7 +33,7 @@
 		 * @acces public.
 		 * @var Array.
 		 */
-		public $languageTopics = array('clientsettings:default');
+		public $languageTopics = array('clientsettings:default', 'clientsettings:settings');
 		
 		/**
 		 * @acces public.
@@ -67,7 +67,7 @@
 			$this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 			
 			$this->setDefaultProperties(array(
-				'dateFormat' => '%b %d, %Y %H:%M',
+				'dateFormat' 	=> $this->modx->getOption('manager_date_format') .', '. $this->modx->getOption('manager_time_format')
 			));
 			
 			return parent::initialize();
@@ -111,19 +111,22 @@
 		 */
 		public function prepareRow(xPDOObject $object) {
 			$array = array_merge($object->toArray(), array(
-				'extra'	=> $this->modx->fromJSON($object->extra)
+				'extra'						=> $this->modx->fromJSON($object->extra),
+				'label_formatted'			=> $this->modx->lexicon($object->label),
+				'description_formatted'		=> $this->modx->lexicon($object->description),
+				'category_name_formatted'	=> $this->modx->lexicon($object->category_name)
 			));
 			
-			if (in_array($array['editedon'], array('-001-11-30 00:00:00', '0000-00-00 00:00:00', '0000-00-00', null))) {
+			if (in_array($array['editedon'], array('-001-11-30 00:00:00', '-1-11-30 00:00:00', '0000-00-00 00:00:00', null))) {
 				$array['editedon'] = '';
 			} else {
-				$array['editedon'] = strftime($this->getProperty('dateFormat'), strtotime($array['editedon']));
+				$array['editedon'] = date($this->getProperty('dateFormat'), strtotime($array['editedon']));
 			}
 			
 			return $array;	
 		}
 	}
 	
-	return 'SettingsGetListProcessor';
+	return 'ClientSettingsSettingsGetListProcessor';
 	
 ?>

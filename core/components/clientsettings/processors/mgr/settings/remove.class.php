@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class SettingsRemoveProcessor extends modObjectRemoveProcessor {
+	class ClientSettingsSettingsRemoveProcessor extends modObjectRemoveProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -70,6 +70,6 @@
 		}
 	}
 	
-	return 'SettingsRemoveProcessor';
+	return 'ClientSettingsSettingsRemoveProcessor';
 	
 ?>

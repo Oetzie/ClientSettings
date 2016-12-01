@@ -1,6 +1,6 @@
 <?php
 
-	/**
+    /**
 	 * Client Settings
 	 *
 	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
@@ -22,22 +22,19 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-
-	if ('mgr' == $modx->context->key) {
-		return;
-	}
-
 	switch($modx->event->name) {
-		case 'OnHandleRequest':
+		case 'OnWebPageInit':
 				$clientsettings = $modx->getService('clientsettings', 'ClientSettings', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 
-				if ($placeholders = $clientsettings->getSettings()) {
-					$modx->setPlaceholders($placeholders, '+');
-
-					foreach ($placeholders as $key => $value) {
-						$modx->setOption($key, $value);
-					}
-				}
+                if ($clientsettings instanceof ClientSettings) {
+                    if ($placeholders = $clientsettings->getSettings()) {
+    					$modx->setPlaceholders($placeholders, '+');
+    
+    					foreach ($placeholders as $key => $value) {
+    						$modx->setOption($key, $value);
+    					}
+    				}
+                }
 
 			break;
 	}

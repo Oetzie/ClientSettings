@@ -36,7 +36,8 @@
 		public function initialize() {
 			$this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 			
-			$this->addJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/clientsettings.js');
+			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/clientsettings.js');
+			
 			$this->addHtml('<script type="text/javascript">
 				Ext.onReady(function() {
 					MODx.config.help_url = "http://rtfm.modx.com/extras/revo/'.$this->clientsettings->getHelpUrl().'";
@@ -55,7 +56,7 @@
 		 * @return Array.
 		 */
 		public function getLanguageTopics() {
-			return array('clientsettings:default');
+			return $this->clientsettings->config['lexicons'];
 		}
 		
 		/**
@@ -73,7 +74,7 @@
 		 * @return String.
 		 */
 		public static function getDefaultController() {
-			return 'client';
+			return 'home';
 		}
 	}
 

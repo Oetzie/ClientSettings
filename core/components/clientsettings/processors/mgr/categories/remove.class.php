@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	class CategoriesRemoveProcessor extends modObjectRemoveProcessor {
+	class ClientSettingsCategoriesRemoveProcessor extends modObjectRemoveProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -66,16 +66,14 @@
 				$this->modx->removeCollection('ClientSettingsValues', array(
 					'setting_id' => $setting->id
 				));
+				
+				$setting->remove();
 			}
-			
-			$this->modx->removeCollection('ClientSettingsSettings', array(
-				'category_id' => $this->getProperty('id')
-			));
 				
 			return parent::afterRemove();
 		}
 	}
 	
 	
-	return 'CategoriesRemoveProcessor';
+	return 'ClientSettingsCategoriesRemoveProcessor';
 ?>

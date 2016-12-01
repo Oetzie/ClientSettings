@@ -50,7 +50,7 @@
 			$this->config = array_merge(array(
 				'namespace'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
 				'helpurl'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
-				'language'				=> 'clientsettings:default',
+				'lexicons'				=> array('clientsettings:default', 'clientsettings:settings'),
 				'base_path'				=> $corePath,
 				'core_path' 			=> $corePath,
 				'model_path' 			=> $corePath.'model/',
@@ -69,6 +69,14 @@
 			), $config);
 		
 			$this->modx->addPackage('clientsettings', $this->config['model_path']);
+			
+			if (is_array($this->config['lexicons'])) {
+				foreach ($this->config['lexicons'] as $lexicon) {
+					$this->modx->lexicon->load($lexicon);
+				}
+			} else {
+				$this->modx->lexicon->load($this->config['lexicons']);
+			}
 		}
 		
 		/**
@@ -84,7 +92,7 @@
 		 * @return Boolean.
 		 */
 		public function hasPermission() {
-			$usergroups = $this->modx->getOption('newsletter_admin_groups', null, 'Administrator');
+			$usergroups = $this->modx->getOption('clientsettings.admin_groups', null, 'Administrator');
 			
 			$isMember = $this->modx->user->isMember(explode(',', $usergroups), false);
 			
@@ -97,6 +105,24 @@
 			}
 			
 			return $isMember;
+		}
+		
+		/**
+		 * @acces protected.
+		 * @return Array.
+		 */
+		public function getContext() {
+			$contexts = array();
+			
+			$criteria = array(
+				'key:!=' => 'mgr'
+			);
+
+			foreach ($this->modx->getCollection('modContext', $criteria) as $context) {
+				$contexts[] = $context->toArray();
+			}
+			
+			return $contexts;
 		}
 		
 		/**
@@ -131,7 +157,7 @@
 						'extra'	=> $this->modx->fromJSON($setting->extra)	
 					));
 				}
-				
+
 				$output['categories'][] = array_merge($category->toArray(), array(
 					'settings' 	=> $settings
 				));
@@ -144,20 +170,6 @@
 			}
 			
 			return $output;
-		}
-		
-		/**
-		 * @acces protected.
-		 * @return Array.
-		 */
-		public function getContext() {
-			$contexts = array();
-
-			foreach ($this->modx->getCollection('modContext', array('key:!=' => 'mgr')) as $context) {
-				$contexts[] = $context->toArray();
-			}
-			
-			return $contexts;
 		}
 		
 		/**

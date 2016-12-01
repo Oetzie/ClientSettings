@@ -1,1 +1,0 @@
-<div id="clientsettings-panel-client-div"></div>

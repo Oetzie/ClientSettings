@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class CategoriesCreateProcessor extends modObjectCreateProcessor {
+	class ClientSettingsCategoriesCreateProcessor extends modObjectCreateProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -74,5 +74,5 @@
 		}
 	}
 	
-	return 'CategoriesCreateProcessor';
+	return 'ClientSettingsCategoriesCreateProcessor';
 ?>

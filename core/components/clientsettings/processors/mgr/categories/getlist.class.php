@@ -3,7 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2015 by Oene Tjeerd de Bruin <info@oetzie.nl>
+	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
 	 *
 	 * This file is part of Client Settings, a real estate property listings component
 	 * for MODX Revolution.
@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class CategoriesGetListProcessor extends modObjectGetListProcessor {
+	class ClientSettingsCategoriesGetListProcessor extends modObjectGetListProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -33,7 +33,7 @@
 		 * @acces public.
 		 * @var Array.
 		 */
-		public $languageTopics = array('clientsettings:default');
+		public $languageTopics = array('clientsettings:default', 'clientsettings:settings');
 		
 		/**
 		 * @acces public.
@@ -67,7 +67,7 @@
 			$this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 			
 			$this->setDefaultProperties(array(
-				'dateFormat' => '%b %d, %Y %H:%M',
+				'dateFormat' 	=> $this->modx->getOption('manager_date_format') .', '. $this->modx->getOption('manager_time_format')
 			));
 			
 			return parent::initialize();
@@ -98,19 +98,21 @@
 		 */
 		public function prepareRow(xPDOObject $object) {
 			$array = array_merge($object->toArray(), array(
-				'settings'	=> count($object->getMany('ClientSettingsSettings'))
+				'settings'				=> count($object->getMany('ClientSettingsSettings')),
+				'name_formatted'		=> $this->modx->lexicon($object->name),
+				'description_formatted'	=> $this->modx->lexicon($object->description)
 			));
 			
-			if (in_array($array['editedon'], array('-001-11-30 00:00:00', '0000-00-00 00:00:00', '0000-00-00', null))) {
+			if (in_array($array['editedon'], array('-001-11-30 00:00:00', '-1-11-30 00:00:00', '0000-00-00 00:00:00', null))) {
 				$array['editedon'] = '';
 			} else {
-				$array['editedon'] = strftime($this->getProperty('dateFormat'), strtotime($array['editedon']));
+				$array['editedon'] = date($this->getProperty('dateFormat'), strtotime($array['editedon']));
 			}
 			
 			return $array;	
 		}
 	}
 
-	return 'CategoriesGetListProcessor';
+	return 'ClientSettingsCategoriesGetListProcessor';
 	
 ?>

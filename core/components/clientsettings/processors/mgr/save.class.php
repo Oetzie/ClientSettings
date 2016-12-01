@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class ValuesSaveProcessor extends modObjectProcessor {
+	class ClientSettingsValuesSaveProcessor extends modObjectProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -105,6 +105,6 @@
 		}
 	}
 	
-	return 'ValuesSaveProcessor';
+	return 'ClientSettingsValuesSaveProcessor';
 	
 ?>

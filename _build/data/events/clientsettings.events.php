@@ -2,7 +2,7 @@
 
 	return array(
 		array(
-		    'event' 		=> 'OnHandleRequest',
+		    'event' 		=> 'OnWebPageInit',
 		    'priority' 		=> 0,
 		    'propertyset' 	=> 0
 		)

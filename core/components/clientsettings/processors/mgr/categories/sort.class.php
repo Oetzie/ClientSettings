@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 
-	class CategoriesSortProcessor extends modObjectProcessor {
+	class ClientSettingsCategoriesSortProcessor extends modObjectProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -76,6 +76,6 @@
 		}
 	}
 	
-	return 'CategoriesSortProcessor';
+	return 'ClientSettingsCategoriesSortProcessor';
 	
 ?>

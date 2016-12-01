@@ -1,7 +1,7 @@
 ----------------------
 Client Settings
 ----------------------
-Version: 1.0.3
+Version: 1.1.0
 Author: Oene Tjeerd de Bruin
 Contact: info@oetzie.nl
 ----------------------

@@ -37,12 +37,12 @@
 		 * @acces public.
 		 */
 		public function loadCustomCssJs() {
-			$this->addJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/widgets/admin.panel.js');
+			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/admin.panel.js');
 			
-			$this->addJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/widgets/categories.grid.js');
-			$this->addJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/widgets/settings.grid.js');
+			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/categories.grid.js');
+			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/settings.grid.js');
 			
-			$this->addLastJavascript($this->modx->getOption('js_url', $this->clientsettings->config).'mgr/sections/admin.js');
+			$this->addLastJavascript($this->clientsettings->config['js_url'].'mgr/sections/admin.js');
 		}
 		
 		/**
@@ -58,7 +58,7 @@
 		* @return String.
 		*/
 		public function getTemplateFile() {
-			return $this->modx->getOption('templates_path', $this->clientsettings->config).'admin.tpl';
+			return $this->clientsettings->config['templates_path'].'admin.tpl';
 		}
 	}
 

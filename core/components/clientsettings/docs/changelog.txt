@@ -3,6 +3,13 @@ Client Settings
 ----------------------
 
 ----------------------
+Version: 1.1.0-pl
+Released: 2016-11-21
+----------------------
+- Bug and coded fixes
+- Lexicon support
+
+----------------------
 Version: 1.0.3-pl
 Released: 2016-01-19
 ----------------------
@@ -16,7 +23,7 @@ Released: 2015-02-10
 ----------------------
 - Bug fixed
 - New setting types added
-	- 'Select from resource from tree' type
+	- 'Select resource from tree' type
 	- Media browser type
 	- Date / time type
 

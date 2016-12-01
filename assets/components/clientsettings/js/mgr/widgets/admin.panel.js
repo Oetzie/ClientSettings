@@ -30,6 +30,7 @@ ClientSettings.panel.Admin = function(config) {
 				}, {
 					xtype			: 'clientsettings-grid-settings',
 					cls				: 'main-wrapper',
+					refreshCmp		: ['clientsettings-grid-admin-categories'],
 					preventRender	: true
 				}]
 			}, {
@@ -46,6 +47,7 @@ ClientSettings.panel.Admin = function(config) {
 				}, {
 					xtype			: 'clientsettings-grid-categories',
 					cls				: 'main-wrapper',
+					refreshCmp		: ['clientsettings-grid-admin-settings'],
 					preventRender	: true
 				}]
 			}]

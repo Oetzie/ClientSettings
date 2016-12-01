@@ -13,11 +13,10 @@ ClientSettings.grid.Settings = function(config) {
         emptyText	: _('clientsettings.filter_category'),
         listeners	: {
         	'select'	: {
-	            	fn			: this.filterCategory,
-	            	scope		: this   
+	            	fn		: this.filterCategory,
+	            	scope	: this   
 		    }
-		},
-		width: 250
+		}
     }, '-', {
         xtype		: 'textfield',
         name 		: 'clientsettings-filter-search-settings',
@@ -36,46 +35,43 @@ ClientSettings.grid.Settings = function(config) {
 				        scope	: cmp
 			        });
 		        },
-		        scope	: this
+		        scope		: this
 	        }
         }
     }, {
-    	xtype	: 'button',
-    	cls		: 'x-form-filter-clear',
-    	id		: 'clientsettings-filter-clear-settings',
-    	text	: _('filter_clear'),
-    	listeners: {
-        	'click': {
-        		fn		: this.clearFilter,
-        		scope	: this
+    	xtype		: 'button',
+    	cls			: 'x-form-filter-clear',
+    	id			: 'clientsettings-filter-clear-settings',
+    	text		: _('filter_clear'),
+    	listeners	: {
+        	'click'		: {
+        		fn			: this.clearFilter,
+        		scope		: this
         	}
         }
     }];
     
     expander = new Ext.grid.RowExpander({
         tpl : new Ext.Template(
-            '<p class="desc">{description}</p>'
+            '<p class="desc">{description_formatted}</p>'
         )
     });
     
     columns = new Ext.grid.ColumnModel({
         columns: [expander, {
-            header		: _('clientsettings.setting_label_label'),
-            dataIndex	: 'label',
+            header		: _('clientsettings.label_setting_label'),
+            dataIndex	: 'label_formatted',
             sortable	: true,
-            editable	: true,
-            width		: 150,
-			editor		: {
-            	xtype		: 'textfield'
-            }
+            editable	: false,
+            width		: 150
         }, {
-            header		: _('clientsettings.setting_label_key'),
+            header		: _('clientsettings.label_setting_key'),
             dataIndex	: 'key',
             sortable	: true,
             editable	: false,
             width		: 100
         }, {
-            header		: _('clientsettings.setting_label_xtype'),
+            header		: _('clientsettings.label_setting_xtype'),
             dataIndex	: 'xtype',
             sortable	: true,
             editable	: true,
@@ -86,7 +82,7 @@ ClientSettings.grid.Settings = function(config) {
             	xtype		: 'clientsettings-combo-xtype'
             }
         }, {
-            header		: _('clientsettings.setting_label_active'),
+            header		: _('clientsettings.label_setting_active'),
             dataIndex	: 'active',
             sortable	: true,
             editable	: true,
@@ -104,8 +100,8 @@ ClientSettings.grid.Settings = function(config) {
             fixed		: true,
 			width		: 200
         }, {
-            header		: _('clientsettings.setting_label_category'),
-            dataIndex	: 'category_name',
+            header		: _('clientsettings.label_setting_category'),
+            dataIndex	: 'category_name_formatted',
             sortable	: true,
             hidden		: true,
             editable	: false
@@ -117,16 +113,16 @@ ClientSettings.grid.Settings = function(config) {
         id			: 'clientsettings-grid-admin-settings',
         url			: ClientSettings.config.connector_url,
         baseParams	: {
-        	action		: 'mgr/settings/getList'
+        	action		: 'mgr/settings/getlist'
         },
         autosave	: true,
-        save_action	: 'mgr/settings/updateFromGrid',
-        fields		: ['id', 'category_id', 'category_name', 'category_menuindex', 'key', 'label', 'description', 'xtype', 'exclude', 'extra', 'menuindex', 'active', 'editedon'],
+        save_action	: 'mgr/settings/updatefromgrid',
+        fields		: ['id', 'category_id', 'category_name', 'category_name_formatted', 'key', 'label', 'label_formatted', 'description', 'description_formatted', 'xtype', 'exclude', 'extra', 'menuindex', 'active', 'editedon'],
         paging		: true,
         pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
         sortBy		: 'menuindex',
         grouping	: true,
-        groupBy		: 'category_name',
+        groupBy		: 'category_name_formatted',
         plugins		: expander,
         singleText	: _('clientsettings.setting'),
         pluralText	: _('clientsettings.settings'),
@@ -142,11 +138,12 @@ ClientSettings.grid.Settings = function(config) {
             handler		: this.collapseAll,
             scope		: this
         }],
+        refreshCmp 	: '',
         enableDragDrop : true,
 	    ddGroup 	: 'clientsettings-grid-admin-settings',
 	    listeners	: {
 	        'afterrender' : {
-	           fn			: this.moveSetting,
+	           fn			: this.sortSetting,
 	           scope		: this
 	    	}
 		}
@@ -154,23 +151,27 @@ ClientSettings.grid.Settings = function(config) {
     
     ClientSettings.grid.Settings.superclass.constructor.call(this, config);
     
-    this.on('afterrender', this.moveSetting, this);
+    this.on('afterrender', this.sortSetting, this);
 };
 
 Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 	filterCategory: function(tf, nv, ov) {
         this.getStore().baseParams.category = tf.getValue();
+        
         this.getBottomToolbar().changePage(1);
     },
     filterSearch: function(tf, nv, ov) {
         this.getStore().baseParams.query = tf.getValue();
+        
         this.getBottomToolbar().changePage(1);
     },
     clearFilter: function() {
 	    this.getStore().baseParams.category = '';
 	    this.getStore().baseParams.query 	= '';
+	    
 	    Ext.getCmp('clientsettings-filter-categories').reset();
 	    Ext.getCmp('clientsettings-filter-search-settings').reset();
+	    
         this.getBottomToolbar().changePage(1);
     },
     getMenu: function() {
@@ -179,14 +180,23 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 	        handler	: this.updateSetting,
 	        scope	: this
 	    }, {
-	        text	: _('clientsettings.setting_copy'),
-	        handler	: this.copySetting,
+	        text	: _('clientsettings.setting_duplicate'),
+	        handler	: this.duplicateSetting,
 	        scope	: this
 	    }, '-',  {
 		    text	: _('clientsettings.setting_remove'),
 		    handler	: this.removeSetting,
 		    scope	: this
-		 }];
+		}];
+    },
+    rRefresh : function() {
+	    if ('string' == typeof this.config.refreshCmp) {
+		    Ext.getCmp(this.config.refreshCmp).refresh();
+	    } else {
+		    for (var i = 0; i < this.config.refreshCmp.length; i++) {
+			    Ext.getCmp(this.config.refreshCmp[i]).refresh();
+		    }
+		}
     },
     createSetting: function(btn, e) {
         if (this.createSettingWindow) {
@@ -198,50 +208,50 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-categories').refresh();
-	            		
+		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
 		        }
 	         }
         });
         
         this.createSettingWindow.show(e.target);
     },
-    copySetting: function(btn, e) {
-    	if (this.copySettingWindow) {
-	        this.copySettingWindow.destroy();
+    duplicateSetting: function(btn, e) {
+    	if (this.duplicateSettingWindow) {
+	        this.duplicateSettingWindow.destroy();
         }
         
-        var duplicate = Ext.apply({}, this.menu.record);
+        var record = Ext.apply({}, this.menu.record);
         
-        Ext.apply(duplicate, {
+        Ext.apply(record, {
         	key			: 'copy_' + this.menu.record.key,
         	menuindex	: 0
         });
         
-        this.copySettingWindow = MODx.load({
-	        xtype		: 'clientsettings-window-setting-copy',
-	        record		: duplicate,
+        this.duplicateSettingWindow = MODx.load({
+	        xtype		: 'clientsettings-window-setting-duplicate',
+	        record		: record,
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-categories').refresh();
-	            		
+		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
 		        }
 	         }
         });
 
-        this.copySettingWindow.setValues(duplicate);
-        this.copySettingWindow.show(e.target);
+        this.duplicateSettingWindow.setValues(record);
+        this.duplicateSettingWindow.show(e.target);
     },
     updateSetting: function(btn, e) {
     	if (this.updateSettingWindow) {
@@ -254,13 +264,13 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 	        closeAction	:'close',
 	        listeners	: {
 		        'success'	: {
-		        	fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-categories').refresh();
-	            		
+		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
 		        }
 	         }
         });
@@ -270,27 +280,27 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
     },
     removeSetting: function() {
     	MODx.msg.confirm({
-        	title 	: _('clientsettings.setting_remove'),
-        	text	: _('clientsettings.setting_remove_confirm'),
-        	url		: ClientSettings.config.connector_url,
-        	params	: {
-            	action	: 'mgr/settings/remove',
-            	id		: this.menu.record.id
+        	title 		: _('clientsettings.setting_remove'),
+        	text		: _('clientsettings.setting_remove_confirm'),
+        	url			: ClientSettings.config.connector_url,
+        	params		: {
+            	action		: 'mgr/settings/remove',
+            	id			: this.menu.record.id
             },
-            listeners: {
-            	'success': {
-            		fn		: function() {
-	            		Ext.getCmp('clientsettings-grid-admin-categories').refresh();
-	            		
+            listeners	: {
+            	'success'	: {
+            		fn			: function() {
             			this.getSelectionModel().clearSelections(true);
+            			
+            			this.rRefresh();
             			this.refresh();
             		},
-		        	scope		:this
+		        	scope		: this
             	}
             }
     	});
     },
-    moveSetting: function() {
+    sortSetting: function() {
 		var grid = this;
 
 		var ddrow = new Ext.dd.DropTarget(this.getView().mainBody, {
@@ -331,9 +341,9 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 			                sort 		: Ext.encode(sort)
 		                },
 		                success: function(r) {
-			            	Ext.getCmp('clientsettings-grid-admin-categories').refresh();
-		            		
 	            			grid.getSelectionModel().clearSelections(true);
+	            			
+	            			grid.rRefresh();
 	            			grid.refresh();
 			            }
 		            });
@@ -382,10 +392,6 @@ ClientSettings.window.CreateSetting = function(config) {
         baseParams	: {
             action		: 'mgr/settings/create'
         },
-        defauls		: {
-	        labelAlign	: 'top',
-            border		: false
-        },
         fields		: [{
             layout		: 'column',
             border		: false,
@@ -406,14 +412,14 @@ ClientSettings.window.CreateSetting = function(config) {
 			        	columnWidth	: .8,
 			        	items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_key'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_key_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_key'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_key_desc'),
 				        	name		: 'key',
 				           	anchor		: '100%',
 				        	allowBlank	: false
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_key_desc'),
+				            html		: _('clientsettings.label_setting_key_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -421,39 +427,38 @@ ClientSettings.window.CreateSetting = function(config) {
 					        style		: 'margin-right: 0;',
 					        items		: [{
 						        xtype		: 'checkbox',
-					            fieldLabel	: _('clientsettings.label_active'),
-					            description	: MODx.expandHelp ? '' : _('clientsettings.label_active_desc'),
+					            fieldLabel	: _('clientsettings.label_setting_active'),
+					            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_active_desc'),
 					            name		: 'active',
 					            inputValue	: 1,
 					            checked		: true
 					        }, {
 					        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-					            html		: _('clientsettings.label_active_desc'),
+					            html		: _('clientsettings.label_setting_active_desc'),
 					            cls			: 'desc-under'
 					        }]
 
 				    }]
 				}, {
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.setting_label_label'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_label_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_label'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_label_desc'),
 		        	name		: 'label',
-		           	anchor		: '100%',
-		        	allowBlank	: false
+		           	anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_label_desc'),
+		            html		: _('clientsettings.label_setting_label_desc'),
 		            cls			: 'desc-under'
 		        }, {
 		            xtype		: 'clientsettings-combo-categories',
-		            fieldLabel	: _('clientsettings.setting_label_category'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_category_desc'),
+		            fieldLabel	: _('clientsettings.label_setting_category'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_category_desc'),
 		            name		: 'category_id',
 		            anchor		: '100%',
 		            allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_category_desc'),
+		            html		: _('clientsettings.label_setting_category_desc'),
 		            cls			: 'desc-under'
 		        }]
 		    }, {
@@ -461,45 +466,45 @@ ClientSettings.window.CreateSetting = function(config) {
 		    	style		: 'margin-right: 0;',
                 items		: [{
 		        	xtype		: 'clientsettings-combo-xtype',
-		        	fieldLabel	: _('clientsettings.setting_label_xtype'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_xtype_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_xtype'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_xtype_desc'),
 		        	id			: 'clientsettings-combo-xtype-create',
 		        	name		: 'xtype',
 		        	anchor		: '100%',
 		        	allowBlank	: false,
 		        	listeners	: {
 			        	'render' 	: {
-				        	fn 			: this.xtype,
+				        	fn 			: this.setXType,
 				        	scope		: this
 			        	},
 			        	'select'	: {
-				        	fn 			: this.xtype,
+				        	fn 			: this.setXType,
 				        	scope		: this
 			        	}
 		        	}
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_xtype_desc'),
+		            html		: _('clientsettings.label_setting_xtype_desc'),
 		            cls			: 'desc-under'
 		        }, {
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.setting_label_description'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_description_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_description'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_description_desc'),
 		        	name		: 'description',
 		        	anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		        	html		: _('clientsettings.setting_label_description_desc'),
+		        	html		: _('clientsettings.label_setting_description_desc'),
 		        	cls			: 'desc-under'
 		        }, {
 			        xtype		: 'textfield',
-		            fieldLabel	: _('clientsettings.setting_label_exclude'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_exclude_desc'),
+		            fieldLabel	: _('clientsettings.label_setting_exclude'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_exclude_desc'),
 		            name		: 'exclude',
 		            anchor		: '100%',
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_exclude_desc'),
+		            html		: _('clientsettings.label_setting_exclude_desc'),
 		            cls			: 'desc-under'
 		        }]    
 		    }]
@@ -547,15 +552,15 @@ ClientSettings.window.CreateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'datefield',
-				        	fieldLabel	: _('clientsettings.setting_label_mindate'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_mindate_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_mindate'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_mindate_desc'),
 				        	name		: 'minDateValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_date_format,
 							startDay	: parseInt(MODx.config.manager_week_start)
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_mindate_desc'),
+				            html		: _('clientsettings.label_setting_mindate_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -563,15 +568,15 @@ ClientSettings.window.CreateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'datefield',
-				        	fieldLabel	: _('clientsettings.setting_label_maxdate'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_maxdate_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_maxdate'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_maxdate_desc'),
 				        	name		: 'maxDateValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_date_format,
 							startDay	: parseInt(MODx.config.manager_week_start)
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_maxdate_desc'),
+				            html		: _('clientsettings.label_setting_maxdate_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -596,14 +601,14 @@ ClientSettings.window.CreateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'timefield',
-				        	fieldLabel	: _('clientsettings.setting_label_mintime'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_mintime_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_mintime'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_mintime_desc'),
 				        	name		: 'minTimeValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_time_format
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_mintime_desc'),
+				            html		: _('clientsettings.label_setting_mintime_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -611,14 +616,14 @@ ClientSettings.window.CreateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'timefield',
-				        	fieldLabel	: _('clientsettings.setting_label_maxtime'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_maxtime_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_maxtime'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_maxtime_desc'),
 				        	name		: 'maxTimeValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_time_format
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_maxtime_desc'),
+				            html		: _('clientsettings.label_setting_maxtime_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -643,25 +648,25 @@ ClientSettings.window.CreateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar1'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar1_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar1'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar1_desc'),
 				        	name		: 'toolbar1',
 				        	anchor		: '100%',
 				        	value		: 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent'
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar1_desc'),
+				            html		: _('clientsettings.label_setting_toolbar1_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar3'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar3_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar3'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar3_desc'),
 				        	name		: 'toolbar3',
 				        	anchor		: '100%',
 				        	value		: ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar3_desc'),
+				            html		: _('clientsettings.label_setting_toolbar3_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -669,25 +674,25 @@ ClientSettings.window.CreateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar2'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar2_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar2'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar2_desc'),
 				        	name		: 'toolbar2',
 				        	anchor		: '100%',
 				        	value		: ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar2_desc'),
+				            html		: _('clientsettings.label_setting_toolbar2_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_plugins'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_plugins_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_plugins'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
 				        	name		: 'plugins',
 				        	anchor		: '100%',
 				        	value		: ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_plugins_desc'),
+				            html		: _('clientsettings.label_setting_plugins_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -721,25 +726,25 @@ ClientSettings.window.CreateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'modx-combo-source',
-				        	fieldLabel	: _('clientsettings.setting_label_source'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_source_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_source'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_source_desc'),
 				        	name		: 'source',
 				        	anchor		: '100%',
 				        	value 		: MODx.config.default_media_source
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_source_desc'),
+				            html		: _('clientsettings.label_setting_source_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_filetypes'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_filetypes_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_filetypes'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_filetypes_desc'),
 				        	name		: 'allowedFileTypes',
 				        	anchor		: '100%',
 				        	value		: ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_filetypes_desc'),
+				            html		: _('clientsettings.label_setting_filetypes_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -747,14 +752,14 @@ ClientSettings.window.CreateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_opento'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_opento_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_opento'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_opento_desc'),
 				        	name		: 'openTo',
 				        	anchor		: '100%',
 				        	value		: '/'
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_opento_desc'),
+				            html		: _('clientsettings.label_setting_opento_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -767,9 +772,8 @@ ClientSettings.window.CreateSetting = function(config) {
 };
 
 Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
-	xtype: function(event) {
+	setXType: function(event) {
 		var type = 'create';
-		var event = Ext.getCmp('clientsettings-combo-xtype-' + type);
 
 		var elements = {
 			default 		: true,
@@ -841,20 +845,16 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
 
 Ext.reg('clientsettings-window-setting-create', ClientSettings.window.CreateSetting);
 
-ClientSettings.window.CopySetting = function(config) {
+ClientSettings.window.DuplicateSetting = function(config) {
     config = config || {};
 
     Ext.applyIf(config, {
     	autoHeight	: true,
     	width		: 600,
-        title 		: _('clientsettings.setting_copy'),
+        title 		: _('clientsettings.setting_duplicate'),
         url			: ClientSettings.config.connector_url,
         baseParams	: {
             action		: 'mgr/settings/create'
-        },
-        defauls		: {
-	        labelAlign	: 'top',
-            border		: false
         },
         fields		: [{
             layout		: 'column',
@@ -876,14 +876,14 @@ ClientSettings.window.CopySetting = function(config) {
 			        	columnWidth	: .8,
 			        	items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_key'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_key_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_key'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_key_desc'),
 				        	name		: 'key',
 				           	anchor		: '100%',
 				        	allowBlank	: false
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_key_desc'),
+				            html		: _('clientsettings.label_setting_key_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -891,38 +891,37 @@ ClientSettings.window.CopySetting = function(config) {
 					        style		: 'margin-right: 0;',
 					        items		: [{
 						        xtype		: 'checkbox',
-					            fieldLabel	: _('clientsettings.label_active'),
-					            description	: MODx.expandHelp ? '' : _('clientsettings.label_active_desc'),
+					            fieldLabel	: _('clientsettings.label_setting_active'),
+					            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_active_desc'),
 					            name		: 'active',
 					            inputValue	: 1
 					        }, {
 					        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-					            html		: _('clientsettings.label_active_desc'),
+					            html		: _('clientsettings.label_setting_active_desc'),
 					            cls			: 'desc-under'
 					        }]
 
 				    }]
 				}, {
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.setting_label_label'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_label_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_label'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_label_desc'),
 		        	name		: 'label',
-		           	anchor		: '100%',
-		        	allowBlank	: false
+		           	anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_label_desc'),
+		            html		: _('clientsettings.label_setting_label_desc'),
 		            cls			: 'desc-under'
 		        }, {
 		            xtype		: 'clientsettings-combo-categories',
-		            fieldLabel	: _('clientsettings.setting_label_category'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_category_desc'),
+		            fieldLabel	: _('clientsettings.label_setting_category'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_category_desc'),
 		            name		: 'category_id',
 		            anchor		: '100%',
 		            allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_category_desc'),
+		            html		: _('clientsettings.label_setting_category_desc'),
 		            cls			: 'desc-under'
 		        }]
 		    }, {
@@ -930,44 +929,44 @@ ClientSettings.window.CopySetting = function(config) {
 		    	style		: 'margin-right: 0;',
                 items		: [{
 		        	xtype		: 'clientsettings-combo-xtype',
-		        	fieldLabel	: _('clientsettings.setting_label_xtype'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_xtype_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_xtype'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_xtype_desc'),
 		        	name		: 'xtype',
 		        	anchor		: '100%',
 		        	allowBlank	: false,
 		        	listeners	: {
 			        	'render' 	: {
-				        	fn 			: this.xtype,
+				        	fn 			: this.setXType,
 				        	scope		: this
 			        	},
 			        	'select'	: {
-				        	fn 			: this.xtype,
+				        	fn 			: this.setXType,
 				        	scope		: this
 			        	}
 		        	}
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_xtype_desc'),
+		            html		: _('clientsettings.label_setting_xtype_desc'),
 		            cls			: 'desc-under'
 		        }, {
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.setting_label_description'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_description_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_description'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_description_desc'),
 		        	name		: 'description',
 		        	anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		        	html		: _('clientsettings.setting_label_description_desc'),
+		        	html		: _('clientsettings.label_setting_description_desc'),
 		        	cls			: 'desc-under'
 		        }, {
 			        xtype		: 'textfield',
-		            fieldLabel	: _('clientsettings.setting_label_exclude'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_exclude_desc'),
+		            fieldLabel	: _('clientsettings.label_setting_exclude'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_exclude_desc'),
 		            name		: 'exclude',
 		            anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_exclude_desc'),
+		            html		: _('clientsettings.label_setting_exclude_desc'),
 		            cls			: 'desc-under'
 		        }]    
 		    }]
@@ -1015,8 +1014,8 @@ ClientSettings.window.CopySetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'datefield',
-				        	fieldLabel	: _('clientsettings.setting_label_mindate'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_mindate_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_mindate'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_mindate_desc'),
 				        	name		: 'minDateValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_date_format,
@@ -1024,7 +1023,7 @@ ClientSettings.window.CopySetting = function(config) {
 							value 		: config.record.extra.minDateValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_mindate_desc'),
+				            html		: _('clientsettings.label_setting_mindate_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1032,8 +1031,8 @@ ClientSettings.window.CopySetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'datefield',
-				        	fieldLabel	: _('clientsettings.setting_label_maxdate'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_maxdate_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_maxdate'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_maxdate_desc'),
 				        	name		: 'maxDateValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_date_format,
@@ -1041,7 +1040,7 @@ ClientSettings.window.CopySetting = function(config) {
 							value 		: config.record.extra.maxDateValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_maxdate_desc'),
+				            html		: _('clientsettings.label_setting_maxdate_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1066,15 +1065,15 @@ ClientSettings.window.CopySetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'timefield',
-				        	fieldLabel	: _('clientsettings.setting_label_mintime'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_mintime_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_mintime'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_mintime_desc'),
 				        	name		: 'minTimeValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_time_format,
 				        	value 		: config.record.extra.minTimeValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_mintime_desc'),
+				            html		: _('clientsettings.label_setting_mintime_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1082,15 +1081,15 @@ ClientSettings.window.CopySetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'timefield',
-				        	fieldLabel	: _('clientsettings.setting_label_maxtime'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_maxtime_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_maxtime'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_maxtime_desc'),
 				        	name		: 'maxTimeValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_time_format,
 				        	value 		: config.record.extra.maxTimeValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_maxtime_desc'),
+				            html		: _('clientsettings.label_setting_maxtime_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1115,25 +1114,25 @@ ClientSettings.window.CopySetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar1'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar1_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar1'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar1_desc'),
 				        	name		: 'toolbar1',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent'
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar1_desc'),
+				            html		: _('clientsettings.label_setting_toolbar1_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar3'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar3_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar3'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar3_desc'),
 				        	name		: 'toolbar3',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.toolbar3 || ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar3_desc'),
+				            html		: _('clientsettings.label_setting_toolbar3_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1141,25 +1140,25 @@ ClientSettings.window.CopySetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar2'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar2_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar2'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar2_desc'),
 				        	name		: 'toolbar2',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.toolbar2 || ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar2_desc'),
+				            html		: _('clientsettings.label_setting_toolbar2_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_plugins'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_plugins_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_plugins'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
 				        	name		: config.record.extra.plugins || 'plugins',
 				        	anchor		: '100%',
 				        	value		: ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_plugins_desc'),
+				            html		: _('clientsettings.label_setting_plugins_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1194,25 +1193,25 @@ ClientSettings.window.CopySetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'modx-combo-source',
-				        	fieldLabel	: _('clientsettings.setting_label_source'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_source_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_source'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_source_desc'),
 				        	name		: 'source',
 				        	anchor		: '100%',
 				        	value 		: config.record.extra.source || MODx.config.default_media_source
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_source_desc'),
+				            html		: _('clientsettings.label_setting_source_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_filetypes'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_filetypes_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_filetypes'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_filetypes_desc'),
 				        	name		: 'allowedFileTypes',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.allowedFileTypes || ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_filetypes_desc'),
+				            html		: _('clientsettings.label_setting_filetypes_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1220,14 +1219,14 @@ ClientSettings.window.CopySetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_opento'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_opento_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_opento'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_opento_desc'),
 				        	name		: 'openTo',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.openTo || '/'
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_opento_desc'),
+				            html		: _('clientsettings.label_setting_opento_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1236,11 +1235,11 @@ ClientSettings.window.CopySetting = function(config) {
 		}]
     });
     
-    ClientSettings.window.CopySetting.superclass.constructor.call(this, config);
+    ClientSettings.window.DuplicateSetting.superclass.constructor.call(this, config);
 };
 
-Ext.extend(ClientSettings.window.CopySetting, MODx.Window, {
-	xtype: function(event) {
+Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window, {
+	setXType: function(event) {
 		var type = 'copy';
 		
 		var elements = {
@@ -1311,7 +1310,7 @@ Ext.extend(ClientSettings.window.CopySetting, MODx.Window, {
 	}
 });
 
-Ext.reg('clientsettings-window-setting-copy', ClientSettings.window.CopySetting);
+Ext.reg('clientsettings-window-setting-duplicate', ClientSettings.window.DuplicateSetting);
 
 ClientSettings.window.UpdateSetting = function(config) {
     config = config || {};
@@ -1324,14 +1323,13 @@ ClientSettings.window.UpdateSetting = function(config) {
         baseParams	: {
             action		: 'mgr/settings/update'
         },
-        defauls		: {
-	        labelAlign	: 'top',
-            border		: false
-        },
         fields		: [{
 	        xtype		: 'hidden',
 	        name		: 'id'
 	    }, {
+			xtype 		: 'hidden',
+			name 		: 'key' 
+		}, {
             layout		: 'column',
             border		: false,
             defaults	: {
@@ -1351,14 +1349,14 @@ ClientSettings.window.UpdateSetting = function(config) {
 			        	columnWidth	: .8,
 			        	items		: [{
 				        	xtype		: 'statictextfield',
-				        	fieldLabel	: _('clientsettings.setting_label_key'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_key_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_key'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_key_desc'),
 				        	name		: 'key',
 				           	anchor		: '100%',
-				        	allowBlank	: false
+				        	value		: config.record.key
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_key_desc'),
+				            html		: _('clientsettings.label_setting_key_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1366,38 +1364,37 @@ ClientSettings.window.UpdateSetting = function(config) {
 					        style		: 'margin-right: 0;',
 					        items		: [{
 						        xtype		: 'checkbox',
-					            fieldLabel	: _('clientsettings.label_active'),
-					            description	: MODx.expandHelp ? '' : _('clientsettings.label_active_desc'),
+					            fieldLabel	: _('clientsettings.label_setting_active'),
+					            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_active_desc'),
 					            name		: 'active',
 					            inputValue	: 1
 					        }, {
 					        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-					            html		: _('clientsettings.label_active_desc'),
+					            html		: _('clientsettings.label_setting_active_desc'),
 					            cls			: 'desc-under'
 					        }]
 
 				    }]
 				}, {
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.setting_label_label'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_label_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_label'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_label_desc'),
 		        	name		: 'label',
-		           	anchor		: '100%',
-		        	allowBlank	: false
+		           	anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_label_desc'),
+		            html		: _('clientsettings.label_setting_label_desc'),
 		            cls			: 'desc-under'
 		        }, {
 		            xtype		: 'clientsettings-combo-categories',
-		            fieldLabel	: _('clientsettings.setting_label_category'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_category_desc'),
+		            fieldLabel	: _('clientsettings.label_setting_category'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_category_desc'),
 		            name		: 'category_id',
 		            anchor		: '100%',
 		            allowBlank	: false
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_category_desc'),
+		            html		: _('clientsettings.label_setting_category_desc'),
 		            cls			: 'desc-under'
 		        }]
 		    }, {
@@ -1405,44 +1402,44 @@ ClientSettings.window.UpdateSetting = function(config) {
 		    	style		: 'margin-right: 0;',
                 items		: [{
 		        	xtype		: 'clientsettings-combo-xtype',
-		        	fieldLabel	: _('clientsettings.setting_label_xtype'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_xtype_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_xtype'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_xtype_desc'),
 		        	name		: 'xtype',
 		        	anchor		: '100%',
 		        	allowBlank	: false,
 		        	listeners	: {
 			        	'render' 	: {
-				        	fn 			: this.xtype,
+				        	fn 			: this.setXType,
 				        	scope		: this
 			        	},
 			        	'select'	: {
-				        	fn 			: this.xtype,
+				        	fn 			: this.setXType,
 				        	scope		: this
 			        	}
 		        	}
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_xtype_desc'),
+		            html		: _('clientsettings.label_setting_xtype_desc'),
 		            cls			: 'desc-under'
 		        }, {
 		        	xtype		: 'textfield',
-		        	fieldLabel	: _('clientsettings.setting_label_description'),
-		        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_description_desc'),
+		        	fieldLabel	: _('clientsettings.label_setting_description'),
+		        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_description_desc'),
 		        	name		: 'description',
 		        	anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		        	html		: _('clientsettings.setting_label_description_desc'),
+		        	html		: _('clientsettings.label_setting_description_desc'),
 		        	cls			: 'desc-under'
 		        }, {
 			        xtype		: 'textfield',
-		            fieldLabel	: _('clientsettings.setting_label_exclude'),
-		            description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_exclude_desc'),
+		            fieldLabel	: _('clientsettings.label_setting_exclude'),
+		            description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_exclude_desc'),
 		            name		: 'exclude',
 		            anchor		: '100%'
 		        }, {
 		        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-		            html		: _('clientsettings.setting_label_exclude_desc'),
+		            html		: _('clientsettings.label_setting_exclude_desc'),
 		            cls			: 'desc-under'
 		        }]    
 		    }]
@@ -1490,8 +1487,8 @@ ClientSettings.window.UpdateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'datefield',
-				        	fieldLabel	: _('clientsettings.setting_label_mindate'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_mindate_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_mindate'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_mindate_desc'),
 				        	name		: 'minDateValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_date_format,
@@ -1499,7 +1496,7 @@ ClientSettings.window.UpdateSetting = function(config) {
 							value 		: config.record.extra.minDateValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_mindate_desc'),
+				            html		: _('clientsettings.label_setting_mindate_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1507,8 +1504,8 @@ ClientSettings.window.UpdateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'datefield',
-				        	fieldLabel	: _('clientsettings.setting_label_maxdate'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_maxdate_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_maxdate'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_maxdate_desc'),
 				        	name		: 'maxDateValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_date_format,
@@ -1516,7 +1513,7 @@ ClientSettings.window.UpdateSetting = function(config) {
 							value 		: config.record.extra.maxDateValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_maxdate_desc'),
+				            html		: _('clientsettings.label_setting_maxdate_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1541,15 +1538,15 @@ ClientSettings.window.UpdateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'timefield',
-				        	fieldLabel	: _('clientsettings.setting_label_mintime'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_mintime_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_mintime'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_mintime_desc'),
 				        	name		: 'minTimeValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_time_format,
 				        	value 		: config.record.extra.minTimeValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_mintime_desc'),
+				            html		: _('clientsettings.label_setting_mintime_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1557,15 +1554,15 @@ ClientSettings.window.UpdateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'timefield',
-				        	fieldLabel	: _('clientsettings.setting_label_maxtime'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_maxtime_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_maxtime'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_maxtime_desc'),
 				        	name		: 'maxTimeValue',
 				        	anchor		: '100%',
 				        	format		: MODx.config.manager_time_format,
 				        	value 		: config.record.extra.maxTimeValue
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_maxtime_desc'),
+				            html		: _('clientsettings.label_setting_maxtime_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1590,25 +1587,25 @@ ClientSettings.window.UpdateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar1'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar1_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar1'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar1_desc'),
 				        	name		: 'toolbar1',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent'
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar1_desc'),
+				            html		: _('clientsettings.label_setting_toolbar1_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar3'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar3_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar3'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar3_desc'),
 				        	name		: 'toolbar3',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.toolbar3 || ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar3_desc'),
+				            html		: _('clientsettings.label_setting_toolbar3_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1616,25 +1613,25 @@ ClientSettings.window.UpdateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_toolbar2'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_toolbar2_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_toolbar2'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar2_desc'),
 				        	name		: 'toolbar2',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.toolbar2 || ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_toolbar2_desc'),
+				            html		: _('clientsettings.label_setting_toolbar2_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_plugins'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_plugins_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_plugins'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
 				        	name		: config.record.extra.plugins || 'plugins',
 				        	anchor		: '100%',
 				        	value		: ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_plugins_desc'),
+				            html		: _('clientsettings.label_setting_plugins_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1669,25 +1666,25 @@ ClientSettings.window.UpdateSetting = function(config) {
 		                columnWidth: .5,
 		                items		: [{
 				        	xtype		: 'modx-combo-source',
-				        	fieldLabel	: _('clientsettings.setting_label_source'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_source_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_source'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_source_desc'),
 				        	name		: 'source',
 				        	anchor		: '100%',
 				        	value 		: config.record.extra.source || MODx.config.default_media_source
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_source_desc'),
+				            html		: _('clientsettings.label_setting_source_desc'),
 				            cls			: 'desc-under'
 				        }, {
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_filetypes'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_filetypes_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_filetypes'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_filetypes_desc'),
 				        	name		: 'allowedFileTypes',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.allowedFileTypes || ''
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_filetypes_desc'),
+				            html		: _('clientsettings.label_setting_filetypes_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }, {
@@ -1695,14 +1692,14 @@ ClientSettings.window.UpdateSetting = function(config) {
 				    	style		: 'margin-right: 0;',
 		                items		: [{
 				        	xtype		: 'textfield',
-				        	fieldLabel	: _('clientsettings.setting_label_opento'),
-				        	description	: MODx.expandHelp ? '' : _('clientsettings.setting_label_opento_desc'),
+				        	fieldLabel	: _('clientsettings.label_setting_opento'),
+				        	description	: MODx.expandHelp ? '' : _('clientsettings.label_setting_opento_desc'),
 				        	name		: 'openTo',
 				        	anchor		: '100%',
 				        	value		: config.record.extra.openTo || '/'
 				        }, {
 				        	xtype		: MODx.expandHelp ? 'label' : 'hidden',
-				            html		: _('clientsettings.setting_label_opento_desc'),
+				            html		: _('clientsettings.label_setting_opento_desc'),
 				            cls			: 'desc-under'
 				        }]
 				    }]
@@ -1715,7 +1712,7 @@ ClientSettings.window.UpdateSetting = function(config) {
 };
 
 Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
-	xtype: function(event) {
+	setXType: function(event) {
 		var type = 'update';
 		
 		var elements = {
@@ -1797,11 +1794,11 @@ ClientSettings.combo.Categories = function(config) {
             action		: 'mgr/categories/getlist',
             combo		: true
         },
-        fields		: ['id','name'],
+        fields		: ['id','name', 'name_formatted'],
         hiddenName	: 'category_id',
         pageSize	: 15,
         valueField	: 'id',
-        displayField: 'name'
+        displayField: 'name_formatted'
     });
     
     ClientSettings.combo.Categories.superclass.constructor.call(this,config);
@@ -1987,7 +1984,6 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
             layout		: 'column',
             border		: false,
             id 			: this.config.id + '-' + id,
-            style		: 'margin-bottom: 5px;',
             defaults	: {
                 layout		: 'form',
                 hideLabels	: true
@@ -1997,7 +1993,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
                 items		: [{
 		        	xtype		: 'textfield',
 		        	anchor		: '100%',
-		        	emptyText 	: _('clientsettings.setting_label_value'),
+		        	emptyText 	: _('clientsettings.label_setting_value'),
 		        	type 		: 'value',
 		        	value		: data.value || '',
 		        	listeners	: {
@@ -2012,7 +2008,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
                 items		: [{
 		        	xtype		: 'textfield',
 		        	anchor		: '100%',
-		        	emptyText 	: _('clientsettings.setting_label_label'),
+		        	emptyText 	: _('clientsettings.label_setting_label'),
 		        	type 		: 'label',
 		        	value		: data.label || '',
 		        	listeners	: {
@@ -2025,6 +2021,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
 		    }, {
 		    	columnWidth : .18,
 		    	style		: 'margin-right: 0;',
+		    	cls 		: 'x-form-item',
                 items		: 0 == index ? [nextBtn] : [nextBtn, prevBtn]
             }]
 		};

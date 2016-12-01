@@ -22,7 +22,7 @@
 	 * Suite 330, Boston, MA 02111-1307 USA
 	 */
 	 
-	class SettingsUpdateProcessor extends modObjectUpdateProcessor {
+	class ClientSettingsSettingsUpdateProcessor extends modObjectUpdateProcessor {
 		/**
 		 * @acces public.
 		 * @var String.
@@ -58,6 +58,14 @@
 				$this->setProperty('active', 0);
 			}
 			
+			if ('' == $this->getProperty('label')) {
+				$this->setProperty('label', 'setting_clientsettings.'.$this->getProperty('key'));
+			}
+			
+			if ('' == $this->getProperty('description')) {
+				$this->setProperty('description', 'setting_clientsettings.'.$this->getProperty('key').'_desc');
+			}
+		
 			if ($xtype = $this->getProperty('xtype')) {
 				switch($xtype) {
 					case 'datefield':
@@ -121,6 +129,6 @@
 		}
 	}
 	
-	return 'SettingsUpdateProcessor';
+	return 'ClientSettingsSettingsUpdateProcessor';
 	
 ?>

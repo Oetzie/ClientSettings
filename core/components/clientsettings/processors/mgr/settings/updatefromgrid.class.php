@@ -24,7 +24,7 @@
 	 
 	require_once dirname(__FILE__).'/update.class.php';
 	
-	class SettingsUpdateFromGridProcessor extends SettingsUpdateProcessor {
+	class ClientSettingsSettingsUpdateFromGridProcessor extends ClientSettingsSettingsUpdateProcessor {
 		/**
 	 	 * @acces public.
 	 	 * @return Mixed.
@@ -53,5 +53,5 @@
 		}
 	}
 	
-	return 'SettingsUpdateFromGridProcessor';
+	return 'ClientSettingsSettingsUpdateFromGridProcessor';
 ?>

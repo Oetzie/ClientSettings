@@ -31,6 +31,7 @@
 			'id'			=> null,
 			'name' 			=> null,
 			'description' 	=> null,
+			'exclude'		=> null,
 			'menuindex' 	=> null,
 			'active'		=> null,
 			'editedon' 		=> null
@@ -52,6 +53,12 @@
 			),
 			'description' => array(
 				'dbtype' 	=> 'text',
+				'phptype' 	=> 'string',
+				'null' 		=> false
+			),
+			'exclude' 	=> array(
+				'dbtype' 	=> 'varchar',
+				'precision' => '255',
 				'phptype' 	=> 'string',
 				'null' 		=> false
 			),

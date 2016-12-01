@@ -1,8 +1,8 @@
 Ext.onReady(function() {
-	MODx.load({xtype: 'clientsettings-page-client'});
+	MODx.load({xtype: 'clientsettings-page-home'});
 });
 
-ClientSettings.page.Client = function(config) {
+ClientSettings.page.Home = function(config) {
 	config = config || {};
 	
 	config.buttons = [{
@@ -15,10 +15,7 @@ ClientSettings.page.Client = function(config) {
 			ctrl		: true,
 			key			: MODx.config.keymap_save || 's'
 		}]
-	}, {
-        text		: _('cancel'),
-        id			: 'modx-abtn-cancel'
-    }, '-'];
+	}, '-'];
 	
 	if (ClientSettings.config.admin) {
 		config.buttons.push({
@@ -35,22 +32,22 @@ ClientSettings.page.Client = function(config) {
 	});
 	
 	Ext.applyIf(config, {
-		formpanel	: 'clientsettings-panel-client',
+		formpanel	: 'clientsettings-panel-home',
 		components	: [{
-			xtype		: 'clientsettings-panel-client',
+			xtype		: 'clientsettings-panel-home',
 			contexts	: ClientSettings.config.contexts,
 			categories	: ClientSettings.config.categories,
-			renderTo	: 'clientsettings-panel-client-div'
+			renderTo	: 'clientsettings-panel-home-div'
 		}]
 	});
 	
-	ClientSettings.page.Client.superclass.constructor.call(this, config);
+	ClientSettings.page.Home.superclass.constructor.call(this, config);
 };
 
-Ext.extend(ClientSettings.page.Client, MODx.Component, {
+Ext.extend(ClientSettings.page.Home, MODx.Component, {
 	toAdminView: function() {
 		MODx.loadPage(MODx.request.a, 'action=admin');
 	}
 });
 
-Ext.reg('clientsettings-page-client', ClientSettings.page.Client);
+Ext.reg('clientsettings-page-home', ClientSettings.page.Home);
