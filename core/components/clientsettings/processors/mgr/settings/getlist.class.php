@@ -33,7 +33,7 @@
 		 * @acces public.
 		 * @var Array.
 		 */
-		public $languageTopics = array('clientsettings:default', 'clientsettings:settings');
+		public $languageTopics = array('clientsettings:default', 'clientsettings:settings', 'site:default');
 		
 		/**
 		 * @acces public.

@@ -50,7 +50,7 @@
 			$this->config = array_merge(array(
 				'namespace'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
 				'helpurl'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
-				'lexicons'				=> array('clientsettings:default', 'clientsettings:settings'),
+				'lexicons'				=> array('clientsettings:default', 'clientsettings:settings', 'site:default'),
 				'base_path'				=> $corePath,
 				'core_path' 			=> $corePath,
 				'model_path' 			=> $corePath.'model/',
