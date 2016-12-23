@@ -23,18 +23,18 @@
 	 */
 
 	switch($modx->event->name) {
-		case 'OnWebPageInit':
-				$clientsettings = $modx->getService('clientsettings', 'ClientSettings', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+		case 'OnLoadWebDocument':
+			$clientsettings = $modx->getService('clientsettings', 'ClientSettings', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 
-                if ($clientsettings instanceof ClientSettings) {
-                    if ($placeholders = $clientsettings->getSettings()) {
-    					$modx->setPlaceholders($placeholders, '+');
-    
-    					foreach ($placeholders as $key => $value) {
-    						$modx->setOption($key, $value);
-    					}
-    				}
-                }
+            if ($clientsettings instanceof ClientSettings) {
+                if ($placeholders = $clientsettings->getSettings()) {
+					$modx->setPlaceholders($placeholders, '+');
+
+					foreach ($placeholders as $key => $value) {
+						$modx->setOption($key, $value);
+					}
+				}
+            }
 
 			break;
 	}
