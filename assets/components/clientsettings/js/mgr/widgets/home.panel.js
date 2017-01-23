@@ -17,14 +17,13 @@ ClientSettings.panel.Home = function(config) {
             id			: 'clientsettings-header',
             cls			: 'modx-page-header'
         }, {
-        	xtype		: 'modx-tabs',
+        	layout		: 'form',
         	border 		: true,
-        	defaults	: {
-				autoHeight	: true,
-				autoWidth	: true,
-				border		: false
-			},
-            items		: this.getContexts()
+            defaults	: {
+            	autoHeight	: true,
+            	border		: false
+            },
+            items		: this.getItems()
         }],
         listeners	: {
             'setup'		: {
@@ -41,23 +40,37 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
 	setup: function() {
 		this.fireEvent('ready');
 	},
-	getContexts: function() {
-		var items 		= [];
+	getItems: function() {
+		var context 	= MODx.request.context || MODx.config.default_context;
 		var contexts 	= ClientSettings.config.contexts;
-
+		
+		var items 		= [{
+        	html			: '<p>' + _('clientsettings.settings_desc') + '</p>',
+            bodyCssClass	: 'panel-desc'
+        }];
+        
 		for (var i = 0; i < contexts.length; i++) {
-			var context = contexts[i];
-
-			items.push({
-				xtype		: 'modx-vtabs',
-				title		: context.name,
-	            defaults	: {
-	            	autoHeight	: true,
-	            	autoWidth	: true,
-	            	border		: false
-	            },
-	            items		: this.getSettings(context)
-	        });
+			if (context == contexts[i].key) {
+				var settings = this.getSettings(contexts[i]);
+				
+				if (0 == settings.length) {
+					items.push({
+			            html			: '<p>' + _('clientsettings.no_settings_desc') + '</p>',
+						bodyCssClass	: 'modx-config-error'
+		            });
+				} else {
+					items.push({
+						xtype		: 'modx-vtabs',
+						title		: context.name,
+			            defaults	: {
+			            	autoHeight	: true,
+			            	autoWidth	: true,
+			            	border		: false
+			            },
+			            items		: settings
+			        });
+			    }
+			}
 		}
 		
 		return items;
@@ -287,6 +300,14 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
 												Ext.getCmp(this.id + '-replace').setValue(data.fullRelativeUrl);
 											},
 											scope		: element
+										},
+										'change'	: {
+											fn 			: function(tf) {
+												if ('' == tf.getValue()) {
+													Ext.getCmp(this.id + '-replace').setValue('');
+												}
+											},
+											scope		: element
 										}
 									}
 								}, element);
@@ -323,21 +344,6 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
 		            }]
 				});
 			}
-	    }
-	    
-	    if (items.length == 0) {
-		    return [{
-				title		: _('clientsettings.no_settings'),
-				defaults	: {
-		        	autoHeight	: true,
-		        	autoWidth	: true,
-		        	border 		: false
-		        },
-		        items		: [{
-		            html			: '<p>' + _('clientsettings.no_settings_desc') + '</p>',
-					bodyCssClass	: 'modx-desc'
-	            }]
-		   }]; 
 	    }
     	
         return items;

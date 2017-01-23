@@ -97,12 +97,14 @@
 	$_lang['clientsettings.label_setting_plugins']					= 'Plugins';
 	$_lang['clientsettings.label_setting_plugins_desc']				= 'The plugins which are used in the WYSIWYG editor.';
 	
+	$_lang['clientsettings.settings_desc']							= 'Here you can edit your site settings.';
 	$_lang['clientsettings.no_settings']							= 'No settings';
 	$_lang['clientsettings.no_settings_desc']						= 'It seems that there are no settings available.';
 	$_lang['clientsettings.extra_settings']							= 'Extra settings';
 	$_lang['clientsettings.no_extra_settings']						= 'This setting has no extra settings.';
 	$_lang['clientsettings.default_view']							= 'Default view';
 	$_lang['clientsettings.admin_view']								= 'Admin view';
+	$_lang['clientsettings.filter_context']							= 'Filter at context...';
 	$_lang['clientsettings.filter_category']						= 'Filter at area...';
 	$_lang['clientsettings.textfield']								= 'Textfield';
 	$_lang['clientsettings.datefield']								= 'Textfield (date)';

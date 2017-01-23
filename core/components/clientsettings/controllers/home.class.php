@@ -48,7 +48,7 @@
 		 * @acces public.
 		 */
 		public function loadCustomCssJs() {
-			$this->addCss($this->clientsettings->config['css_url'].'mgr/clientsettings.css');
+			$this->addCSS($this->clientsettings->config['css_url'].'mgr/clientsettings.css');
 			
 			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/home.panel.js');
 			

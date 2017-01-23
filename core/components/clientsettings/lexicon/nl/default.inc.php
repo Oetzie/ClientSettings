@@ -97,12 +97,14 @@
 	$_lang['clientsettings.label_setting_plugins']					= 'Plug-ins';
 	$_lang['clientsettings.label_setting_plugins_desc']				= 'De plug-ins die gebruikt worden in de WYSIWYG editor.';
 	
+	$_lang['clientsettings.settings_desc']							= 'Hier kun je alle instellingen van jouw website wijzigen.';
 	$_lang['clientsettings.no_settings']							= 'Geen instellingen';
 	$_lang['clientsettings.no_settings_desc']						= 'Het lijkt erop dat er geen instellingen beschikbaar zijn.';
 	$_lang['clientsettings.extra_settings']							= 'Extra instellingen';
 	$_lang['clientsettings.no_extra_settings']						= 'Deze instelling heeft geen extra instellingen.';
 	$_lang['clientsettings.default_view']							= 'Standaard weergave';
 	$_lang['clientsettings.admin_view']								= 'Admin weergave';
+	$_lang['clientsettings.filter_context']							= 'Filter op context...';
 	$_lang['clientsettings.filter_category']						= 'Filter op categorie...';
 	$_lang['clientsettings.textfield']								= 'Tekstvak';
 	$_lang['clientsettings.datefield']								= 'Tekstvak (datum)';

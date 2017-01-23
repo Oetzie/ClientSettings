@@ -1,27 +1,13 @@
 .modx-desc {
-	padding: 15px;
-}
-
-.modx-desc p {
 	color: #53595f;
-	padding: 10px 15px;
+	margin: 15px 15px -15px 15px;
+	padding: 15px;
 	background: #f0f0f0;
-	border: 1px solid #e7e7e7;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-	   		border-radius: 3px;
+	-webkit-border-radius: 0;
+	   -moz-border-radius: 0;
+	   		border-radius: 0;
 }
 
 .modx-config-error {
-	padding: 15px;
-}
-
-.modx-config-error p {
-	color: #ffffff;
-	padding: 10px 15px;
-	background: #d83755;
-	border: 1px solid #c1304b;
-	-webkit-border-radius: 3px;
-	   -moz-border-radius: 3px;
-	   		border-radius: 3px;
+	margin-bottom: 15px;
 }

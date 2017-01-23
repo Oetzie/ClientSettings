@@ -6,6 +6,22 @@ ClientSettings.page.Home = function(config) {
 	config = config || {};
 	
 	config.buttons = [{
+    	xtype		: 'modx-combo-context',
+    	hidden		: Webshop.config.context,
+        value 		: MODx.request.context || MODx.config.default_context,
+		name		: 'clientsettings-filter-context',
+        emptyText	: _('clientsettings.filter_context'),
+        listeners	: {
+        	'select'	: {
+            	fn			: this.filterContext,
+            	scope		: this   
+		    }
+		},
+		baseParams	: {
+			action		: 'context/getlist',
+			exclude		: 'mgr'
+		}
+    }, {
 		text		: _('save'),
 		cls			:'primary-button',
 		method		: 'remote',
@@ -46,7 +62,22 @@ ClientSettings.page.Home = function(config) {
 
 Ext.extend(ClientSettings.page.Home, MODx.Component, {
 	toAdminView: function() {
-		MODx.loadPage(MODx.request.a, 'action=admin');
+		var request = MODx.request || {};
+		
+        Ext.apply(request, {
+	    	'action' : 'admin'  
+	    });
+        
+        MODx.loadPage('?' + Ext.urlEncode(request));
+	},
+	filterContext: function(tf) {
+		var request = MODx.request || {};
+		
+        Ext.apply(request, {
+	    	'context' : tf.getValue()  
+	    });
+	    
+        MODx.loadPage('?' + Ext.urlEncode(request));
 	}
 });
 

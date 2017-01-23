@@ -38,14 +38,22 @@
 	$_lang['setting_clientsettings.contact_mobile_desc'] 			= 'Algemeen contact mobiel nummer.';
 	$_lang['setting_clientsettings.contact_email'] 					= 'E-mailadres';
 	$_lang['setting_clientsettings.contact_email_desc'] 			= 'Algemeen contact e-mailadres.';
+	$_lang['setting_clientsettings.bank_account']					= 'Bankrekening';
+	$_lang['setting_clientsettings.bank_account_desc']				= 'IBAN bankrekeningnummer.';
+	$_lang['setting_clientsettings.tax_account']					= 'BTW nummer';
+	$_lang['setting_clientsettings.tax_account_desc']				= 'BTW nummer.';
+	$_lang['setting_clientsettings.kvk_account']					= 'KVK nummer';
+	$_lang['setting_clientsettings.kvk_account_desc']				= 'Kamer van Koophandel nummer.';
 	$_lang['setting_clientsettings.google_analytics'] 				= 'Google Analytics';
 	$_lang['setting_clientsettings.google_analytics_desc'] 			= 'De Google Analytics key.';
-	$_lang['setting_clientsettings.contact_form_email'] 			= 'Contact formulier e-mail ontvanger';
+	$_lang['setting_clientsettings.contact_form_email'] 			= 'Contact formulier e-mailontvanger';
 	$_lang['setting_clientsettings.contact_form_email_desc'] 		= 'Het e-mailadres waar het \'contact formulier\' naar toe word gestuurd. Laat dit veld leeg om het algemeen e-mailadres te gebruiken.';
-	$_lang['setting_clientsettings.appointment_form_email'] 		= 'Maak een afspraak formulier e-mail ontvanger';
+	$_lang['setting_clientsettings.appointment_form_email'] 		= 'Maak een afspraak formulier e-mailontvanger';
 	$_lang['setting_clientsettings.appointment_form_email_desc'] 	= 'Het e-mailadres waar het \'maak een afspraak formulier\' naar toe word gestuurd. Laat dit veld leeg om het algemeen e-mailadres te gebruiken.';
-	$_lang['setting_clientsettings.wish_form_email'] 				= 'Woonwens formulier e-mail ontvanger';
+	$_lang['setting_clientsettings.wish_form_email'] 				= 'Woonwens formulier e-mailontvanger';
 	$_lang['setting_clientsettings.wish_form_email_desc'] 			= 'Het e-mailadres waar het \'woonwens formulier\' naar toe word gestuurd. Laat dit veld leeg om het algemeen e-mailadres te gebruiken.';
+	$_lang['setting_clientsettings.subscribe_form_email'] 			= 'Lid worden formulier e-mailontvanger';
+	$_lang['setting_clientsettings.subscribe_form_email_desc'] 		= 'Het e-mailadres waar het \'lid worden formulier\' naar toe word gestuurd. Laat dit veld leeg om het algemeen e-mailadres te gebruiken.';
 	$_lang['setting_clientsettings.facebook'] 						= 'Facebook';
 	$_lang['setting_clientsettings.facebook_desc'] 					= 'De link van het Facebook-account (Bijv: https://www.facebook.com/Oetzienl).';
 	$_lang['setting_clientsettings.twitter'] 						= 'Twitter';
@@ -70,6 +78,6 @@
 	$_lang['category_clientsettings.socialmedia']					= 'Social media';
 	$_lang['category_clientsettings.socialmedia_desc']				= 'Wijzig hier de social media accounts van de website.';
 	$_lang['category_clientsettings.apis']							= 'API\'s';
-	$_lang['category_clientsettings.aps_desc']						= 'Wijzig hier de API accounts, wijzig alleen de instellingen als je weet wat je doet.';
+	$_lang['category_clientsettings.apis_desc']						= 'Wijzig hier de API accounts, wijzig alleen de instellingen als je weet wat je doet.';
 	
 ?>

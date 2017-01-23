@@ -50,7 +50,7 @@
 			$this->config = array_merge(array(
 				'namespace'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
 				'helpurl'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
-				'lexicons'				=> array('clientsettings:default', 'clientsettings:settings'),
+				'lexicons'				=> array('clientsettings:default', 'clientsettings:settings', 'site:default'),
 				'base_path'				=> $corePath,
 				'core_path' 			=> $corePath,
 				'model_path' 			=> $corePath.'model/',
@@ -202,6 +202,24 @@
 			}
 			
 			return $settings;
+		}
+		
+		/**
+		 * @acces public.
+		 * @return null;
+		 */
+		public function run() {
+			$settings = $this->getSettings();
+			
+			if (0 < count($settings)) {
+				$this->modx->setPlaceholders($settings, '+');
+	
+				foreach ($placeholders as $key => $value) {
+					$this->modx->setOption($settings, $value);
+				}
+			}
+			
+			return null;
 		}
 	}
 	

@@ -27,7 +27,13 @@ ClientSettings.page.Admin = function(config) {
 
 Ext.extend(ClientSettings.page.Admin, MODx.Component, {
 	toDefaultView: function() {
-		MODx.loadPage(MODx.request.a);
+		var request = MODx.request || {};
+		
+        Ext.apply(request, {
+	    	'action' : 'home'  
+	    });
+        
+        MODx.loadPage('?' + Ext.urlEncode(request));
 	}
 });
 
