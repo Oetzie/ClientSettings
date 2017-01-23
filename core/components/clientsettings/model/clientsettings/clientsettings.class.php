@@ -66,6 +66,7 @@
 				'css_url' 				=> $assetsUrl.'css/',
 				'assets_url' 			=> $assetsUrl,
 				'connector_url'			=> $assetsUrl.'connector.php',
+				'context'				=> $this->getContexts()
 			), $config);
 		
 			$this->modx->addPackage('clientsettings', $this->config['model_path']);
@@ -105,6 +106,16 @@
 			}
 			
 			return $isMember;
+		}
+		
+		/**
+		 * @acces private.
+		 * @return Boolean.
+		 */
+		private function getContexts() {
+			return 1 == $this->modx->getCount('modContext', array(
+				'key:!=' => 'mgr'
+			));
 		}
 		
 		/**

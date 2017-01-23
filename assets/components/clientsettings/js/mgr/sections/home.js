@@ -4,10 +4,10 @@ Ext.onReady(function() {
 
 ClientSettings.page.Home = function(config) {
 	config = config || {};
-	
+
 	config.buttons = [{
     	xtype		: 'modx-combo-context',
-    	hidden		: Webshop.config.context,
+    	hidden		: ClientSettings.config.context,
         value 		: MODx.request.context || MODx.config.default_context,
 		name		: 'clientsettings-filter-context',
         emptyText	: _('clientsettings.filter_context'),
