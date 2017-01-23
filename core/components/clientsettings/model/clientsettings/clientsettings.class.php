@@ -214,7 +214,7 @@
 			if (0 < count($settings)) {
 				$this->modx->setPlaceholders($settings, '+');
 	
-				foreach ($placeholders as $key => $value) {
+				foreach ($settings as $key => $value) {
 					$this->modx->setOption($settings, $value);
 				}
 			}

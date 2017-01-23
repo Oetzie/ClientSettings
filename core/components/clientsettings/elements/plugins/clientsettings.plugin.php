@@ -1,6 +1,5 @@
 <?php
-
-    /**
+/**
 	 * Client Settings
 	 *
 	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
@@ -27,13 +26,7 @@
 			$clientsettings = $modx->getService('clientsettings', 'ClientSettings', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 
             if ($clientsettings instanceof ClientSettings) {
-                if ($placeholders = $clientsettings->getSettings()) {
-					$modx->setPlaceholders($placeholders, '+');
-
-					foreach ($placeholders as $key => $value) {
-						$modx->setOption($key, $value);
-					}
-				}
+                return $clientsettings->run();
             }
 
 			break;
