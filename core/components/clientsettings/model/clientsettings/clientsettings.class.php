@@ -226,7 +226,7 @@
 				$this->modx->setPlaceholders($settings, '+');
 	
 				foreach ($settings as $key => $value) {
-					$this->modx->setOption($settings, $value);
+					$this->modx->setOption($key, $value);
 				}
 			}
 			
