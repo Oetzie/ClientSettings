@@ -3,10 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
-	 *
-	 * This file is part of Client Settings, a real estate property listings component
-	 * for MODX Revolution.
+	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
 	 *
 	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
@@ -26,9 +23,6 @@
 	$_lang['clientsettings.desc'] 									= 'Change or manage system settings.';
 	
 	$_lang['area_clientsettings']									= 'Settings';
-	
-	$_lang['setting_clientsettings.admin_groups']					= 'Usergroups';
-	$_lang['setting_clientsettings.admin_groups_desc']				= 'The usergroups that are allowed to acces the "admin view" of the settings. Use a comma to separate multiple usergroups.';
 	
 	$_lang['clientsettings.category'] 								= 'Area';
 	$_lang['clientsettings.categories'] 							= 'Areas';

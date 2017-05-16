@@ -3,32 +3,23 @@ ClientSettings.panel.Home = function(config) {
 
     Ext.apply(config, {
     	url			: ClientSettings.config.connector_url,
-    	baseParams	: {},
+    	baseParams	: {
+	    	action		: 'mgr/save'
+    	},
         id			: 'clientsettings-panel-home',
         cls			: 'container',
-	    defaults	: {
-			collapsible	: false,
-			autoHeight	: true,
-			autoWidth	: true,
-			border		: false
-		},
         items		: [{
             html		: '<h2>' + _('clientsettings') + '</h2>',
             id			: 'clientsettings-header',
             cls			: 'modx-page-header'
         }, {
         	layout		: 'form',
-        	border 		: true,
-            defaults	: {
-            	autoHeight	: true,
-            	border		: false
-            },
             items		: this.getItems()
         }],
         listeners	: {
             'setup'		: {
-            	fn			:this.setup,
-            	scope		:this
+            	fn			: this.setup,
+            	scope		: this
             }
         }
     });

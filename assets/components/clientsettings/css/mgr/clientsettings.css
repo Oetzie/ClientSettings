@@ -1,3 +1,10 @@
+#modx-action-buttons .x-btn-branding {
+	background: none !important;
+	box-shadow: none !important;
+	border: none !important;
+	color: #555555 !important;
+}
+
 .modx-desc {
 	color: #53595f;
 	margin: 15px 15px -15px 15px;

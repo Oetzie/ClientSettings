@@ -3,7 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
+	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
 	 *
 	 * This file is part of Client Settings, a real estate property listings component
 	 * for MODX Revolution.
@@ -24,19 +24,11 @@
 
 	class ClientSettingsAdminManagerController extends ClientSettingsManagerController {
 		/**
-		 * @acces public.
-		 * @param Array $scriptProperties.
-		 */
-		public function process(array $scriptProperties = array()) {
-			if (!$this->clientsettings->hasPermission()) {
-				$this->modx->sendRedirect($this->modx->getOption('manager_url').'?a='.$_GET['a']);
-			}
-		}
-		
-		/**
-		 * @acces public.
+		 * @access public.
 		 */
 		public function loadCustomCssJs() {
+			$this->addCSS($this->clientsettings->config['css_url'].'mgr/clientsettings.css');
+			
 			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/admin.panel.js');
 			
 			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/widgets/categories.grid.js');
@@ -46,7 +38,7 @@
 		}
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return String.
 		 */
 		public function getPageTitle() {
@@ -54,11 +46,21 @@
 		}
 		
 		/**
-		* @acces public.
+		* @access public.
 		* @return String.
 		*/
 		public function getTemplateFile() {
 			return $this->clientsettings->config['templates_path'].'admin.tpl';
+		}
+		
+		/**
+		 * @access public.
+		 * @param Array $scriptProperties.
+		 */
+		public function process(array $scriptProperties = array()) {
+			if (!$this->modx->hasPermission('clientsettings_admin')) {
+				$this->modx->sendRedirect($this->modx->getOption('manager_url').'?a='.$_GET['a'].'&namespace='.$this->clientsettings->config['namespace']);
+			}
 		}
 	}
 

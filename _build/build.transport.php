@@ -8,7 +8,7 @@
 	define('PKG_NAME', 			'ClientSettings');
 	define('PKG_NAME_LOWER', 	strtolower(PKG_NAME));
 	define('PKG_NAMESPACE', 	strtolower(PKG_NAME));
-	define('PKG_VERSION',		'1.1.0');
+	define('PKG_VERSION',		'1.1.1');
 	define('PKG_RELEASE',		'pl');
 
 	$root = dirname(dirname(__FILE__)).'/';
@@ -135,6 +135,24 @@
 	    )
 	)));
 	
+	if (file_exists($sources['data'].'transport.events.php')) {
+		$events = include $sources['data'].'transport.events.php';
+		
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packaging in events(s) into category...');
+		
+		foreach ($events as $key => $value) {
+			$builder->putVehicle($builder->createVehicle($value, array(
+				xPDOTransport::UNIQUE_KEY 		=> 'name',
+				xPDOTransport::PRESERVE_KEYS 	=> true,
+				xPDOTransport::UPDATE_OBJECT 	=> false
+			)));
+		}
+		
+		$modx->log(modX::LOG_LEVEL_INFO, 'Packed events(s) '.count($events).' into category.');
+	} else {
+		$modx->log(modX::LOG_LEVEL_INFO, 'No events(s) to pack...');
+	}
+	
 	if (file_exists($sources['data'].'transport.settings.php')) {
 		$settings = include $sources['data'].'transport.settings.php';
 		
@@ -142,9 +160,9 @@
 		
 		foreach ($settings as $key => $value) {
 			$builder->putVehicle($builder->createVehicle($value, array(
-				xPDOTransport::UNIQUE_KEY => 'key',
-				xPDOTransport::PRESERVE_KEYS => true,
-				xPDOTransport::UPDATE_OBJECT => false
+				xPDOTransport::UNIQUE_KEY 		=> 'key',
+				xPDOTransport::PRESERVE_KEYS 	=> true,
+				xPDOTransport::UPDATE_OBJECT 	=> false
 			)));
 		}
 		

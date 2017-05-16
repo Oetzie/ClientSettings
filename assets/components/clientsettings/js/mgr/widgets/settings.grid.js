@@ -2,10 +2,10 @@ ClientSettings.grid.Settings = function(config) {
     config = config || {};
 
 	config.tbar = [{
-        text	: _('clientsettings.setting_create'),
-        cls		:'primary-button',
-        handler	: this.createSetting,
-        scope	: this
+        text		: _('clientsettings.setting_create'),
+        cls			: 'primary-button',
+        handler		: this.createSetting,
+        scope		: this
     }, '->', {
     	xtype		: 'clientsettings-combo-categories',
     	name		: 'clientsettings-filter-categories',
@@ -13,8 +13,8 @@ ClientSettings.grid.Settings = function(config) {
         emptyText	: _('clientsettings.filter_category'),
         listeners	: {
         	'select'	: {
-	            	fn		: this.filterCategory,
-	            	scope	: this   
+	            fn			: this.filterCategory,
+	            scope		: this   
 		    }
 		}
     }, '-', {
@@ -138,7 +138,7 @@ ClientSettings.grid.Settings = function(config) {
             handler		: this.collapseAll,
             scope		: this
         }],
-        refreshCmp 	: '',
+        refreshGrid : [],
         enableDragDrop : true,
 	    ddGroup 	: 'clientsettings-grid-admin-settings',
 	    listeners	: {
@@ -189,12 +189,12 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 		    scope	: this
 		}];
     },
-    rRefresh : function() {
-	    if ('string' == typeof this.config.refreshCmp) {
-		    Ext.getCmp(this.config.refreshCmp).refresh();
+	refreshGrids: function() {
+	    if ('string' == typeof this.config.refreshGrid) {
+		    Ext.getCmp(this.config.refreshGrid).refresh();
 	    } else {
-		    for (var i = 0; i < this.config.refreshCmp.length; i++) {
-			    Ext.getCmp(this.config.refreshCmp[i]).refresh();
+		    for (var i = 0; i < this.config.refreshGrid.length; i++) {
+			    Ext.getCmp(this.config.refreshGrid[i]).refresh();
 		    }
 		}
     },
@@ -205,18 +205,18 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
         
         this.createSettingWindow = MODx.load({
 	        xtype		: 'clientsettings-window-setting-create',
-	        closeAction	:'close',
+	        closeAction	: 'close',
 	        listeners	: {
 		        'success'	: {
 		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
 		        }
-	         }
+	        }
         });
         
         this.createSettingWindow.show(e.target);
@@ -236,18 +236,18 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
         this.duplicateSettingWindow = MODx.load({
 	        xtype		: 'clientsettings-window-setting-duplicate',
 	        record		: record,
-	        closeAction	:'close',
+	        closeAction	: 'close',
 	        listeners	: {
 		        'success'	: {
 		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
 		        }
-	         }
+	        }
         });
 
         this.duplicateSettingWindow.setValues(record);
@@ -261,13 +261,13 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
         this.updateSettingWindow = MODx.load({
 	        xtype		: 'clientsettings-window-setting-update',
 	        record		: this.menu.record,
-	        closeAction	:'close',
+	        closeAction	: 'close',
 	        listeners	: {
 		        'success'	: {
 		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
@@ -292,7 +292,7 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
             		fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
@@ -301,34 +301,32 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
     	});
     },
     sortSetting: function() {
-		var grid = this;
-
 		var ddrow = new Ext.dd.DropTarget(this.getView().mainBody, {
-        	ddGroup 	: grid.config.ddGroup,
+        	ddGroup 	: this.config.ddGroup,
             notifyDrop 	: function(dd, e, data) {
-            	var sm = grid.getSelectionModel();
-                var sels = sm.getSelections();
-                var cindex = dd.getDragData(e).rowIndex;
+            	var sm = data.grid.getSelectionModel(),
+                	sels = sm.getSelections(),
+					index = dd.getDragData(e).rowIndex,
+					items = data.grid.getStore().data.items;
                 
-                if (undefined != cindex) {
-	                var record = grid.getStore().getAt(cindex);
+                if (undefined != index) {
+	                var record = data.grid.getStore().getAt(index);
 
 	                if (sm.hasSelection()) {
                 		for (i = 0; i < sels.length; i++) {
-	                    	grid.getStore().remove(grid.getStore().getById(sels[i].id));
-	                        grid.getStore().insert(cindex, sels[i]);
+	                    	data.grid.getStore().remove(data.grid.getStore().getById(sels[i].id));
+	                        data.grid.getStore().insert(index, sels[i]);
 	                    }
 	                    
 	                    sm.selectRecords(sels);
 	                }
 	                
-	                var sm = grid.getStore().data.items;
 	                var sort = new Array();
 	                
-	                for (var i = 0; i < sm.length; i++) {
-		                if (i == cindex || sm[i].data.category_id == record.data.category_id) {
+	                for (var i = 0; i < items.length; i++) {
+		                if (i == index || items[i].data.category_id == record.data.category_id) {
 			                sort.push({
-				                'id' 			: sm[i].id,
+				                'id' 			: items[i].id,
 				                'category_id'	: record.data.category_id
 				            });
 		                }
@@ -341,10 +339,10 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 			                sort 		: Ext.encode(sort)
 		                },
 		                success: function(r) {
-	            			grid.getSelectionModel().clearSelections(true);
+	            			data.grid.getSelectionModel().clearSelections(true);
 	            			
-	            			grid.rRefresh();
-	            			grid.refresh();
+	            			data.grid.refreshGrids();
+	            			data.grid.refresh();
 			            }
 		            });
                 }

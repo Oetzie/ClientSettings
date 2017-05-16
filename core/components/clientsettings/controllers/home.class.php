@@ -3,10 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
-	 *
-	 * This file is part of Client Settings, a real estate property listings component
-	 * for MODX Revolution.
+	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
 	 *
 	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
@@ -24,28 +21,7 @@
 
 	class ClientSettingsHomeManagerController extends ClientSettingsManagerController {
 		/**
-		 * @acces public.
-		 * @param Array $scriptProperties.
-		 */
-		public function process(array $scriptProperties = array()) {
-			if ($this->modx->getOption('use_editor') && $richtext = $this->modx->getOption('which_editor')) {
-				$properties = array(
-					'editor' 	=> $richtext,
-					'elements' 	=> array()
-				);
-
-				$onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', $properties);
-	            
-	            if (is_array($onRichTextEditorInit)) {
-					$onRichTextEditorInit = implode('', $onRichTextEditorInit);
-            	}
-            	
-            	$this->addHtml($onRichTextEditorInit);
-			}
-		}
-		
-		/**
-		 * @acces public.
+		 * @access public.
 		 */
 		public function loadCustomCssJs() {
 			$this->addCSS($this->clientsettings->config['css_url'].'mgr/clientsettings.css');
@@ -63,7 +39,7 @@
 		}
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return String.
 		 */
 		public function getPageTitle() {
@@ -71,11 +47,32 @@
 		}
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return String.
 		 */
 		public function getTemplateFile() {
 			return $this->clientsettings->config['templates_path'].'home.tpl';
+		}
+		
+		/**
+		 * @access public.
+		 * @param Array $scriptProperties.
+		 */
+		public function process(array $scriptProperties = array()) {
+			if ($this->modx->getOption('use_editor') && $richtext = $this->modx->getOption('which_editor')) {
+				$properties = array(
+					'editor' 	=> $richtext,
+					'elements' 	=> array()
+				);
+
+				$onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', $properties);
+	            
+	            if (is_array($onRichTextEditorInit)) {
+					$onRichTextEditorInit = implode('', $onRichTextEditorInit);
+            	}
+            	
+            	$this->addHtml($onRichTextEditorInit);
+			}
 		}
     }
 

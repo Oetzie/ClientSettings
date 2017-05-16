@@ -4,8 +4,18 @@ Ext.onReady(function() {
 
 ClientSettings.page.Home = function(config) {
 	config = config || {};
+	
+	config.buttons = [];
 
-	config.buttons = [{
+	if (ClientSettings.config.branding) {
+		config.buttons.push({
+			text 		: 'ClientSettings ' + ClientSettings.config.version,
+			cls			: 'x-btn-branding',
+			handler		: this.loadBranding
+		});
+	}
+
+	config.buttons.push({
     	xtype		: 'modx-combo-context',
     	hidden		: ClientSettings.config.context,
         value 		: MODx.request.context || MODx.config.default_context,
@@ -23,7 +33,7 @@ ClientSettings.page.Home = function(config) {
 		}
     }, {
 		text		: _('save'),
-		cls			:'primary-button',
+		cls			: 'primary-button',
 		method		: 'remote',
 		process 	: 'mgr/save',
 		checkDirty	: true,
@@ -31,9 +41,9 @@ ClientSettings.page.Home = function(config) {
 			ctrl		: true,
 			key			: MODx.config.keymap_save || 's'
 		}]
-	}, '-'];
+	}, '-');
 	
-	if (ClientSettings.config.admin) {
+	if (ClientSettings.config.has_permission) {
 		config.buttons.push({
 			text		: _('clientsettings.admin_view'),
 			handler		: this.toAdminView,
@@ -61,14 +71,8 @@ ClientSettings.page.Home = function(config) {
 };
 
 Ext.extend(ClientSettings.page.Home, MODx.Component, {
-	toAdminView: function() {
-		var request = MODx.request || {};
-		
-        Ext.apply(request, {
-	    	'action' : 'admin'  
-	    });
-        
-        MODx.loadPage('?' + Ext.urlEncode(request));
+	loadBranding: function(btn) {
+		window.open(ClientSettings.config.branding_url);
 	},
 	filterContext: function(tf) {
 		var request = MODx.request || {};
@@ -77,6 +81,15 @@ Ext.extend(ClientSettings.page.Home, MODx.Component, {
 	    	'context' : tf.getValue()  
 	    });
 	    
+        MODx.loadPage('?' + Ext.urlEncode(request));
+	},
+	toAdminView: function() {
+		var request = MODx.request || {};
+		
+        Ext.apply(request, {
+	    	'action' : 'admin'  
+	    });
+        
         MODx.loadPage('?' + Ext.urlEncode(request));
 	}
 });

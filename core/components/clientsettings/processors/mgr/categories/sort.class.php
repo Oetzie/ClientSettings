@@ -3,10 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
-	 *
-	 * This file is part of Client Settings, a real estate property listings component
-	 * for MODX Revolution.
+	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
 	 *
 	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
@@ -24,31 +21,31 @@
 
 	class ClientSettingsCategoriesSortProcessor extends modObjectProcessor {
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $classKey = 'ClientSettingsCategories';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Array.
 		 */
 		public $languageTopics = array('clientsettings:default');
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $objectType = 'clientsettings.categories';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Object.
 		 */
 		public $clientsettings;
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return Mixed.
 		 */
 		public function initialize() {
@@ -58,21 +55,23 @@
 		}
 		
 		/**
-		 * @acces public
+		 * @access public
 		 * @return Mixed.
 		 */
 		public function process() {
-			$sort = $this->modx->fromJSON($this->getProperty('sort'));
-
-			foreach ($sort as $key => $id) {
-				if (null !== ($object = $this->modx->getObject($this->classKey, $id))) {
-					$object->set('menuindex', $key);
-					
-					$object->save();
+			if (null !== ($sort = $this->modx->fromJSON($this->getProperty('sort')))) {
+				foreach ($sort as $key => $id) {
+					if (null !== ($object = $this->modx->getObject('ClientSettingsCategories', $id))) {
+						$object->fromArray(array(
+							'menuindex' => $key
+						));
+						
+						$object->save();
+					}
 				}
 			}
 			
-			return $this->hasErrors() ? $this->failure() : $this->success();
+			return $this->success();
 		}
 	}
 	

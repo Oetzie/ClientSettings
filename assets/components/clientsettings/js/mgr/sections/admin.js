@@ -5,7 +5,17 @@ Ext.onReady(function() {
 ClientSettings.page.Admin = function(config) {
 	config = config || {};
 	
-	config.buttons = [{
+	config.buttons = [];
+	
+	if (ClientSettings.config.branding) {
+		config.buttons.push({
+			text 		: 'ClientSettings ' + ClientSettings.config.version,
+			cls			: 'x-btn-branding',
+			handler		: this.loadBranding
+		});
+	}
+	
+	config.buttons.push({
 		text		: _('clientsettings.default_view'),
 		handler		: this.toDefaultView,
 		scope		: this
@@ -13,7 +23,7 @@ ClientSettings.page.Admin = function(config) {
 		text		: _('help_ex'),
 		handler		: MODx.loadHelpPane,
 		scope		: this
-	}];
+	});
 	
 	Ext.applyIf(config, {
 		components	: [{
@@ -26,6 +36,9 @@ ClientSettings.page.Admin = function(config) {
 };
 
 Ext.extend(ClientSettings.page.Admin, MODx.Component, {
+	loadBranding: function(btn) {
+		window.open(ClientSettings.config.branding_url);
+	},
 	toDefaultView: function() {
 		var request = MODx.request || {};
 		

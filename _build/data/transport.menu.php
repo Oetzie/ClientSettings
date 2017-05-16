@@ -21,7 +21,7 @@
 	    'menuindex' 	=> 0,
 	    'params' 		=> '',
 	    'handler' 		=> '',
-	    'permissions'	=> ''
+	    'permissions'	=> 'clientsettings'
 	), '', true, true);
 	
 	$menu->addOne($action);

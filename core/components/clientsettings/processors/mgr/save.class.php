@@ -24,31 +24,31 @@
 
 	class ClientSettingsValuesSaveProcessor extends modObjectProcessor {
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $classKey = 'ClientSettingsValues';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Array.
 		 */
 		public $languageTopics = array('clientsettings:default');
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $objectType = 'clientsettings.values';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Object.
 		 */
 		public $clientsettings;
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return Mixed.
 		 */
 		public function initialize() {
@@ -58,7 +58,7 @@
 		}
 		
 		/**
-		 * @acces public
+		 * @access public
 		 * @return Mixed.
 		 */
 		public function process() {
@@ -80,28 +80,27 @@
 						$key = '';
 					}
 					
-					$value = array(
-						'key'			=> $key,
-						'value' 		=> serialize($value)
-					);
-
 					$setting = array(
 						'setting_id' 	=> $setting,
 						'key'			=> $key,
 						'context' 		=> $context
 					);
 				
-					if (null === ($object = $this->modx->getObject($this->classKey, $setting))) {
-						$object = $this->modx->newObject($this->classKey, array_merge($setting, $value));
-					} else {
-						$object->fromArray($value);	
+					if (null === ($object = $this->modx->getObject('ClientSettingsValues', $setting))) {
+						$object = $this->modx->newObject('ClientSettingsValues');
 					}
-				
+					
+					$object->fromArray(array_merge($setting, array(
+						'key'			=> $key,
+						'value' 		=> serialize($value)
+					)));	
 					$object->save();
 				}
 			}
+			
+			$this->modx->invokeEvent('onClientSettingsSave');
 
-			return $this->hasErrors() ? $this->failure() : $this->success();
+			return $this->success();
 		}
 	}
 	

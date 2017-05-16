@@ -3,10 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
-	 *
-	 * This file is part of Client Settings, a real estate property listings component
-	 * for MODX Revolution.
+	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
 	 *
 	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
@@ -24,37 +21,37 @@
 	 
 	class ClientSettingsSettingsGetListProcessor extends modObjectGetListProcessor {
 		/**
-	 	 * @acces public.
+	 	 * @access public.
 		 * @var String.
 		 */
 		public $classKey = 'ClientSettingsSettings';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Array.
 		 */
 		public $languageTopics = array('clientsettings:default', 'clientsettings:settings', 'site:default');
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $defaultSortField = 'menuindex';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $defaultSortDirection = 'ASC';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var String.
 		 */
 		public $objectType = 'clientsettings.settings';
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Object.
 		 */
 		public $clientsettings;
@@ -67,7 +64,7 @@
 			$this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
 			
 			$this->setDefaultProperties(array(
-				'dateFormat' 	=> $this->modx->getOption('manager_date_format') .', '. $this->modx->getOption('manager_time_format')
+				'dateFormat' => $this->modx->getOption('manager_date_format') .', '. $this->modx->getOption('manager_time_format')
 			));
 			
 			return parent::initialize();
@@ -79,15 +76,16 @@
 		 * @return Object.
 		 */
 		public function prepareQueryBeforeCount(xPDOQuery $c) {
-			$c->leftJoin('ClientSettingsCategories', 'ClientSettingsCategories');
 			$c->select($this->modx->getSelectColumns('ClientSettingsSettings', 'ClientSettingsSettings'));
 			$c->select($this->modx->getSelectColumns('ClientSettingsCategories', 'ClientSettingsCategories', 'category_', array('name', 'menuindex')));
+			
+			$c->leftJoin('ClientSettingsCategories', 'ClientSettingsCategories');
 			
 			$category = $this->getProperty('category');
 			
 			if (!empty($category)) {
 				$c->where(array(
-					'ClientSettingsSettings.category_id'	=> $category
+					'ClientSettingsSettings.category_id' => $category
 				));
 			}
 			
@@ -95,18 +93,16 @@
 			
 			if (!empty($query)) {
 				$c->where(array(
-					'ClientSettingsSettings.key:LIKE' 		=> '%'.$query.'%'
+					'ClientSettingsSettings.key:LIKE' => '%'.$query.'%'
 				));
 			}
-			
-			$c->sortby('ClientSettingsCategories.menuindex', 'ASC');
-			
+
 			return $c;
 		}
 		
 		/**
 		 * @acces public.
-		 * @param Object $query.
+		 * @param Object $object.
 		 * @return Array.
 		 */
 		public function prepareRow(xPDOObject $object) {

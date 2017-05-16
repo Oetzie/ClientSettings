@@ -3,10 +3,7 @@
 	/**
 	 * Client Settings
 	 *
-	 * Copyright 2016 by Oene Tjeerd de Bruin <info@oetzie.nl>
-	 *
-	 * This file is part of Client Settings, a real estate property listings component
-	 * for MODX Revolution.
+	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
 	 *
 	 * Client Settings is free software; you can redistribute it and/or modify it under
 	 * the terms of the GNU General Public License as published by the Free Software
@@ -24,23 +21,23 @@
 
 	class ClientSettings {
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Object.
 		 */
 		public $modx;
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @var Array.
 		 */
 		public $config = array();
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @param Object $modx.
 		 * @param Array $config.
-		*/
-		function __construct(modX &$modx, array $config = array()) {
+		 */
+		public function __construct(modX &$modx, array $config = array()) {
 			$this->modx =& $modx;
 		
 			$corePath 		= $this->modx->getOption('clientsettings.core_path', $config, $this->modx->getOption('core_path').'components/clientsettings/');
@@ -49,7 +46,6 @@
 		
 			$this->config = array_merge(array(
 				'namespace'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
-				'helpurl'				=> $this->modx->getOption('namespace', $config, 'clientsettings'),
 				'lexicons'				=> array('clientsettings:default', 'clientsettings:settings', 'site:default'),
 				'base_path'				=> $corePath,
 				'core_path' 			=> $corePath,
@@ -66,6 +62,11 @@
 				'css_url' 				=> $assetsUrl.'css/',
 				'assets_url' 			=> $assetsUrl,
 				'connector_url'			=> $assetsUrl.'connector.php',
+				'version'				=> '1.1.1',
+				'branding'				=> (boolean) $this->modx->getOption('cientsettings.branding', null, true),
+				'branding_url'			=> 'http://www.oetzie.nl',
+				'branding_help_url'		=> 'http://www.werkvanoetzie.nl/extras/cientsettings',
+				'has_permission'		=> $this->hasPermission(),
 				'context'				=> $this->getContexts()
 			), $config);
 		
@@ -81,35 +82,23 @@
 		}
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return String.
 		 */
 		public function getHelpUrl() {
-			return $this->config['helpurl'];
+			return $this->config['branding_help_url'].'?v='.$this->config['version'];
 		}
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return Boolean.
 		 */
 		public function hasPermission() {
-			$usergroups = $this->modx->getOption('clientsettings.admin_groups', null, 'Administrator');
-			
-			$isMember = $this->modx->user->isMember(explode(',', $usergroups), false);
-			
-			if (!$isMember) {
-				$version = $this->modx->getVersionData();
-				
-				if (version_compare($version['full_version'], '2.2.1-pl') == 1) {
-					$isMember = (bool) $this->modx->user->get('sudo');
-				}
-			}
-			
-			return $isMember;
+			return $this->modx->hasPermission('clientsettings_admin');
 		}
 		
 		/**
-		 * @acces private.
+		 * @access private.
 		 * @return Boolean.
 		 */
 		private function getContexts() {
@@ -119,7 +108,7 @@
 		}
 		
 		/**
-		 * @acces protected.
+		 * @access protected.
 		 * @return Array.
 		 */
 		public function getContext() {
@@ -137,7 +126,7 @@
 		}
 		
 		/**
-		 * @acces protected.
+		 * @access protected.
 		 * @return Array.
 		 */
 		public function getCategories() {
@@ -184,7 +173,7 @@
 		}
 		
 		/**
-		 * @acces public.
+		 * @access public.
 		 * @return Array.
 		 */
 		public function getSettings() {
@@ -202,7 +191,7 @@
 
 			foreach ($this->modx->getCollection('ClientSettingsValues', $criteria) as $setting) {
 				if (!preg_match('/-replace$/si', $setting->setting_key)) {
-					$value =  unserialize($setting->value);
+					$value = unserialize($setting->value);
 					
 					if (is_array($value)) {
 						$value = implode(',', $value);
@@ -216,8 +205,7 @@
 		}
 		
 		/**
-		 * @acces public.
-		 * @return null;
+		 * @access public.
 		 */
 		public function run() {
 			$settings = $this->getSettings();
@@ -229,8 +217,6 @@
 					$this->modx->setOption($key, $value);
 				}
 			}
-			
-			return null;
 		}
 	}
 	

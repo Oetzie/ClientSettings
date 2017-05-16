@@ -4,14 +4,8 @@ ClientSettings.panel.Admin = function(config) {
 	Ext.apply(config, {
 		id			: 'clientsettings-panel-admin',
 		cls			: 'container',
-		defaults	: {
-			collapsible	: false,
-			autoHeight	: true,
-			autoWidth	: true,
-			border		: false
-		},
 		items		: [{
-			html		: '<h2>'+_('clientsettings')+'</h2>',
+			html		: '<h2>' + _('clientsettings') + '</h2>',
 			id			: 'clientsettings-header',
 			cls			: 'modx-page-header'
 		}, {
@@ -19,35 +13,25 @@ ClientSettings.panel.Admin = function(config) {
 			items		: [{
 				layout		: 'form',
 				title		: _('clientsettings.settings'),
-				defaults	: {
-					autoHeight	: true,
-					autoWidth	: true,
-					border		: false
-				},
 				items		: [{
-					html			: '<p>'+_('clientsettings.settings_desc')+'</p>',
+					html			: '<p>' + _('clientsettings.settings_desc') + '</p>',
 					bodyCssClass	: 'panel-desc'
 				}, {
 					xtype			: 'clientsettings-grid-settings',
 					cls				: 'main-wrapper',
-					refreshCmp		: ['clientsettings-grid-admin-categories'],
+					refreshGrid		: ['clientsettings-grid-admin-categories'],
 					preventRender	: true
 				}]
 			}, {
 				layout		: 'form',
 				title		: _('clientsettings.categories'),
-				defaults	: {
-					autoHeight	: true,
-					autoWidth	: true,
-					border		: false
-				},
 				items		: [{
-					html			: '<p>'+_('clientsettings.categories_desc')+'</p>',
+					html			: '<p>' + _('clientsettings.categories_desc') + '</p>',
 					bodyCssClass	: 'panel-desc'
 				}, {
 					xtype			: 'clientsettings-grid-categories',
 					cls				: 'main-wrapper',
-					refreshCmp		: ['clientsettings-grid-admin-settings'],
+					refreshGrid		: ['clientsettings-grid-admin-settings'],
 					preventRender	: true
 				}]
 			}]

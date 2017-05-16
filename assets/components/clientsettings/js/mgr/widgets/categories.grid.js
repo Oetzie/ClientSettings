@@ -2,10 +2,10 @@ ClientSettings.grid.Categories = function(config) {
     config = config || {};
 
 	config.tbar = [{
-        text	: _('clientsettings.category_create'),
-        cls		:'primary-button',
-        handler	: this.createCategory,
-        scope	: this
+        text		: _('clientsettings.category_create'),
+        cls			: 'primary-button',
+        handler		: this.createCategory,
+        scope		: this
     }, '->', {
         xtype		: 'textfield',
         name 		: 'clientsettings-filter-search-categories',
@@ -96,7 +96,7 @@ ClientSettings.grid.Categories = function(config) {
         paging		: true,
         pageSize	: MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
         sortBy		: 'menuindex',
-        refreshCmp 	: '',
+        refreshGrid : [],
         enableDragDrop : true,
 	    ddGroup 	: 'clientsettings-grid-admin-categories',
 	    listeners	: {
@@ -136,12 +136,12 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
 		    scope	: this
 		}];
     },
-    rRefresh : function() {
-	    if ('string' == typeof this.config.refreshCmp) {
-		    Ext.getCmp(this.config.refreshCmp).refresh();
+    refreshGrids: function() {
+	    if ('string' == typeof this.config.refreshGrid) {
+		    Ext.getCmp(this.config.refreshGrid).refresh();
 	    } else {
-		    for (var i = 0; i < this.config.refreshCmp.length; i++) {
-			    Ext.getCmp(this.config.refreshCmp[i]).refresh();
+		    for (var i = 0; i < this.config.refreshGrid.length; i++) {
+			    Ext.getCmp(this.config.refreshGrid[i]).refresh();
 		    }
 		}
     },
@@ -152,20 +152,19 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
         
         this.updateCategoryWindow = MODx.load({
 	        xtype		: 'clientsettings-window-category-create',
-	        closeAction	:'close',
+	        closeAction	: 'close',
 	        listeners	: {
 		        'success'	: {
 		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
 		        }
-	         }
+	        }
         });
-        
         
         this.updateCategoryWindow.show(e.target);
     },
@@ -177,18 +176,18 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
         this.createCategoryWindow = MODx.load({
 	        xtype		: 'clientsettings-window-category-update',
 	        record		: this.menu.record,
-	        closeAction	:'close',
+	        closeAction	: 'close',
 	        listeners	: {
 		        'success'	: {
 		        	fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
 		        }
-	         }
+	        }
         });
         
         this.createCategoryWindow.setValues(this.menu.record);
@@ -208,7 +207,7 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
             		fn			: function() {
             			this.getSelectionModel().clearSelections(true);
             			
-            			this.rRefresh();
+            			this.refreshGrids();
             			this.refresh();
             		},
 		        	scope		: this
@@ -217,45 +216,45 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     	});
     },
     sortCategory: function() {
-	    var grid = this;
-
-		var ddrow = new Ext.dd.DropTarget(this.getView().mainBody, {
-        	ddGroup 	: grid.config.ddGroup,
+		new Ext.dd.DropTarget(this.getView().mainBody, {
+        	ddGroup 	: this.config.ddGroup,
             notifyDrop 	: function(dd, e, data) {
-            	var sm = grid.getSelectionModel();
-                var sels = sm.getSelections();
-                var cindex = dd.getDragData(e).rowIndex;
+            	var sm = data.grid.getSelectionModel(),
+                	sels = sm.getSelections(),
+					index = dd.getDragData(e).rowIndex,
+					items = data.grid.getStore().data.items;
                 
-                if (sm.hasSelection()) {
-                	for (i = 0; i < sels.length; i++) {
-                    	grid.getStore().remove(grid.getStore().getById(sels[i].id));
-                        grid.getStore().insert(cindex, sels[i]);
-                    }
-                    
-                    sm.selectRecords(sels);
-                }
-                
-                var sm = grid.getStore().data.items;
-                var sort = new Array();
-                
-                for (var i = 0; i < sm.length; i++) {
-	                sort.push(sm[i].id);
-                }
-
-                Ext.Ajax.request({
-	                url		: ClientSettings.config.connector_url,
-	                params 	: {
-		                action	: 'mgr/categories/sort',
-		                sort 	: Ext.encode(sort)
-	                },
-	                success: function(r) {
-            			grid.getSelectionModel().clearSelections(true);
-            			
-            			grid.rRefresh();
-            			grid.refresh();
-		            }
-	            });
-            }
+                if (undefined != index) {
+	                if (sm.hasSelection()) {
+	                	for (i = 0; i < sels.length; i++) {
+	                    	data.grid.getStore().remove(data.grid.getStore().getById(sels[i].id));
+	                        data.grid.getStore().insert(index, sels[i]);
+	                    }
+	                    
+	                    sm.selectRecords(sels);
+	                }
+	                
+	                var sort = new Array();
+	                
+	                for (var i = 0; i < items.length; i++) {
+		                sort.push(items[i].id);
+	                }
+	
+	                Ext.Ajax.request({
+		                url		: ClientSettings.config.connector_url,
+		                params 	: {
+			                action	: 'mgr/categories/sort',
+			                sort 	: Ext.encode(sort)
+		                },
+		                success : function(r) {
+	            			data.grid.getSelectionModel().clearSelections(true);
+	            			
+	            			data.grid.refreshGrids();
+	            			data.grid.refresh();
+			            }
+		            });
+		        }
+        	}
         });
 	},
     renderBoolean: function(d, c) {
@@ -292,7 +291,7 @@ ClientSettings.window.CreateCategory = function(config) {
                 labelSeparator : ''
             },
         	items		: [{
-	        	columnWidth	: .8,
+	        	columnWidth	: .85,
 	        	items		: [{
 		        	xtype		: 'textfield',
 		        	fieldLabel	: _('clientsettings.label_category_name'),
@@ -306,7 +305,7 @@ ClientSettings.window.CreateCategory = function(config) {
 		            cls			: 'desc-under'
 		        }]
 	        }, {
-		        columnWidth	: .2,
+		        columnWidth	: .15,
 		        style		: 'margin-right: 0;',
 		        items		: [{
 			        xtype		: 'checkbox',
@@ -372,7 +371,7 @@ ClientSettings.window.UpdateCategory = function(config) {
                 labelSeparator : ''
             },
         	items		: [{
-	        	columnWidth	: .8,
+	        	columnWidth	: .85,
 	        	items		: [{
 		        	xtype		: 'textfield',
 		        	fieldLabel	: _('clientsettings.label_category_name'),
@@ -386,7 +385,7 @@ ClientSettings.window.UpdateCategory = function(config) {
 		            cls			: 'desc-under'
 		        }]
 	        }, {
-		        columnWidth	: .2,
+		        columnWidth	: .15,
 		        style		: 'margin-right: 0;',
 		        items		: [{
 			        xtype		: 'checkbox',
