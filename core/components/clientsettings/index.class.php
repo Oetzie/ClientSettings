@@ -1,76 +1,66 @@
 <?php
 
-	/**
-	 * Client Settings
-	 *
-	 * Copyright 2017 by Oene Tjeerd de Bruin <modx@oetzie.nl>
-	 *
-	 * Client Settings is free software; you can redistribute it and/or modify it under
-	 * the terms of the GNU General Public License as published by the Free Software
-	 * Foundation; either version 2 of the License, or (at your option) any later
-	 * version.
-	 *
-	 * Client Settings is distributed in the hope that it will be useful, but WITHOUT ANY
-	 * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-	 * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-	 *
-	 * You should have received a copy of the GNU General Public License along with
-	 * Client Settings; if not, write to the Free Software Foundation, Inc., 59 Temple Place,
-	 * Suite 330, Boston, MA 02111-1307 USA
-	 */
-
-	abstract class ClientSettingsManagerController extends modExtraManagerController {
-		/**
-		 * @access public.
-		 * @var Object.
-		 */
-		public $clientsettings;
-		
-		/**
-		 * @access public.
-		 * @return Mixed.
-		 */
-		public function initialize() {
-			$this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
-			
-			$this->addJavascript($this->clientsettings->config['js_url'].'mgr/clientsettings.js');
-			
-			$this->addHtml('<script type="text/javascript">
-				Ext.onReady(function() {
-					MODx.config.help_url = "'.$this->clientsettings->getHelpUrl().'";
-			
-					ClientSettings.config = '.$this->modx->toJSON($this->clientsettings->config).';
-				});
-			</script>');
-			
-			return parent::initialize();
-		}
-		
-		/**
-		 * @access public.
-		 * @return Array.
-		 */
-		public function getLanguageTopics() {
-			return $this->clientsettings->config['lexicons'];
-		}
-		
-		/**
-		 * @access public.
-		 * @returns Boolean.
-		 */	    
-		public function checkPermissions() {
-			return $this->modx->hasPermission('clientsettings');
-		}
-	}
-		
-	class IndexManagerController extends ClientSettingsManagerController {
-		/**
-		 * @access public.
-		 * @return String.
-		 */
-		public static function getDefaultController() {
-			return 'home';
-		}
-	}
+    /**
+     * Client Settings
+     *
+     * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
+     */
+    
+    abstract class ClientSettingsManagerController extends modExtraManagerController {
+        /**
+         * @access public.
+         * @var Object.
+         */
+        public $clientsettings;
+        
+        /**
+        * @access public.
+        * @return Mixed.
+        */
+        public function initialize() {
+            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            
+            $this->addJavascript($this->clientsettings->config['js_url'].'mgr/clientsettings.js');
+            
+            $this->addHtml('<script type="text/javascript">
+                Ext.onReady(function() {
+                    MODx.config.help_url = "'.$this->clientsettings->getHelpUrl().'";
+                    
+                    ClientSettings.config = '.$this->modx->toJSON(array_merge($this->clientsettings->config, array(
+                        'branding_url'          => $this->clientsettings->getBrandingUrl(),
+                        'branding_url_help'     => $this->clientsettings->getHelpUrl()
+                    ))).';
+                });
+            </script>');
+            
+            return parent::initialize();
+        }
+        
+        /**
+         * @access public.
+         * @return Array.
+         */
+        public function getLanguageTopics() {
+            return $this->clientsettings->config['lexicons'];
+        }
+        
+        /**
+         * @access public.
+         * @returns Boolean.
+         */	    
+        public function checkPermissions() {
+            return $this->modx->hasPermission('clientsettings');
+        }
+    }
+        
+    class IndexManagerController extends ClientSettingsManagerController {
+        /**
+         * @access public.
+         * @return String.
+         */
+        public static function getDefaultController() {
+            return 'home';
+        }
+    }
 
 ?>
