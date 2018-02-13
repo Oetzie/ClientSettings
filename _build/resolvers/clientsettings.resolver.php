@@ -1,7 +1,5 @@
 <?php
     
-    $package = 'DigitalSignage';
-    
     $success = false;
 
     $permissions = [
