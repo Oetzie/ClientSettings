@@ -8,10 +8,10 @@
     
     switch($modx->event->name) {
         case 'OnLoadWebDocument':
-            $clientsettings = $modx->getService('clientsettings', 'ClientSettings', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $modx->getService('clientsettings', 'ClientSettings', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
-            if ($clientsettings instanceof ClientSettings) {
-                return $clientsettings->onLoadWebDocument();
+            if ($modx->clientsettings instanceof ClientSettings) {
+                return $modx->clientsettings->onLoadWebDocument();
             }
             
             break;

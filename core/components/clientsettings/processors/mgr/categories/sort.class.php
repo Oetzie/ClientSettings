@@ -11,7 +11,7 @@
          * @access public.
          * @var String.
          */
-        public $classKey = 'ClientSettingsCategories';
+        public $classKey = 'ClientSettingsCategory';
         
         /**
          * @access public.
@@ -23,20 +23,14 @@
          * @access public.
          * @var String.
          */
-        public $objectType = 'clientsettings.categories';
-        
-        /**
-         * @access public.
-         * @var Object.
-         */
-        public $clientsettings;
+        public $objectType = 'clientsettings.category';
         
         /**
          * @access public.
          * @return Mixed.
          */
         public function initialize() {
-            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
             return parent::initialize();
         }
@@ -48,7 +42,7 @@
         public function process() {
             if (null !== ($sort = $this->modx->fromJSON($this->getProperty('sort')))) {
                 foreach ($sort as $key => $id) {
-                    if (null !== ($object = $this->modx->getObject('ClientSettingsCategories', $id))) {
+                    if (null !== ($object = $this->modx->getObject('ClientSettingsCategory', $id))) {
                         $object->fromArray([
                             'menuindex' => $key
                         ]);

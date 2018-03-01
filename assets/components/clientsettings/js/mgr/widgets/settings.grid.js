@@ -150,7 +150,7 @@ ClientSettings.grid.Settings = function(config) {
 };
 
 Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
-	filterCategory: function(tf, nv, ov) {
+    filterCategory: function(tf, nv, ov) {
         this.getStore().baseParams.category = tf.getValue();
         
         this.getBottomToolbar().changePage(1);
@@ -162,7 +162,7 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
     },
     clearFilter: function() {
         this.getStore().baseParams.category = '';
-        this.getStore().baseParams.query 	= '';
+        this.getStore().baseParams.query    = '';
         
         Ext.getCmp('clientsettings-filter-settings-categories').reset();
         Ext.getCmp('clientsettings-filter-settings-search').reset();
@@ -295,11 +295,11 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
             this.duplicateSettingWindow.destroy();
         }
         
-        var record = Ext.apply({}, this.menu.record);
+        var record = Ext.apply({}, {
+            key : 'copy_' + this.menu.record.key
+        }, this.menu.record);
         
-        Ext.apply(record, {
-            keys : 'copy_' + this.menu.record.key
-        });
+        console.log(record);
         
         this.duplicateSettingWindow = MODx.load({
             xtype       : 'clientsettings-window-setting-duplicate',
@@ -425,7 +425,6 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .2,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'checkbox',
                             fieldLabel  : _('clientsettings.label_setting_active'),
@@ -463,7 +462,6 @@ ClientSettings.window.CreateSetting = function(config) {
                 }]
             }, {
                 columnWidth : .5,
-                style       : 'margin-right: 0;',
                 items       : [{
                     xtype       : 'clientsettings-combo-xtype',
                     fieldLabel  : _('clientsettings.label_setting_xtype'),
@@ -520,22 +518,7 @@ ClientSettings.window.CreateSetting = function(config) {
             },
             items       : [{
                 xtype       : 'panel',
-                id          : 'clientsettings-extra-default-create',
-                style       : 'padding-top: 2px',
-                hidden      : false,
-                defaults    : {
-                    layout      : 'form',
-                    labelSeparator : ''
-                },
-                items       : [{
-                    xtype       : 'label',
-                    html        : _('clientsettings.no_extra_settings'),
-                    cls         : 'desc-under'
-                }]
-            }, {
-                xtype       : 'panel',
                 id          : 'clientsettings-extra-datefield-create',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -565,7 +548,6 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'datefield',
                             fieldLabel  : _('clientsettings.label_setting_maxdate'),
@@ -584,7 +566,6 @@ ClientSettings.window.CreateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-timefield-create',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -613,7 +594,6 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'timefield',
                             fieldLabel  : _('clientsettings.label_setting_maxtime'),
@@ -631,7 +611,6 @@ ClientSettings.window.CreateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-richtext-create',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -671,7 +650,6 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'textfield',
                             fieldLabel  : _('clientsettings.label_setting_toolbar2'),
@@ -700,7 +678,6 @@ ClientSettings.window.CreateSetting = function(config) {
             }, {
                 xtype       : 'clientsettings-combo-values',
                 id          : 'clientsettings-extra-combo-create',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -709,7 +686,6 @@ ClientSettings.window.CreateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-browser-create',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -749,7 +725,6 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'textfield',
                             fieldLabel  : _('clientsettings.label_setting_opento'),
@@ -888,7 +863,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .2,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'checkbox',
                             fieldLabel  : _('clientsettings.label_setting_active'),
@@ -925,7 +899,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                 }]
             }, {
                 columnWidth : .5,
-                style       : 'margin-right: 0;',
                 items       : [{
                     xtype       : 'clientsettings-combo-xtype',
                     fieldLabel  : _('clientsettings.label_setting_xtype'),
@@ -981,22 +954,7 @@ ClientSettings.window.DuplicateSetting = function(config) {
             },
             items       : [{
                 xtype       : 'panel',
-                id          : 'clientsettings-extra-default-copy',
-                style       : 'padding-top: 2px',
-                hidden      : false,
-                defaults    : {
-                    layout      : 'form',
-                    labelSeparator : ''
-                },
-                items       : [{
-                    xtype       : 'label',
-                    html        : _('clientsettings.no_extra_settings'),
-                    cls         : 'desc-under'
-                }]
-            }, {
-                xtype       : 'panel',
                 id          : 'clientsettings-extra-datefield-copy',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1027,7 +985,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'datefield',
                             fieldLabel  : _('clientsettings.label_setting_maxdate'),
@@ -1047,7 +1004,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-timefield-copy',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1077,7 +1033,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'timefield',
                             fieldLabel  : _('clientsettings.label_setting_maxtime'),
@@ -1096,7 +1051,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-richtext-copy',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1136,7 +1090,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'textfield',
                             fieldLabel  : _('clientsettings.label_setting_toolbar2'),
@@ -1165,7 +1118,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
             }, {
                 xtype       : 'clientsettings-combo-values',
                 id          : 'clientsettings-extra-combo-copy',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1175,7 +1127,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-browser-copy',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1215,7 +1166,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'textfield',
                             fieldLabel  : _('clientsettings.label_setting_opento'),
@@ -1360,7 +1310,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .2,
-                        style       : 'margin-right: 0;',
                         items		: [{
                             xtype       : 'checkbox',
                             fieldLabel  : _('clientsettings.label_setting_active'),
@@ -1397,7 +1346,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                 }]
             }, {
                 columnWidth : .5,
-                style       : 'margin-right: 0;',
                 items       : [{
                     xtype       : 'clientsettings-combo-xtype',
                     fieldLabel  : _('clientsettings.label_setting_xtype'),
@@ -1453,22 +1401,7 @@ ClientSettings.window.UpdateSetting = function(config) {
             },
             items       : [{
                 xtype       : 'panel',
-                id          : 'clientsettings-extra-default-update',
-                style       : 'padding-top: 2px',
-                hidden      : false,
-                defaults    : {
-                    layout      : 'form',
-                    labelSeparator : ''
-                },
-                items       : [{
-                    xtype       : 'label',
-                    html        : _('clientsettings.no_extra_settings'),
-                    cls         : 'desc-under'
-                }]
-            }, {
-                xtype       : 'panel',
                 id          : 'clientsettings-extra-datefield-update',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1499,7 +1432,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'datefield',
                             fieldLabel  : _('clientsettings.label_setting_maxdate'),
@@ -1519,7 +1451,6 @@ ClientSettings.window.UpdateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-timefield-update',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1549,7 +1480,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'timefield',
                             fieldLabel  : _('clientsettings.label_setting_maxtime'),
@@ -1568,7 +1498,6 @@ ClientSettings.window.UpdateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-richtext-update',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1608,7 +1537,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'textfield',
                             fieldLabel  : _('clientsettings.label_setting_toolbar2'),
@@ -1637,7 +1565,6 @@ ClientSettings.window.UpdateSetting = function(config) {
             }, {
                 xtype       : 'clientsettings-combo-values',
                 id          : 'clientsettings-extra-combo-update',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1647,7 +1574,6 @@ ClientSettings.window.UpdateSetting = function(config) {
             }, {
                 xtype       : 'panel',
                 id          : 'clientsettings-extra-browser-update',
-                style       : 'padding-top: 15px',
                 hidden      : true,
                 defaults    : {
                     layout      : 'form',
@@ -1687,7 +1613,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }, {
                         columnWidth : .5,
-                        style       : 'margin-right: 0;',
                         items       : [{
                             xtype       : 'textfield',
                             fieldLabel  : _('clientsettings.label_setting_opento'),
@@ -1939,8 +1864,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
             autoEl      : {
                 tag         : 'a',
                 html        : '<i class="icon icon-plus"></i>',
-                style       : 'padding: 9px; margin: 0 5px; cursor: pointer;',
-                cls         : 'x-btn',
+                cls         : 'x-btn x-btn-clientsettings',
                 current     : this.config.id + '-' + id
             },
             listeners   : {
@@ -1961,8 +1885,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
             autoEl      : {
                 tag         : 'a',
                 html        : '<i class="icon icon-minus"></i>',
-                style       : 'padding: 9px; margin: 0 5px; cursor: pointer;',
-                cls         : 'x-btn',
+                cls         : 'x-btn x-btn-clientsettings',
                 current     : this.config.id + '-' + id
             },
             listeners   : {
@@ -1987,7 +1910,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
                 hideLabels  : true
             },
             items       : [{
-                columnWidth : .41,
+                columnWidth : .42,
                 items       : [{
                     xtype       : 'textfield',
                     anchor      : '100%',
@@ -2002,7 +1925,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
                     }
                 }]
             }, {
-                columnWidth : .41,
+                columnWidth : .42,
                 items       : [{
                     xtype       : 'textfield',
                     anchor      : '100%',
@@ -2017,8 +1940,7 @@ Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
                     }
                 }]
             }, {
-                columnWidth : .18,
-                style       : 'margin-right: 0;',
+                columnWidth : .16,
                 cls         : 'x-form-item',
                 items       : 0 == index ? [nextBtn] : [nextBtn, prevBtn]
             }]

@@ -6,6 +6,6 @@
      * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
      */
     
-    class ClientSettingsValues extends xPDOSimpleObject {}
+    class ClientSettingsValue extends xPDOSimpleObject {}
 
 ?>

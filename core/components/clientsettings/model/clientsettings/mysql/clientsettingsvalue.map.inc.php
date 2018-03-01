@@ -6,22 +6,17 @@
      * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
      */
     
-    $xpdo_meta_map['ClientSettingsSettings'] = [
+    $xpdo_meta_map['ClientSettingsValue'] = [
         'package'       => 'clientsettings',
         'version'       => '1.0',
-        'table'         => 'clientsettings_settings',
+        'table'         => 'clientsettings_value',
         'extends'       => 'xPDOSimpleObject',
         'fields'        => [
             'id'            => null,
-            'category_id'   => null,
+            'setting_id'    => null,
+            'context'       => null,
             'key'           => null,
-            'label'         => null,
-            'description'   => null,
-            'xtype'         => null,
-            'exclude'       => null,
-            'extra'         => null,
-            'menuindex'     => null,
-            'active'        => null,
+            'value'         => null,
             'editedon'      => null
         ],
         'fieldMeta'     => [
@@ -33,10 +28,16 @@
                 'index'         => 'pk',
                 'generated'     => 'native'
             ],
-            'category_id'   => [
+            'setting_id'    => [
                 'dbtype'        => 'int',
                 'precision'     => '11',
                 'phptype'       => 'integer',
+                'null'          => false
+            ],
+            'context'       => [
+                'dbtype'        => 'varchar',
+                'precision'     => '75',
+                'phptype'       => 'string',
                 'null'          => false
             ],
             'key'           => [
@@ -45,47 +46,10 @@
                 'phptype'       => 'string',
                 'null'          => false
             ],
-            'label'         => [
-                'dbtype'        => 'varchar',
-                'precision'     => '75',
-                'phptype'       => 'string',
-                'null'          => false
-            ],
-            'description'   => [
-                'dbtype'        => 'varchar',
-                'precision'     => '255',
-                'phptype'       => 'string',
-                'null'          => false
-            ],
-            'xtype'         => [
-                'dbtype'        => 'varchar',
-                'precision'     => '75',
-                'phptype'       => 'string',
-                'null'          => false
-            ],
-            'exclude'       => [
-                'dbtype'        => 'varchar',
-                'precision'     => '255',
-                'phptype'       => 'string',
-                'null'          => false
-            ],
-            'extra'         => [
+            'value'         => [
                 'dbtype'        => 'text',
                 'phptype'       => 'string',
                 'null'          => false
-            ],
-            'menuindex'     => [
-                'dbtype'        => 'int',
-                'precision'     => '11',
-                'phptype'       => 'integer',
-                'null'          => false
-            ],
-            'active'        => [
-                'dbtype'        => 'int',
-                'precision'     => '1',
-                'phptype'       => 'integer',
-                'null'          => false,
-                'default'       => 1
             ],
             'editedon'      => [
                 'dbtype'        => 'timestamp',
@@ -102,25 +66,18 @@
                 'columns'       => [
                     'id'            => [
                         'collation'     => 'A',
-                        'null'          => false,
+                        'null'          => false
                     ]
                 ]
             ]
         ],
         'aggregates'    => [
-            'Category'      => [
-                'local'         => 'category_id',
-                'class'         => 'ClientSettingsCategories',
+            'Setting'       => [
+                'local'         => 'setting_id',
+                'class'         => 'ClientSettingsSetting',
                 'foreign'       => 'id',
                 'owner'         => 'foreign',
                 'cardinality'   => 'one'
-            ],
-            'Value'         => [
-                'local'         => 'id',
-                'class'         => 'ClientSettingsValues',
-                'foreign'       => 'setting_id',
-                'owner'         => 'local',
-                'cardinality'   => 'many'
             ]
         ]
     ];

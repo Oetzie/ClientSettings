@@ -11,7 +11,7 @@
          * @access public.
          * @var String.
          */
-        public $classKey = 'ClientSettingsCategories';
+        public $classKey = 'ClientSettingsCategory';
     
         /**
          * @access public.
@@ -35,23 +35,17 @@
          * @access public.
          * @var String.
          */
-        public $objectType = 'clientsettings.categories';
+        public $objectType = 'clientsettings.category';
         
-        /**
-         * @access public.
-         * @var Object.
-         */
-        public $clientsettings;
-    
         /**
          * @acces public.
          * @return Mixed.
          */
         public function initialize() {
-            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
             $this->setDefaultProperties([
-                'dateFormat' => $this->modx->getOption('manager_date_format').', '. $this->modx->getOption('manager_time_format')
+                'dateFormat' => $this->modx->getOption('manager_date_format') . ', ' .  $this->modx->getOption('manager_time_format')
             ]);
             
             return parent::initialize();
@@ -67,8 +61,8 @@
             
             if (!empty($query)) {
                 $c->where([
-                    'name:LIKE'             => '%'.$query.'%',
-                    'OR:description:LIKE'   => '%'.$query.'%'
+                    'name:LIKE'             => '%' . $query . '%',
+                    'OR:description:LIKE'   => '%' . $query . '%'
                 ]);
             }
             
@@ -82,27 +76,27 @@
         */
         public function prepareRow(xPDOObject $object) {
             $array = array_merge($object->toArray(), [
-                'settings'              => count($object->getMany('Settings')),
+                'settings'              => $object->getSettingsCount(),
                 'name_formatted'        => $object->get('name'),
                 'description_formatted' => $object->get('description')
             ]);
             
-            $translationKey = 'category_clientsettings.'.$object->get('name');
+            $translationKey = 'category_clientsettings.' . $object->get('name');
             
             if ($translationKey !== ($translation = $this->modx->lexicon($translationKey))) {
                 $array['name_formatted'] = $translation;
             }
             
-            $translationKey = 'category_clientsettings.'.$object->get('description').'_desc';
+            $translationKey = 'category_clientsettings.' . $object->get('description').'_desc';
             
             if ($translationKey !== ($translation = $this->modx->lexicon($translationKey))) {
                 $array['description_formatted'] = $translation;
             }
             
-            if (in_array($array['editedon'], ['-001-11-30 00:00:00', '-1-11-30 00:00:00', '0000-00-00 00:00:00', null])) {
+            if (in_array($object->get('editedon'), ['-001-11-30 00:00:00', '0000-00-00 00:00:00'])) {
                 $array['editedon'] = '';
             } else {
-                $array['editedon'] = date($this->getProperty('dateFormat'), strtotime($array['editedon']));
+                $array['editedon'] = date($this->getProperty('dateFormat'), strtotime($object->get('editedon')));
             }
             
             return $array;	

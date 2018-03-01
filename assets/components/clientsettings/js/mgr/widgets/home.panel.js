@@ -10,7 +10,6 @@ ClientSettings.panel.Home = function(config) {
         cls         : 'container',
         items       : [{
             html        : '<h2>' + _('clientsettings') + '</h2>',
-            id          : 'clientsettings-header',
             cls         : 'modx-page-header'
         }, {
             layout      : 'form',
@@ -296,7 +295,7 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                                     id      : element.id + '-replace',
                                     value   : undefined == categories.values[name] ? '' : categories.values[name].value,
                                 });
-                                
+                 
                                 element = Ext.applyIf({
                                     xtype       : 'modx-combo-browser',
                                     name        : element.name + '-replace',

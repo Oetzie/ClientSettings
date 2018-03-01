@@ -6,7 +6,7 @@
      * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
      */
     
-    class ClientSettingsSettings extends xPDOSimpleObject {
+    class ClientSettingsSetting extends xPDOSimpleObject {
         /**
          * @access public.
          * @param Integer $categoryID.
@@ -15,16 +15,16 @@
          */
         public function getMenuIndex($categoryID, $reset = true) {
             if ($reset || $categoryID != $this->get('category_id')) {
-                $c = $this->xpdo->newQuery('ClientSettingsSettings');
+                $query = $this->xpdo->newQuery('ClientSettingsSetting');
                 
-                $c->where([
+                $query->where([
                     'category_id' => $categoryID
                 ]);
                 
-                $c->sortby('menuindex', 'DESC');
-                $c->limit(1);
+                $query->sortby('menuindex', 'DESC');
+                $query->limit(1);
                 
-                if (null !== ($object = $this->xpdo->getObject('ClientSettingsSettings', $c))) {
+                if (null !== ($object = $this->xpdo->getObject('ClientSettingsSetting', $query))) {
                     return (int) $object->get('menuindex') + 1;
                 } else {
                     return 0;

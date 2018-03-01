@@ -18,3 +18,9 @@
 .modx-config-error {
 	margin-bottom: 15px;
 }
+
+.x-form-item .x-btn.x-btn-clientsettings {
+    padding: 9px;
+    margin: 0 7px;
+    cursor: pointer;
+}

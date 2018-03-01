@@ -6,16 +6,20 @@
      * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
      */
     
-    $xpdo_meta_map['ClientSettingsCategories'] = [
+    $xpdo_meta_map['ClientSettingsSetting'] = [
         'package'       => 'clientsettings',
         'version'       => '1.0',
-        'table'         => 'clientsettings_categories',
+        'table'         => 'clientsettings_setting',
         'extends'       => 'xPDOSimpleObject',
         'fields'        => [
             'id'            => null,
-            'name'          => null,
+            'category_id'   => null,
+            'key'           => null,
+            'label'         => null,
             'description'   => null,
+            'xtype'         => null,
             'exclude'       => null,
+            'extra'         => null,
             'menuindex'     => null,
             'active'        => null,
             'editedon'      => null
@@ -29,14 +33,33 @@
                 'index'         => 'pk',
                 'generated'     => 'native'
             ],
-            'name'          => [
+            'category_id'   => [
+                'dbtype'        => 'int',
+                'precision'     => '11',
+                'phptype'       => 'integer',
+                'null'          => false
+            ],
+            'key'           => [
+                'dbtype'        => 'varchar',
+                'precision'     => '75',
+                'phptype'       => 'string',
+                'null'          => false
+            ],
+            'label'         => [
                 'dbtype'        => 'varchar',
                 'precision'     => '75',
                 'phptype'       => 'string',
                 'null'          => false
             ],
             'description'   => [
-                'dbtype'        => 'text',
+                'dbtype'        => 'varchar',
+                'precision'     => '255',
+                'phptype'       => 'string',
+                'null'          => false
+            ],
+            'xtype'         => [
+                'dbtype'        => 'varchar',
+                'precision'     => '75',
                 'phptype'       => 'string',
                 'null'          => false
             ],
@@ -46,7 +69,12 @@
                 'phptype'       => 'string',
                 'null'          => false
             ],
-            'menuindex'	     => [
+            'extra'         => [
+                'dbtype'        => 'text',
+                'phptype'       => 'string',
+                'null'          => false
+            ],
+            'menuindex'     => [
                 'dbtype'        => 'int',
                 'precision'     => '11',
                 'phptype'       => 'integer',
@@ -63,7 +91,8 @@
                 'dbtype'        => 'timestamp',
                 'phptype'       => 'timestamp',
                 'attributes'    => 'ON UPDATE CURRENT_TIMESTAMP',
-                'null'          => false
+                'null'          => false,
+                'default'       => '0000-00-00 00:00:00'
             ]
         ],
         'indexes'       => [
@@ -74,16 +103,23 @@
                 'columns'       => [
                     'id'            => [
                         'collation'     => 'A',
-                        'null'          => false,
+                        'null'          => false
                     ]
                 ]
             ]
         ],
-        'aggregates'    =>  [
-            'Settings'      => [
+        'aggregates'    => [
+            'Category'      => [
+                'local'         => 'category_id',
+                'class'         => 'ClientSettingsCategory',
+                'foreign'       => 'id',
+                'owner'         => 'foreign',
+                'cardinality'   => 'one'
+            ],
+            'Value'         => [
                 'local'         => 'id',
-                'class'         => 'ClientSettingsSettings',
-                'foreign'       => 'category_id',
+                'class'         => 'ClientSettingsValue',
+                'foreign'       => 'setting_id',
                 'owner'         => 'local',
                 'cardinality'   => 'many'
             ]

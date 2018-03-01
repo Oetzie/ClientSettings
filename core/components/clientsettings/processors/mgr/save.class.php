@@ -11,32 +11,26 @@
          * @access public.
          * @var String.
          */
-        public $classKey = 'ClientSettingsValues';
+        public $classKey = 'ClientSettingsValue';
         
         /**
          * @access public.
          * @var Array.
          */
-        public $languageTopics = array('clientsettings:default');
+        public $languageTopics = ['clientsettings:default'];
         
         /**
          * @access public.
          * @var String.
          */
-        public $objectType = 'clientsettings.values';
-        
-        /**
-         * @access public.
-         * @var Object.
-         */
-        public $clientsettings;
+        public $objectType = 'clientsettings.value';
     
         /**
          * @access public.
          * @return Mixed.
          */
         public function initialize() {
-            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
             return parent::initialize();
         }
@@ -66,8 +60,8 @@
                         'context'       => $context
                     ];
                 
-                    if (null === ($object = $this->modx->getObject('ClientSettingsValues', $setting))) {
-                        $object = $this->modx->newObject('ClientSettingsValues');
+                    if (null === ($object = $this->modx->getObject('ClientSettingsValue', $setting))) {
+                        $object = $this->modx->newObject('ClientSettingsValue');
                     }
                 
                     $object->fromArray(array_merge($setting, [

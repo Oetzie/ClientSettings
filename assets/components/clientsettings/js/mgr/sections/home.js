@@ -51,7 +51,7 @@ ClientSettings.page.Home = function(config) {
         }, '-');
     }
 	
-	if (ClientSettings.config.branding_url_help) {
+    if (ClientSettings.config.branding_url_help) {
         config.buttons.push({
             text        : _('help_ex'),
             handler     : MODx.loadHelpPane,
@@ -77,22 +77,10 @@ Ext.extend(ClientSettings.page.Home, MODx.Component, {
         window.open(ClientSettings.config.branding_url);
     },
     filterContext: function(tf) {
-        var request = MODx.request || {};
-        
-        Ext.apply(request, {
-            context : tf.getValue()  
-        });
-        
-        MODx.loadPage('?' + Ext.urlEncode(request));
+        MODx.loadPage('?a=admin&namespace=' + ClientSettings.config.namespace + '&context=' + tf.getValue());
     },
     toAdminView: function() {
-        var request = MODx.request || {};
-        
-        Ext.apply(request, {
-            a : 'admin'  
-        });
-        
-        MODx.loadPage('?' + Ext.urlEncode(request));
+        MODx.loadPage('?a=admin&namespace=' + ClientSettings.config.namespace);
     }
 });
 

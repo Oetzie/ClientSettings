@@ -11,7 +11,7 @@
          * @access public.
          * @var String.
          */
-        public $classKey = 'ClientSettingsSettings';
+        public $classKey = 'ClientSettingsSetting';
         
         /**
          * @access public.
@@ -23,20 +23,14 @@
          * @access public.
          * @var String.
          */
-        public $objectType = 'clientsettings.settings';
-        
-        /**
-        * @access public.
-        * @var Object.
-        */
-        public $clientsettings;
+        public $objectType = 'clientsettings.setting';
         
         /**
          * @access public.
           * @return Mixed.
          */
         public function initialize() {
-            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
             if (null !== ($key = $this->getProperty('key'))) {
                 $this->setProperty('key', strtolower(str_replace(array(' ', '-'), '_', $key)));	
@@ -60,7 +54,7 @@
         /**
          * @access public.
          * @return Mixed.
-         ß*/
+         */
         public function beforeSave() {
             $c = [
                 'id:!=' => $this->object->get('id'),
@@ -121,7 +115,7 @@
                         break;
                     case 'browser':
                         $extra = [
-                            'browser'           => $this->getProperty('browser'),
+                            'source'            => $this->getProperty('source'),
                             'openTo'            => $this->getProperty('openTo'),
                             'allowedFileTypes'	=> $this->getProperty('allowedFileTypes')
                         ];

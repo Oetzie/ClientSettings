@@ -8,9 +8,9 @@
     
     $xpdo_meta_map = [
         'xPDOSimpleObject' => [
-            'ClientSettingsCategories',
-            'ClientSettingsSettings',
-            'ClientSettingsValues'
+            'ClientSettingsCategory',
+            'ClientSettingsSetting',
+            'ClientSettingsValue'
         ]
     ];
 	

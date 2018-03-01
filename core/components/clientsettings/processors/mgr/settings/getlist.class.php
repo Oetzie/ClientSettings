@@ -11,7 +11,7 @@
          * @access public.
          * @var String.
          */
-        public $classKey = 'ClientSettingsSettings';
+        public $classKey = 'ClientSettingsSetting';
         
         /**
          * @access public.
@@ -23,7 +23,7 @@
          * @access public.
          * @var String.
          */
-        public $defaultSortField = 'Settings.menuindex';
+        public $defaultSortField = 'Setting.menuindex';
         
         /**
          * @access public.
@@ -35,23 +35,17 @@
          * @access public.
          * @var String.
          */
-        public $objectType = 'clientsettings.settings';
-        
-        /**
-         * @access public.
-         * @var Object.
-         */
-        public $clientsettings;
+        public $objectType = 'clientsettings.setting';
         
         /**
          * @acces public.
          * @return Mixed.
          */
         public function initialize() {
-            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
             $this->setDefaultProperties([
-                'dateFormat' => $this->modx->getOption('manager_date_format').', '. $this->modx->getOption('manager_time_format')
+                'dateFormat' => $this->modx->getOption('manager_date_format') . ', ' . $this->modx->getOption('manager_time_format')
             ]);
             
             return parent::initialize();
@@ -63,18 +57,18 @@
          * @return Object.
          */
         public function prepareQueryBeforeCount(xPDOQuery $c) {
-            $c->setClassAlias('Settings');
+            $c->setClassAlias('Setting');
             
-            $c->select($this->modx->getSelectColumns('ClientSettingsSettings', 'Settings'));
-            $c->select($this->modx->getSelectColumns('ClientSettingsCategories', 'Category', 'category_', ['name', 'menuindex']));
+            $c->select($this->modx->getSelectColumns('ClientSettingsSetting', 'Setting'));
+            $c->select($this->modx->getSelectColumns('ClientSettingsCategory', 'Category', 'category_', ['name', 'menuindex']));
             
-            $c->leftJoin('ClientSettingsCategories', 'Category');
+            $c->leftJoin('ClientSettingsCategory', 'Category');
             
             $category = $this->getProperty('category');
             
             if (!empty($category)) {
                 $c->where([
-                    'Settings.category_id' => $category
+                    'Setting.category_id' => $category
                 ]);
             }
             
@@ -82,7 +76,7 @@
             
             if (!empty($query)) {
                 $c->where([
-                    'Settings.key:LIKE' => '%'.$query.'%'
+                    'Setting.key:LIKE' => '%' . $query . '%'
                 ]);
             }
             
@@ -102,28 +96,28 @@
                 'category_name_formatted'   => $object->get('category_name')
             ]);
             
-            $translationKey = 'setting_clientsettings.'.$object->get('label');
+            $translationKey = 'setting_clientsettings.' . $object->get('label');
             
             if ($translationKey !== ($translation = $this->modx->lexicon($translationKey))) {
                 $array['label_formatted'] = $translation;
             }
             
-            $translationKey = 'setting_clientsettings.'.$object->get('description').'_desc';
+            $translationKey = 'setting_clientsettings.' . $object->get('description').'_desc';
             
             if ($translationKey !== ($translation = $this->modx->lexicon($translationKey))) {
                 $array['description_formatted'] = $translation;
             }
             
-            $translationKey = 'category_clientsettings.'.$object->get('category_name');
+            $translationKey = 'category_clientsettings.' . $object->get('category_name');
             
             if ($translationKey !== ($translation = $this->modx->lexicon($translationKey))) {
                 $array['category_name_formatted'] = $translation;
             }
             
-            if (in_array($array['editedon'], ['-001-11-30 00:00:00', '-1-11-30 00:00:00', '0000-00-00 00:00:00', null])) {
+            if (in_array($object->get('editedon'), ['-001-11-30 00:00:00', '0000-00-00 00:00:00'])) {
                 $array['editedon'] = '';
             } else {
-                $array['editedon'] = date($this->getProperty('dateFormat'), strtotime($array['editedon']));
+                $array['editedon'] = date($this->getProperty('dateFormat'), strtotime($object->get('editedon')));
             }
             
             return $array;	

@@ -6,17 +6,18 @@
      * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
      */
     
-    $xpdo_meta_map['ClientSettingsValues'] = [
+    $xpdo_meta_map['ClientSettingsCategory'] = [
         'package'       => 'clientsettings',
         'version'       => '1.0',
-        'table'         => 'clientsettings_values',
+        'table'         => 'clientsettings_category',
         'extends'       => 'xPDOSimpleObject',
         'fields'        => [
             'id'            => null,
-            'setting_id'    => null,
-            'context'       => null,
-            'key'           => null,
-            'value'         => null,
+            'name'          => null,
+            'description'   => null,
+            'exclude'       => null,
+            'menuindex'     => null,
+            'active'        => null,
             'editedon'      => null
         ],
         'fieldMeta'     => [
@@ -28,28 +29,35 @@
                 'index'         => 'pk',
                 'generated'     => 'native'
             ],
-            'setting_id'    => [
+            'name'          => [
+                'dbtype'        => 'varchar',
+                'precision'     => '75',
+                'phptype'       => 'string',
+                'null'          => false
+            ],
+            'description'   => [
+                'dbtype'        => 'text',
+                'phptype'       => 'string',
+                'null'          => false
+            ],
+            'exclude'       => [
+                'dbtype'        => 'varchar',
+                'precision'     => '255',
+                'phptype'       => 'string',
+                'null'          => false
+            ],
+            'menuindex'	     => [
                 'dbtype'        => 'int',
                 'precision'     => '11',
                 'phptype'       => 'integer',
                 'null'          => false
             ],
-            'context'       => [
-                'dbtype'        => 'varchar',
-                'precision'     => '75',
-                'phptype'       => 'string',
-                'null'          => false
-            ],
-            'key'           => [
-                'dbtype'        => 'varchar',
-                'precision'     => '75',
-                'phptype'       => 'string',
-                'null'          => false
-            ],
-            'value'         => [
-                'dbtype'        => 'text',
-                'phptype'       => 'string',
-                'null'          => false
+            'active'        => [
+                'dbtype'        => 'int',
+                'precision'     => '1',
+                'phptype'       => 'integer',
+                'null'          => false,
+                'default'       => 1
             ],
             'editedon'      => [
                 'dbtype'        => 'timestamp',
@@ -66,18 +74,18 @@
                 'columns'       => [
                     'id'            => [
                         'collation'     => 'A',
-                        'null'          => false,
+                        'null'          => false
                     ]
                 ]
             ]
         ],
-        'aggregates'    => [
-            'Setting'       => [
-                'local'         => 'setting_id',
-                'class'         => 'ClientSettingsSettings',
-                'foreign'       => 'id',
-                'owner'         => 'foreign',
-                'cardinality'   => 'one'
+        'aggregates'    =>  [
+            'Settings'      => [
+                'local'         => 'id',
+                'class'         => 'ClientSettingsSetting',
+                'foreign'       => 'category_id',
+                'owner'         => 'local',
+                'cardinality'   => 'many'
             ]
         ]
     ];

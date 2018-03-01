@@ -6,12 +6,10 @@ ClientSettings.panel.Admin = function(config) {
         cls         : 'container',
         items       : [{
             html        : '<h2>' + _('clientsettings') + '</h2>',
-            id          : 'clientsettings-header',
             cls         : 'modx-page-header'
         }, {
             xtype       : 'modx-tabs',
             items       : [{
-                layout      : 'form',
                 title       : _('clientsettings.settings'),
                 items       : [{
                     html            : '<p>' + _('clientsettings.settings_desc') + '</p>',
@@ -23,7 +21,6 @@ ClientSettings.panel.Admin = function(config) {
                     refreshGrid     : ['clientsettings-grid-admin-categories']
                 }]
             }, {
-                layout      : 'form',
                 title       : _('clientsettings.categories'),
                 items       : [{
                     html            : '<p>' + _('clientsettings.categories_desc') + '</p>',

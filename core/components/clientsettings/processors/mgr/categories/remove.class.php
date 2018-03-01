@@ -11,7 +11,7 @@
          * @access public.
          * @var String.
          */
-        public $classKey = 'ClientSettingsCategories';
+        public $classKey = 'ClientSettingsCategory';
     
         /**
          * @access public.
@@ -23,20 +23,14 @@
          * @access public.
          * @var String.
          */
-        public $objectType = 'clientsettings.categories';
-    
-        /**
-         * @access public.
-         * @var Object.
-         */
-        public $clientsettings;
+        public $objectType = 'clientsettings.category';
     
         /**
          * @access public.
          * @return Mixed.
          */
         public function initialize() {
-            $this->clientsettings = $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path').'components/clientsettings/').'model/clientsettings/');
+            $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
             
             return parent::initialize();
         }
@@ -46,9 +40,9 @@
          * @return Mixed.
          */
         public function afterRemove() {
-            foreach ($this->object->getMany('Settings') as $setting) {
-                $this->modx->removeCollection('ClientSettingsValues', [
-                    'setting_id' => $setting->id
+            foreach ($this->object->getSettings() as $setting) {
+                $this->modx->removeCollection('ClientSettingsValue', [
+                    'setting_id' => $setting->get('id')
                 ]);
             
                 $setting->remove();

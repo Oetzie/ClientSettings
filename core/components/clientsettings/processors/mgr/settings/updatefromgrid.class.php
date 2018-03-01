@@ -6,7 +6,7 @@
      * Copyright 2018 by Oene Tjeerd de Bruin <modx@oetzie.nl>
      */
     
-    require_once dirname(__FILE__).'/update.class.php';
+    require_once __DIR__ . '/update.class.php';
     
     class ClientSettingsSettingsUpdateFromGridProcessor extends ClientSettingsSettingsUpdateProcessor {
         /**

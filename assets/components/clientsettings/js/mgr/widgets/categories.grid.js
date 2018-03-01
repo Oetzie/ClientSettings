@@ -11,7 +11,7 @@ ClientSettings.grid.Categories = function(config) {
         name        : 'clientsettings-filter-categories-search',
         id          : 'clientsettings-filter-categories-search',
         emptyText   : _('search') + '...',
-        listeners	: {
+        listeners   : {
             'change'    : {
                 fn          : this.filterSearch,
                 scope       : this
@@ -181,11 +181,11 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
         });
     },
     createCategory: function(btn, e) {
-        if (this.updateCategoryWindow) {
-            this.updateCategoryWindow.destroy();
+        if (this.createCategoryWindow) {
+            this.createCategoryWindow.destroy();
         }
         
-        this.updateCategoryWindow = MODx.load({
+        this.createCategoryWindow = MODx.load({
             xtype       : 'clientsettings-window-category-create',
             closeAction : 'close',
             listeners   : {
@@ -201,14 +201,14 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
             }
         });
         
-        this.updateCategoryWindow.show(e.target);
+        this.createCategoryWindow.show(e.target);
     },
     updateCategory: function(btn, e) {
-        if (this.createCategoryWindow) {
-            this.createCategoryWindow.destroy();
+        if (this.updateCategoryWindow) {
+            this.updateCategoryWindow.destroy();
         }
         
-        this.createCategoryWindow = MODx.load({
+        this.updateCategoryWindow = MODx.load({
             xtype       : 'clientsettings-window-category-update',
             record      : this.menu.record,
             closeAction : 'close',
@@ -225,8 +225,8 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
             }
         });
         
-        this.createCategoryWindow.setValues(this.menu.record);
-        this.createCategoryWindow.show(e.target);
+        this.updateCategoryWindow.setValues(this.menu.record);
+        this.updateCategoryWindow.show(e.target);
     },
     removeCategory: function() {
         MODx.msg.confirm({
@@ -299,7 +299,6 @@ ClientSettings.window.CreateCategory = function(config) {
                 }]
             }, {
                 columnWidth : .15,
-                style       : 'margin-right: 0;',
                 items       : [{
                     xtype       : 'checkbox',
                     fieldLabel  : _('clientsettings.label_category_active'),
@@ -379,7 +378,6 @@ ClientSettings.window.UpdateCategory = function(config) {
                 }]
             }, {
                 columnWidth : .15,
-                style       : 'margin-right: 0;',
                 items       : [{
                     xtype       : 'checkbox',
                     fieldLabel  : _('clientsettings.label_category_active'),

@@ -44,13 +44,7 @@ Ext.extend(ClientSettings.page.Admin, MODx.Component, {
         window.open(ClientSettings.config.branding_url);
     },
     toDefaultView: function() {
-        var request = MODx.request || {};
-        
-        Ext.apply(request, {
-            a : 'home'  
-        });
-        
-        MODx.loadPage('?' + Ext.urlEncode(request));
+        MODx.loadPage('?a=home&namespace=' + ClientSettings.config.namespace);
     }
 });
 
