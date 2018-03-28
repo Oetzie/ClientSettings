@@ -16,7 +16,7 @@ ClientSettings.page.Admin = function(config) {
     }
 
     config.buttons.push({
-        text        : _('clientsettings.default_view'),
+        text        : '<i class="icon icon-eye"></i>' + _('clientsettings.default_view'),
         handler     : this.toDefaultView,
         scope       : this
     });

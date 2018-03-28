@@ -1,3 +1,16 @@
+/* Should be moved to default theme. */
+.x-menu-item-icon {
+    left: 7px !important;
+    font-size: 14px !important;
+    line-height: 16px !important;  
+    text-align: center !important;
+}
+
+/* Shoul be moved to default theme. */
+.x-btn-text .icon {
+    margin-right: 8px;
+}
+
 #modx-action-buttons .x-btn-branding {
 	background: none !important;
 	box-shadow: none !important;

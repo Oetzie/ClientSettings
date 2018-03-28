@@ -45,7 +45,7 @@ ClientSettings.page.Home = function(config) {
 	
     if (ClientSettings.config.has_permission) {
         config.buttons.push({
-            text        : _('clientsettings.admin_view'),
+            text        : '<i class="icon icon-cogs"></i>' + _('clientsettings.admin_view'),
             handler     : this.toAdminView,
             scope       : this
         }, '-');

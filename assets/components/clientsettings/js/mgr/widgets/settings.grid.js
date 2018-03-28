@@ -171,15 +171,15 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
     },
     getMenu: function() {
         return [{
-            text    : _('clientsettings.setting_update'),
+            text    : '<i class="x-menu-item-icon icon icon-edit"></i>' + _('clientsettings.setting_update'),
             handler : this.updateSetting,
             scope   : this
         }, {
-            text    : _('clientsettings.setting_duplicate'),
+            text    : '<i class="x-menu-item-icon icon icon-copy"></i>' + _('clientsettings.setting_duplicate'),
             handler : this.duplicateSetting,
             scope   : this
         }, '-',  {
-            text    : _('clientsettings.setting_remove'),
+            text    : '<i class="x-menu-item-icon icon icon-times"></i>' + _('clientsettings.setting_remove'),
             handler : this.removeSetting,
             scope   : this
         }];

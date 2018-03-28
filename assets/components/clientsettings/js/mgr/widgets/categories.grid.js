@@ -121,11 +121,11 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
     },
     getMenu: function() {
         return [{
-            text    : _('clientsettings.category_update'),
+            text    : '<i class="x-menu-item-icon icon icon-edit"></i>' + _('clientsettings.category_update'),
             handler : this.updateCategory,
             scope   : this
         }, '-', {
-            text    : _('clientsettings.category_remove'),
+            text    : '<i class="x-menu-item-icon icon icon-times"></i>' + _('clientsettings.category_remove'),
             handler : this.removeCategory,
             scope   : this
         }];
