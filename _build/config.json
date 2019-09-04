@@ -23,6 +23,7 @@
         },
         "systemSettings": [{
             "key": "branding_url",
+            "value": "//www.oetzie.nl",
             "area": "clientsettings"
         },{
             "key": "branding_url_help",
