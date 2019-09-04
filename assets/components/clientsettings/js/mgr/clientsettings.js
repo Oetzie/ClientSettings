@@ -14,6 +14,6 @@ Ext.extend(ClientSettings, Ext.Component, {
     config  : {}
 });
 
-Ext.reg('cientsettings', ClientSettings);
+Ext.reg('clientsettings', ClientSettings);
 
 ClientSettings = new ClientSettings();

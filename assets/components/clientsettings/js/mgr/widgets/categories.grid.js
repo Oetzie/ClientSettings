@@ -19,7 +19,7 @@ ClientSettings.grid.Categories = function(config) {
             'render'    : {
                 fn          : function(cmp) {
                     new Ext.KeyMap(cmp.getEl(), {
-                        keys    : Ext.EventObject.ENTER,
+                        key     : Ext.EventObject.ENTER,
                         fn      : this.blur,
                         scope   : cmp
                     });
@@ -131,7 +131,7 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
         }];
     },
     refreshGrids: function() {
-        if ('string' == typeof this.config.refreshGrid) {
+        if (typeof this.config.refreshGrid === 'string') {
             Ext.getCmp(this.config.refreshGrid).refresh();
         } else {
             for (var i = 0; i < this.config.refreshGrid.length; i++) {
@@ -143,37 +143,33 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
         new Ext.dd.DropTarget(this.getView().mainBody, {
             ddGroup     : this.config.ddGroup,
             notifyDrop  : function(dd, e, data) {
-                var grid    = data.grid,
-                    sm      = grid.getSelectionModel(),
-                    sels    = sm.getSelections(),
-                    items   = grid.getStore().data.items;
+                var index = dd.getDragData(e).rowIndex;
 
-                if (undefined != (index = dd.getDragData(e).rowIndex)) {
-                    if (sm.hasSelection()) {
-                        for (i = 0; i < sels.length; i++) {
-                            grid.getStore().remove(grid.getStore().getById(sels[i].id));
-                            grid.getStore().insert(index, sels[i]);
-                        }
-
-                        sm.selectRecords(sels);
+                if (undefined !== index) {
+                    for (var i = 0; i < data.selections.length; i++) {
+                        data.grid.getStore().remove(data.grid.getStore().getById(data.selections[i].id));
+                        data.grid.getStore().insert(index, data.selections[i]);
                     }
 
-                    var sort = [];
-                    
-                    for (var i = 0; i < items.length; i++) {
-                        sort.push(items[i].id);
-                    }
-                    
-                    Ext.Ajax.request({
-                        url     : ClientSettings.config.connector_url,
-                        params  : {
-                            action  : 'mgr/categories/sort',
-                            sort    : Ext.encode(sort)
+                    var order = [];
+
+                    Ext.each(data.grid.getStore().data.items, (function(record) {
+                        order.push(record.id);
+                    }).bind(this));
+
+                    MODx.Ajax.request({
+                        url         : ClientSettings.config.connector_url,
+                        params      : {
+                            action      : 'mgr/categories/sort',
+                            sort        : order.join(',')
                         },
-                        success    : function(result) {
-                            grid.getSelectionModel().clearSelections(true);
-                            
-                            grid.refresh();
+                        listeners   : {
+                            'success'   : {
+                                fn          : function() {
+
+                                },
+                                scope       : this
+                            }
                         }
                     });
                 }
@@ -191,8 +187,6 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
             listeners   : {
                 'success'   : {
                     fn          : function() {
-                        this.getSelectionModel().clearSelections(true);
-                        
                         this.refreshGrids();
                         this.refresh();
                     },
@@ -215,8 +209,6 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
             listeners   : {
                 'success'   : {
                     fn          : function() {
-                        this.getSelectionModel().clearSelections(true);
-                        
                         this.refreshGrids();
                         this.refresh();
                     },
@@ -237,23 +229,21 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
                 action      : 'mgr/categories/remove',
                 id          : this.menu.record.id
             },
-            listeners	: {
+            listeners   : {
                 'success'   : {
                     fn          : function() {
-                        this.getSelectionModel().clearSelections(true);
-                        
                         this.refreshGrids();
                         this.refresh();
                     },
-                    scope		: this
+                    scope       : this
                 }
             }
         });
     },
     renderBoolean: function(d, c) {
-        c.css = 1 == parseInt(d) || d ? 'green' : 'red';
-        
-        return 1 == parseInt(d) || d ? _('yes') : _('no');
+        c.css = parseInt(d) === 1 || d ? 'green' : 'red';
+
+        return parseInt(d) === 1 || d ? _('yes') : _('no');
     },
     renderDate: function(a) {
         if (Ext.isEmpty(a)) {
@@ -278,7 +268,6 @@ ClientSettings.window.CreateCategory = function(config) {
         },
         fields      : [{
             layout      : 'column',
-            border      : false,
             defaults    : {
                 layout      : 'form',
                 labelSeparator : ''
@@ -311,7 +300,7 @@ ClientSettings.window.CreateCategory = function(config) {
                     html        : _('clientsettings.label_category_active_desc'),
                     cls         : 'desc-under'
                 }]
-            }]	
+            }]
         }, {
             xtype       : 'textarea',
             fieldLabel  : _('clientsettings.label_category_description'),
@@ -357,7 +346,6 @@ ClientSettings.window.UpdateCategory = function(config) {
             name        : 'id'
         }, {
             layout      : 'column',
-            border      : false,
             defaults    : {
                 layout      : 'form',
                 labelSeparator : ''
@@ -389,7 +377,7 @@ ClientSettings.window.UpdateCategory = function(config) {
                     html        : _('clientsettings.label_category_active_desc'),
                     cls         : 'desc-under'
                 }]
-            }]	
+            }]
         }, {
             xtype       : 'textarea',
             fieldLabel  : _('clientsettings.label_category_description'),

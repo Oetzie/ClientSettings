@@ -1,5 +1,7 @@
 Ext.onReady(function() {
-    MODx.load({xtype: 'clientsettings-page-admin'});
+    MODx.load({
+        xtype : 'clientsettings-page-admin'
+    });
 });
 
 ClientSettings.page.Admin = function(config) {

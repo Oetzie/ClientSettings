@@ -1,0 +1,46 @@
+{
+    "name": "ClientSettings",
+    "lowCaseName": "clientsettings",
+    "description": "A client settings solution for MODX Revolution.",
+    "author": "Oetzie.nl",
+    "version": "1.2.0-pl",
+    "package":{
+        "menus": [{
+            "text": "clientsettings",
+            "description": "clientsettings.desc",
+            "parent": "components",
+            "action": "home",
+            "permissions": "clientsettings"
+        }],
+        "elements": {
+            "plugins": [{
+                "name": "ClientSettings",
+                "file": "clientsettings.plugin.php",
+                "events": [
+                    "OnLoadWebDocument"
+                ]
+            }]
+        },
+        "systemSettings": [{
+            "key": "branding_url",
+            "area": "clientsettings"
+        },{
+            "key": "branding_url_help",
+            "area": "clientsettings"
+        },{
+            "key": "exclude_contexts",
+            "area": "clientsettings"
+        }]
+    },
+    "build":{
+        "readme": "docs/readme.txt",
+        "license": "docs/license.txt",
+        "changelog": "docs/changelog.txt",
+        "resolver": {
+            "after": [
+                "tables.resolver.php",
+                "permissions.resolver.php"
+            ]
+        }
+    }
+}

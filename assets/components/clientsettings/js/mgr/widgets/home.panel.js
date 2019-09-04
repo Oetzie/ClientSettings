@@ -13,7 +13,7 @@ ClientSettings.panel.Home = function(config) {
             cls         : 'modx-page-header'
         }, {
             layout      : 'form',
-            items       : this.getItems()
+            items       : this.getItems(config.settings)
         }],
         listeners   : {
             'setup'     : {
@@ -30,332 +30,277 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
     setup: function() {
         this.fireEvent('ready');
     },
-	getItems: function() {
-        var context     = MODx.request.context || MODx.config.default_context;
-        var contexts    = ClientSettings.config.contexts;
-        
-        var items       = [{
+    getItems: function(settings) {
+        var items = [];
+
+        items.push({
             html            : '<p>' + _('clientsettings.settings_desc') + '</p>',
             bodyCssClass    : 'panel-desc'
-        }];
-        
-        for (var i = 0; i < contexts.length; i++) {
-            if (context == contexts[i].key) {
-                var settings = this.getSettings(contexts[i]);
-            
-                if (0 == settings.length) {
-                    items.push({
-                        html            : '<p>' + _('clientsettings.no_settings_desc') + '</p>',
-                        bodyCssClass    : 'modx-config-error'
-                    });
-                } else {
-                    items.push({
-                        xtype		: 'modx-vtabs',
-                        title		: context.name,
-                        defaults	: {
-                            autoHeight	: true,
-                            autoWidth	: true,
-                            border		: false
-                        },
-                        items		: settings
-                    });
-                }
-            }
-        }
-		
-		return items;
-	},
-    getSettings: function(context) {
-        var items       = [];
-        var categories  = ClientSettings.config.categories;
-    
-        for (var i = 0; i < categories.categories.length; i++) {
-            var settings    = [];
-            var category    = categories.categories[i];
-            var exclude     = category.exclude.split(',').map(function(value) {
-                return value.trim();
-            });
-	    	
-            if (-1 == exclude.indexOf(context.key)) {
-                for (var ii = 0; ii < category.settings.length; ii++) {
-                    var setting = category.settings[ii];
-                    var element = Ext.applyIf({}, setting);
-            
-                    var exclude = setting.exclude.split(',').map(function(value) {
-                        return value.trim();
-                    });
-            
-                    if (-1 == exclude.indexOf(context.key)) {
-                        var name = context.key + ':' + setting.id;
-            
-                        element = Ext.applyIf(element, {
-                            xtype       : 'textfield',
-                            fieldLabel  : setting.label_formatted,
-                            name        : name,
-                            anchor      : '60%',
-                            value       : undefined == categories.values[name] ? '' : categories.values[name].value,
-                        });
-            
-                        element = Ext.applyIf({
-                            id          : 'element-' + context.key + '-' + element.id,
-                            description : '<b>[[++' + setting.key + ']]</b>',
-                        }, element);
-            
-                        switch (element.xtype) {
-                            case 'datefield':
-                                element = Ext.applyIf({
-                                    format      : MODx.config.manager_date_format,
-                                    startDay    : parseInt(MODx.config.manager_week_start),
-                                    minValue    : element.extra.minDateValue,
-                                    maxValue    : element.extra.maxDateValue
-                                }, element);
-                                
-                                break;
-                            case 'timefield':
-                                element = Ext.applyIf({
-                                    format      : MODx.config.manager_time_format,
-                                    offset_time : MODx.config.server_offset_time,
-                                    minValue    : element.extra.minTimeValue,
-                                    maxValue    : element.extra.maxTimeValue
-                                }, element);
-                                
-                                break;
-                            case 'datetimefield':
-                                element = Ext.applyIf({
-                                    xtype           : 'xdatetime',
-                                    dateFormat      : MODx.config.manager_date_format,
-                                    timeFormat      : MODx.config.manager_time_format,
-                                    startDay        : parseInt(MODx.config.manager_week_start),
-                                    offset_time     : MODx.config.server_offset_time,
-                                    minDateValue    : element.extra.minDateValue,
-                                    maxDateValue    : element.extra.maxDateValue,
-                                    minTimeValue    : element.extra.minTimeValue,
-                                    maxTimeValue    : element.extra.maxTimeValue
-                                }, element);
-                            
-                                break;
-                            case 'passwordfield':
-                                element = Ext.applyIf({
-                                    xtype       : 'textfield',
-                                    inputType   : 'password'
-                                }, element);
-            
-                                break;
-                            case 'richtext':
-                                element = Ext.applyIf({
-                                    xtype       : 'textarea',
-                                    listeners   : {
-                                        afterrender : {
-                                            fn          : function(event) {
-                                                if (MODx.loadRTE) {
-                                                    MODx.loadRTE(event.id, {
-                                                        toolbar1    : element.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent',
-                                                        toolbar2    : element.extra.toolbar2 || '',
-                                                        toolbar3    : element.extra.toolbar3 || '',
-                                                        plugins     : element.extra.plugins || '',
-                                                        menubar     : false,
-                                                        statusbar   : false,
-                                                        width       : '60%',
-                                                        height      : '150px',
-                                                        toggle      : false
-                                                    });
-                                                }
-                                            }
-                                        }
-                                    }
-                                }, element);	
-                            
-                                break;
-                            case 'boolean':
-                                element = Ext.applyIf({
-                                    xtype   : 'combo-boolean'
-                                }, element);
-                                
-                                break;
-                            case 'combo':
-                                var options = [];
-                                
-                                if (typeof element.extra.values == 'object') {
-                                    options = element.extra.values;
-                                }
-                                
-                                element = Ext.applyIf({
-                                    xtype       : 'modx-combo',
-                                    store       : new Ext.data.JsonStore({
-                                        fields      : ['value', 'label'],
-                                        data        : element.extra.values || []
-                                    }),
-                                    mode        : 'local',
-                                    hiddenName  : element.name,
-                                    valueField  : 'value',
-                                    displayField: 'label',
-                                    listeners   : {
-                                        select      : function(data) {
-                                            Ext.getCmp(this.config.id + '-replace').setValue(data.lastSelectionText);
-                                        }
-                                    }
-                                }, element);
-                            
-                                break;
-                            case 'checkbox':
-                                settings.push({
-                                    xtype   : 'hidden',
-                                    name    : element.name
-                                });
-                            
-                                element = Ext.applyIf({
-                                    fieldLabel  : '',
-                                    boxLabel    : element.fieldLabel,
-                                    inputValue  : 1,
-                                    checked     : undefined == categories.values[name] ? false : Boolean(categories.values[name].value)
-                                }, element);
-                            
-                                break;
-                            case 'checkboxgroup':
-                                var options = [];
-                                
-                                if (typeof element.extra.values == 'object') {
-                                    for (var a = 0; a < element.extra.values.length; a++) {
-                                        options.push({
-                                            name        : element.name + '[]',
-                                            boxLabel    : element.extra.values[a].label,
-                                            inputValue  : element.extra.values[a].value
-                                        });
-                                    }
-                                }
-                   
-                                if (0 < options.length) {
-                                    settings.push({
-                                        xtype   : 'hidden',
-                                        name    : element.name,
-                                    });
-                                    
-                                    element = Ext.applyIf({
-                                        xtype   : 'checkboxgroup',
-                                        columns	: 1,
-                                        items   : options,
-                                        value   : undefined == categories.values[name] ? '' : (typeof categories.values[name].value == 'object' ? typeof categories.values[name].value.join(',') : '')
-                                    }, element);
-                                } else {
-                                    element = Ext.applyIf({
-                                        xtype   : 'textfield', 
-                                    }, element);
-                                }
+        });
 
-                                break;
-                            case 'radiogroup':
-                                var options = [];
-                                
-                                if (typeof element.extra.values == 'object') {
-                                    for (var a = 0; a < element.extra.values.length; a++) {
-                                        options.push({
-                                            name        : element.name,
-                                            boxLabel    : element.extra.values[a].label,
-                                            inputValue  : element.extra.values[a].value
-                                        });
-                                    }
-                                }
-                                
-                                if (0 < options.length) {
-                                    element = Ext.applyIf({
-                                        xtype   : 'radiogroup',
-                                        columns	: 1,
-                                        items	: options
-                                    }, element);
-                                } else {
-                                    element = Ext.applyIf({
-                                        xtype   : 'textfield', 
-                                    }, element);
-                                }
-                            
-                                break;
-                            case 'resource':
-                                settings.push({
-                                    xtype   : 'hidden',
-                                    name    : element.name,
-                                    id      : element.id + '-replace',
-                                    value   : undefined == categories.values[name] ? '' : categories.values[name].value
-                                });
-                                
-                                element = Ext.applyIf({
-                                    xtype       : 'modx-field-parent-change',
-                                    name        : element.name + '-replace',
-                                    formpanel   : 'clientsettings-panel-home',
-                                    parentcmp   : element.id + '-replace',
-                                    contextcmp  : null,
-                                    currentid   : 0,
-                                    value       : undefined == categories.values[name] ? '' : categories.values[name].replace
-                                }, element);
-                            
-                                break;
-                            case 'browser':
-                                settings.push({
-                                    xtype   : 'hidden',
-                                    name    : element.name,
-                                    id      : element.id + '-replace',
-                                    value   : undefined == categories.values[name] ? '' : categories.values[name].value,
-                                });
-                 
-                                element = Ext.applyIf({
-                                    xtype       : 'modx-combo-browser',
-                                    name        : element.name + '-replace',
-                                    source      : element.extra.source || MODx.config.default_media_source,
-                                    openTo      : element.extra.openTo || '/',
-                                    allowedFileTypes : element.extra.allowedFileTypes || '',
-                                    value       : undefined == categories.values[name] ? '' : categories.values[name].replace,
-                                    listeners   : {
-                                        select      : {
-                                            fn          : function(data) {
-                                                Ext.getCmp(this.id + '-replace').setValue(data.fullRelativeUrl);
-                                            },
-                                            scope       : element
-                                        },
-                                        change      : {
-                                            fn          : function(tf) {
-                                                if ('' == tf.getValue()) {
-                                                    Ext.getCmp(this.id + '-replace').setValue('');
-                                                }
-                                            },
-                                            scope       : element
-                                        }
-                                    }
-                                }, element);
-                            
-                                break;
-                        }
-            
-                        settings.push(element, {
-                            xtype   : MODx.expandHelp ? 'label' : 'hidden',
-                            html	: setting.description_formatted,
-                            cls		: 'desc-under'
-                        });
-                    }
-                }
-            }
-	    	
-            if (settings.length > 0) {
-                items.push({
-                    title       : category.name_formatted,
-                    defaults	: {
-                        autoHeight  : true,
-                        autoWidth   : true,
-                        border      : false
-                    },
-                    items       : [{
-                        hidden      : null === category.description_formatted,
-                        html        : '<p>' + category.description_formatted + '</p>',
-                        bodyCssClass: 'modx-desc'
+        if (settings.length === 0) {
+            items.push({
+                html    : '<p>' + _('clientsettings.no_settings_desc') + '</p>',
+                cls     : 'modx-config-error'
+            });
+        } else {
+            var tabs = [];
+
+            settings.forEach((function (category, index) {
+                tabs.push({
+                    title           : category.name_formatted,
+                    items           : [{
+                        html            : '<p>' + category.description_formatted + '</p>',
+                        bodyCssClass    : 'panel-desc',
+                        hidden          : category.description_formatted === ''
                     }, {
                         layout          : 'form',
-                        cls             : 'main-wrapper form-with-labels',
                         labelAlign      : 'top',
                         labelSeparator  : '',
-                        items           : settings
+                        items           : this.getSettings(category.settings)
                     }]
                 });
-            }
+            }).bind(this));
+
+            items.push({
+                xtype           : 'modx-vtabs',
+                items           : tabs
+            });
         }
-    
+
+        return items;
+    },
+    getSettings: function(settings) {
+        var items = [];
+
+        if (settings.length === 0) {
+            items.push({
+                html    : '<p>' + _('clientsettings.no_settings_desc') + '</p>',
+                cls     : 'modx-config-error'
+            });
+        } else {
+            var context = MODx.request.context || MODx.config.default_context;
+
+            settings.forEach((function (setting, index) {
+                var element = Ext.applyIf({
+                    fieldLabel  : setting.label_formatted ? setting.label_formatted : setting.label,
+                    name        : context + ':' + setting.id,
+                    anchor      : '60%',
+                    id          : 'element-' + context + '-' + setting.id,
+                    description : '<b>[[++' + setting.key + ']]</b>',
+                    value       : setting.value.value || '',
+                }, setting);
+
+                switch (element.xtype) {
+                    case 'datefield':
+                        element = Ext.applyIf({
+                            format          : MODx.config.manager_date_format,
+                            startDay        : parseInt(MODx.config.manager_week_start),
+                            minValue        : element.extra.minDateValue,
+                            maxValue        : element.extra.maxDateValue
+                        }, element);
+
+                        break;
+                    case 'timefield':
+                        element = Ext.applyIf({
+                            format          : MODx.config.manager_time_format,
+                            offset_time     : MODx.config.server_offset_time,
+                            minValue        : element.extra.minTimeValue,
+                            maxValue        : element.extra.maxTimeValue
+                        }, element);
+
+                        break;
+                    case 'datetimefield':
+                        element = Ext.applyIf({
+                            xtype           : 'xdatetime',
+                            dateFormat      : MODx.config.manager_date_format,
+                            timeFormat      : MODx.config.manager_time_format,
+                            startDay        : parseInt(MODx.config.manager_week_start),
+                            offset_time     : MODx.config.server_offset_time,
+                            minDateValue    : element.extra.minDateValue,
+                            maxDateValue    : element.extra.maxDateValue,
+                            minTimeValue    : element.extra.minTimeValue,
+                            maxTimeValue    : element.extra.maxTimeValue
+                        }, element);
+
+                        break;
+                    case 'passwordfield':
+                        element = Ext.applyIf({
+                            xtype           : 'textfield',
+                            inputType       : 'password'
+                        }, element);
+
+                        break;
+                    case 'richtext':
+                        element = Ext.applyIf({
+                            xtype           : 'textarea',
+                            listeners       : {
+                                afterrender     : {
+                                    fn              : function(event) {
+                                        if (MODx.loadRTE) {
+                                            MODx.loadRTE(event.id, {
+                                                toolbar1    : element.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent',
+                                                toolbar2    : element.extra.toolbar2 || '',
+                                                toolbar3    : element.extra.toolbar3 || '',
+                                                plugins     : element.extra.plugins || '',
+                                                menubar     : false,
+                                                statusbar   : false,
+                                                width       : '60%',
+                                                height      : '250px',
+                                                toggle      : false
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                        }, element);
+
+                        break;
+                    case 'boolean':
+                        element = Ext.applyIf({
+                            xtype           : 'combo-boolean'
+                        }, element);
+
+                        break;
+                    case 'combo':
+                        element = Ext.applyIf({
+                            xtype           : 'modx-combo',
+                            store           : new Ext.data.JsonStore({
+                                fields          : ['value', 'label'],
+                                data            : element.extra.values || []
+                            }),
+                            mode            : 'local',
+                            hiddenName      : element.name,
+                            valueField      : 'value',
+                            displayField    : 'label'
+                        }, element);
+
+                        break;
+                    case 'checkbox':
+                        items.push({
+                            xtype           : 'hidden',
+                            name            : element.name
+                        });
+
+                        element = Ext.applyIf({
+                            fieldLabel      : '',
+                            boxLabel        : element.fieldLabel,
+                            inputValue      : 1,
+                            checked         : parseInt(setting.value.value || 0)
+                        }, element);
+
+                        break;
+                    case 'checkboxgroup':
+                        var options = [];
+
+                        element.extra.values.forEach(function(option, index) {
+                            options.push({
+                                name        : element.name + '[]',
+                                boxLabel    : option.label,
+                                inputValue  : option.value
+                            });
+                        });
+
+                        items.push({
+                            xtype           : 'hidden',
+                            name            : element.name
+                        });
+
+                        if (options.length >= 1) {
+                            element = Ext.applyIf({
+                                xtype       : 'checkboxgroup',
+                                columns     : 1,
+                                items       : options,
+                                value       : setting.value.value || ''
+                            }, element);
+                        }
+
+                        break;
+                    case 'radiogroup':
+                        var options = [];
+
+                        element.extra.values.forEach(function(option, index) {
+                            options.push({
+                                name        : element.name,
+                                boxLabel    : option.label,
+                                inputValue  : option.value
+                            });
+                        });
+
+                        element = Ext.applyIf({
+                            xtype           : 'radiogroup',
+                            columns         : 1,
+                            items           : options
+                        }, element);
+
+                        break;
+                    case 'resource':
+                        items.push({
+                            xtype           : 'hidden',
+                            name            : element.name,
+                            id              : element.id + '-replace',
+                            value           : setting.value.value || ''
+                        });
+
+                        element = Ext.applyIf({
+                            xtype           : 'modx-field-parent-change',
+                            name            : element.name + '-replace',
+                            formpanel       : 'clientsettings-panel-home',
+                            parentcmp       : element.id + '-replace',
+                            contextcmp      : null,
+                            currentid       : 0,
+                            value           : setting.value.replace || ''
+                        }, element);
+
+                        break;
+                    case 'browser':
+                        items.push({
+                            xtype           : 'hidden',
+                            name            : element.name,
+                            id              : element.id + '-replace',
+                            value           : setting.value.value || ''
+                        });
+
+                        element = Ext.applyIf({
+                            xtype           : 'modx-combo-browser',
+                            name            : element.name + '-replace',
+                            source          : element.extra.source || MODx.config.default_media_source,
+                            openTo          : element.extra.openTo || '/',
+                            allowedFileTypes : element.extra.allowedFileTypes || '',
+                            value           : setting.value.replace || '',
+                            listeners       : {
+                                select          : {
+                                    fn              : function(data) {
+                                        Ext.getCmp(this.id + '-replace').setValue(data.fullRelativeUrl);
+                                    },
+                                    scope           : element
+                                },
+                                change          : {
+                                    fn              : function(tf) {
+                                        if (tf.getValue() === '') {
+                                            Ext.getCmp(this.id + '-replace').setValue('');
+                                        }
+                                    },
+                                    scope           : element
+                                }
+                            }
+                        }, element);
+
+                        break;
+                }
+
+                items.push(element);
+
+                if (setting.description_formatted || setting.description) {
+                    items.push({
+                        xtype    : MODx.expandHelp ? 'label' : 'hidden',
+                        html     : setting.description_formatted ? setting.description_formatted : setting.description,
+                        cls      : 'desc-under'
+                    });
+                }
+            }).bind(this));
+        }
+
         return items;
     }
 });

@@ -2,38 +2,54 @@
 .x-menu-item-icon {
     left: 7px !important;
     font-size: 14px !important;
-    line-height: 16px !important;  
+    line-height: 16px !important;
     text-align: center !important;
 }
 
-/* Shoul be moved to default theme. */
+/* Should be moved to default theme. */
 .x-btn-text .icon {
     margin-right: 8px;
 }
 
 #modx-action-buttons .x-btn-branding {
-	background: none !important;
-	box-shadow: none !important;
-	border: none !important;
-	color: #555555 !important;
-}
-
-.modx-desc {
-	color: #53595f;
-	margin: 15px 15px -15px 15px;
-	padding: 15px;
-	background: #f0f0f0;
-	-webkit-border-radius: 0;
-	   -moz-border-radius: 0;
-	   		border-radius: 0;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    color: #555555 !important;
 }
 
 .modx-config-error {
-	margin-bottom: 15px;
+    padding: 15px;
+    background-color: #fff;
 }
 
-.x-form-item .x-btn.x-btn-clientsettings {
-    padding: 9px;
-    margin: 0 7px;
+.modx-config-error .x-panel-bwrap {
+    color: #856404;
+    padding: 12px 20px;
+    background: #fff3cd !important;
+    border: 1px solid #ffeeba;
+    border-radius: 3px;
+}
+
+.vertical-tabs-body .panel-desc {
+    margin: 0;
+}
+
+.vertical-tabs-body .modx-config-error {
+    padding: 15px 0 0;
+}
+
+.x-window .vertical-tabs-bwrap {
+    padding: 0;
+    box-shadow: none;
+}
+
+.clientsettings-extra-combo .clientsettings-extra-combo-item {
+    margin: 6px 0 0;
+}
+
+.clientsettings-extra-combo .clientsettings-extra-combo-item .x-btn {
+    padding: 9px 12px;
+    margin: 0 0 0 5px;
     cursor: pointer;
 }

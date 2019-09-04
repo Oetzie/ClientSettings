@@ -1,12 +1,14 @@
 Ext.onReady(function() {
-	MODx.load({xtype: 'clientsettings-page-home'});
+    MODx.load({
+        xtype : 'clientsettings-page-home'
+    });
 });
 
 ClientSettings.page.Home = function(config) {
-	config = config || {};
-	
-	config.buttons = [];
-	
+    config = config || {};
+
+    config.buttons = [];
+
     if (ClientSettings.config.branding_url) {
         config.buttons.push({
             text        : 'ClientSettings ' + ClientSettings.config.version,
@@ -21,6 +23,7 @@ ClientSettings.page.Home = function(config) {
         value       : MODx.request.context || MODx.config.default_context,
         name        : 'clientsettings-filter-context',
         emptyText   : _('clientsettings.filter_context'),
+        displayField : 'name',
         listeners   : {
             'select'    : {
                 fn          : this.filterContext,
@@ -29,7 +32,7 @@ ClientSettings.page.Home = function(config) {
         },
         baseParams  : {
             action      : 'context/getlist',
-            exclude     : 'mgr'
+            exclude     : ClientSettings.config.exclude_contexts.join(',')
         }
     }, {
         text        : _('save'),
@@ -39,10 +42,10 @@ ClientSettings.page.Home = function(config) {
         checkDirty  : true,
         keys        : [{
             ctrl        : true,
-            keys        : MODx.config.keymap_save || 's'
+            key         : MODx.config.keymap_save || 's'
         }]
     }, '-');
-	
+
     if (ClientSettings.config.has_permission) {
         config.buttons.push({
             text        : '<i class="icon icon-cogs"></i>' + _('clientsettings.admin_view'),
@@ -50,7 +53,7 @@ ClientSettings.page.Home = function(config) {
             scope       : this
         }, '-');
     }
-	
+
     if (ClientSettings.config.branding_url_help) {
         config.buttons.push({
             text        : _('help_ex'),
@@ -58,18 +61,17 @@ ClientSettings.page.Home = function(config) {
             scope       : this
         });
     }
-	
+
     Ext.applyIf(config, {
         formpanel   : 'clientsettings-panel-home',
         components  : [{
             xtype       : 'clientsettings-panel-home',
-            contexts    : ClientSettings.config.contexts,
-            categories  : ClientSettings.config.categories,
+            settings    : ClientSettings.config.settings,
             renderTo    : 'clientsettings-panel-home-div'
         }]
     });
-	
-	ClientSettings.page.Home.superclass.constructor.call(this, config);
+
+    ClientSettings.page.Home.superclass.constructor.call(this, config);
 };
 
 Ext.extend(ClientSettings.page.Home, MODx.Component, {
