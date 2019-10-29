@@ -39,7 +39,6 @@ ClientSettings.page.Home = function(config) {
         cls         : 'primary-button',
         method      : 'remote',
         process     : 'mgr/save',
-        checkDirty  : true,
         keys        : [{
             ctrl        : true,
             key         : MODx.config.keymap_save || 's'
@@ -79,7 +78,7 @@ Ext.extend(ClientSettings.page.Home, MODx.Component, {
         window.open(ClientSettings.config.branding_url);
     },
     filterContext: function(tf) {
-        MODx.loadPage('?a=admin&namespace=' + ClientSettings.config.namespace + '&context=' + tf.getValue());
+        MODx.loadPage('?a=home&namespace=' + ClientSettings.config.namespace + '&context=' + tf.getValue());
     },
     toAdminView: function() {
         MODx.loadPage('?a=admin&namespace=' + ClientSettings.config.namespace);

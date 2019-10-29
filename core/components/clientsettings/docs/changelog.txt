@@ -3,6 +3,14 @@ Client Settings
 ----------------------
 
 ----------------------
+Version: 1.3.0-pl
+Released: 2019-10-20
+----------------------
+- Bug fixes
+- Database query/snippet support for combo's
+- ClientGrid support if installed
+
+----------------------
 Version: 1.2.0-pl
 Released: 2019-09-03
 ----------------------

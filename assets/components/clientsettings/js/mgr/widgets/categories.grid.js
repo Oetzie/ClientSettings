@@ -85,7 +85,7 @@ ClientSettings.grid.Categories = function(config) {
     
     Ext.applyIf(config, {
         cm          : columns,
-        id          : 'clientsettings-grid-admin-categories',
+        id          : 'clientsettings-grid-categories',
         url         : ClientSettings.config.connector_url,
         baseParams  : {
             action      : 'mgr/categories/getlist'
@@ -98,12 +98,12 @@ ClientSettings.grid.Categories = function(config) {
         sortBy      : 'menuindex',
         refreshGrid : [],
         enableDragDrop : true,
-        ddGroup     : 'clientsettings-grid-admin-categories'
+        ddGroup     : 'clientsettings-grid-categories'
     });
     
     ClientSettings.grid.Categories.superclass.constructor.call(this, config);
     
-    this.on('afterrender', this.sortCategory, this);
+    this.on('afterrender', this.sortCategories, this);
 };
 
 Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
@@ -134,12 +134,12 @@ Ext.extend(ClientSettings.grid.Categories, MODx.grid.Grid, {
         if (typeof this.config.refreshGrid === 'string') {
             Ext.getCmp(this.config.refreshGrid).refresh();
         } else {
-            for (var i = 0; i < this.config.refreshGrid.length; i++) {
-                Ext.getCmp(this.config.refreshGrid[i]).refresh();
-            }
+            this.config.refreshGrid.forEach(function(grid) {
+                Ext.getCmp(grid).refresh();
+            });
         }
     },
-    sortCategory: function() {
+    sortCategories: function() {
         new Ext.dd.DropTarget(this.getView().mainBody, {
             ddGroup     : this.config.ddGroup,
             notifyDrop  : function(dd, e, data) {
@@ -336,7 +336,7 @@ ClientSettings.window.UpdateCategory = function(config) {
     
     Ext.applyIf(config, {
         autoHeight  : true,
-        title       : _('clientsettings.category_create'),
+        title       : _('clientsettings.category_update'),
         url         : ClientSettings.config.connector_url,
         baseParams  : {
             action      : 'mgr/categories/update'

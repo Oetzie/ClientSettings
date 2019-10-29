@@ -104,7 +104,8 @@ class ClientSettingsSettingCreateProcessor extends modObjectCreateProcessor
                 case 'checkboxgroup':
                 case 'radiogroup':
                     $extra = [
-                        'values'            => json_decode($this->getProperty('values'), true)
+                        'values'            => json_decode($this->getProperty('values'), true),
+                        'bindedValues'      => $this->getProperty('bindedValues')
                     ];
 
                     break;
@@ -113,6 +114,12 @@ class ClientSettingsSettingCreateProcessor extends modObjectCreateProcessor
                         'source'            => $this->getProperty('source'),
                         'openTo'            => $this->getProperty('openTo'),
                         'allowedFileTypes'  => $this->getProperty('allowedFileTypes')
+                    ];
+
+                    break;
+                case 'clientgrid':
+                    $extra = [
+                        'grid'              => $this->getProperty('grid')
                     ];
 
                     break;

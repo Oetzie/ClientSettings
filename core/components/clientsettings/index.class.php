@@ -20,6 +20,8 @@ abstract class ClientSettingsManagerController extends modExtraManagerController
 
         $this->addJavascript($this->modx->clientsettings->config['js_url'] . 'mgr/clientsettings.js');
 
+        $this->addJavascript($this->modx->clientsettings->config['js_url'] . 'mgr/extras/extras.js');
+
         $this->addHtml('<script type="text/javascript">
             Ext.onReady(function() {
                 MODx.config.help_url = "' . $this->modx->clientsettings->getHelpUrl() . '";

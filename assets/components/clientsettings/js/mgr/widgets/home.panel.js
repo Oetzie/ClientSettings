@@ -11,10 +11,7 @@ ClientSettings.panel.Home = function(config) {
         items       : [{
             html        : '<h2>' + _('clientsettings') + '</h2>',
             cls         : 'modx-page-header'
-        }, {
-            layout      : 'form',
-            items       : this.getItems(config.settings)
-        }],
+        }, this.getItems(config.settings)],
         listeners   : {
             'setup'     : {
                 fn          : this.setup,
@@ -32,11 +29,6 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
     },
     getItems: function(settings) {
         var items = [];
-
-        items.push({
-            html            : '<p>' + _('clientsettings.settings_desc') + '</p>',
-            bodyCssClass    : 'panel-desc'
-        });
 
         if (settings.length === 0) {
             items.push({
@@ -57,15 +49,30 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                         layout          : 'form',
                         labelAlign      : 'top',
                         labelSeparator  : '',
+                        cls             : ClientSettings.config.vtabs ? '' : 'main-wrapper',
                         items           : this.getSettings(category.settings)
                     }]
                 });
             }).bind(this));
 
-            items.push({
-                xtype           : 'modx-vtabs',
-                items           : tabs
-            });
+            if (ClientSettings.config.vtabs) {
+                items.push({
+                    xtype   : 'modx-vtabs',
+                    items   : tabs
+                });
+            } else {
+                items.push({
+                    xtype   : 'modx-tabs',
+                    items   : tabs
+                });
+            }
+        }
+
+        if (ClientSettings.config.vtabs) {
+            return [{
+                layout      : 'form',
+                items       : items
+            }];
         }
 
         return items;
@@ -83,12 +90,12 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
 
             settings.forEach((function (setting, index) {
                 var element = Ext.applyIf({
-                    fieldLabel  : setting.label_formatted ? setting.label_formatted : setting.label,
-                    name        : context + ':' + setting.id,
-                    anchor      : '60%',
-                    id          : 'element-' + context + '-' + setting.id,
+                    fieldLabel  : setting.label_formatted || setting.label,
                     description : '<b>[[++' + setting.key + ']]</b>',
-                    value       : setting.value.value || '',
+                    name        : context + ':' + setting.id,
+                    anchor      : '100%',
+                    id          : 'clientsettings-setting-' + context + '-' + setting.id,
+                    value       : setting.value.value || ''
                 }, setting);
 
                 switch (element.xtype) {
@@ -158,7 +165,8 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                         break;
                     case 'boolean':
                         element = Ext.applyIf({
-                            xtype           : 'combo-boolean'
+                            xtype           : 'combo-boolean',
+                            hiddenName      : element.name
                         }, element);
 
                         break;
@@ -183,10 +191,10 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                         });
 
                         element = Ext.applyIf({
-                            fieldLabel      : '',
+                            hideLabel       : true,
                             boxLabel        : element.fieldLabel,
                             inputValue      : 1,
-                            checked         : parseInt(setting.value.value || 0)
+                            checked         : parseInt(setting.value.value)
                         }, element);
 
                         break;
@@ -254,36 +262,18 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
 
                         break;
                     case 'browser':
-                        items.push({
-                            xtype           : 'hidden',
-                            name            : element.name,
-                            id              : element.id + '-replace',
-                            value           : setting.value.value || ''
-                        });
-
                         element = Ext.applyIf({
                             xtype           : 'modx-combo-browser',
-                            name            : element.name + '-replace',
                             source          : element.extra.source || MODx.config.default_media_source,
                             openTo          : element.extra.openTo || '/',
-                            allowedFileTypes : element.extra.allowedFileTypes || '',
-                            value           : setting.value.replace || '',
-                            listeners       : {
-                                select          : {
-                                    fn              : function(data) {
-                                        Ext.getCmp(this.id + '-replace').setValue(data.fullRelativeUrl);
-                                    },
-                                    scope           : element
-                                },
-                                change          : {
-                                    fn              : function(tf) {
-                                        if (tf.getValue() === '') {
-                                            Ext.getCmp(this.id + '-replace').setValue('');
-                                        }
-                                    },
-                                    scope           : element
-                                }
-                            }
+                            allowedFileTypes : element.extra.allowedFileTypes || ''
+                        }, element);
+
+                        break;
+                    case 'clientgrid':
+                        element = Ext.applyIf({
+                            xtype           : 'clientgrid-panel-gridview',
+                            grid            : element.extra.grid
                         }, element);
 
                         break;
@@ -294,7 +284,7 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                 if (setting.description_formatted || setting.description) {
                     items.push({
                         xtype    : MODx.expandHelp ? 'label' : 'hidden',
-                        html     : setting.description_formatted ? setting.description_formatted : setting.description,
+                        html     : setting.description_formatted || setting.description,
                         cls      : 'desc-under'
                     });
                 }

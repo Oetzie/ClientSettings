@@ -6,7 +6,8 @@
  * Copyright 2019 by Oene Tjeerd de Bruin <modx@oetzie.nl>
  */
     
-class ClientSettingsCategoryRemoveProcessor extends modObjectRemoveProcessor {
+class ClientSettingsCategoryRemoveProcessor extends modObjectRemoveProcessor
+{
     /**
      * @access public.
      * @var String.
@@ -42,7 +43,7 @@ class ClientSettingsCategoryRemoveProcessor extends modObjectRemoveProcessor {
      */
     public function afterRemove()
     {
-        foreach ($this->object->getMany('Settings') as $setting) {
+        foreach ($this->object->getMany('Setting') as $setting) {
             $this->modx->removeCollection('ClientSettingsValue', [
                 'setting_id' => $setting->get('id')
             ]);

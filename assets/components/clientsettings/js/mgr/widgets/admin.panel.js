@@ -18,7 +18,7 @@ ClientSettings.panel.Admin = function(config) {
                     xtype           : 'clientsettings-grid-settings',
                     cls             : 'main-wrapper',
                     preventRender   : true,
-                    refreshGrid     : ['clientsettings-grid-admin-categories']
+                    refreshGrid     : 'clientsettings-grid-categories'
                 }]
             }, {
                 title       : _('clientsettings.categories'),
@@ -29,7 +29,7 @@ ClientSettings.panel.Admin = function(config) {
                     xtype           : 'clientsettings-grid-categories',
                     cls             : 'main-wrapper',
                     preventRender   : true,
-                    refreshGrid     : ['clientsettings-grid-admin-settings']
+                    refreshGrid     : 'clientsettings-grid-settings'
                 }]
             }]
         }]

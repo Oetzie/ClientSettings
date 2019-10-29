@@ -29,12 +29,12 @@ class ClientSettings
     {
         $this->modx =& $modx;
 
-        $corePath       = $this->modx->getOption('clientsettings.core_path', $config, $this->modx->getOption('core_path') . 'components/clientsettings/');
-        $assetsUrl      = $this->modx->getOption('clientsettings.assets_url', $config, $this->modx->getOption('assets_url') . 'components/clientsettings/');
-        $assetsPath     = $this->modx->getOption('clientsettings.assets_path', $config, $this->modx->getOption('assets_path') . 'components/clientsettings/');
+        $corePath   = $this->modx->getOption('clientsettings.core_path', $config, $this->modx->getOption('core_path') . 'components/clientsettings/');
+        $assetsUrl  = $this->modx->getOption('clientsettings.assets_url', $config, $this->modx->getOption('assets_url') . 'components/clientsettings/');
+        $assetsPath = $this->modx->getOption('clientsettings.assets_path', $config, $this->modx->getOption('assets_path') . 'components/clientsettings/');
 
         $this->config = array_merge([
-            'namespace'         => $this->modx->getOption('namespace', $config, 'clientsettings'),
+            'namespace'         => 'clientsettings',
             'lexicons'          => ['clientsettings:default', 'clientsettings:settings', 'base:default', 'site:default'],
             'base_path'         => $corePath,
             'core_path'         => $corePath,
@@ -50,12 +50,13 @@ class ClientSettings
             'css_url'           => $assetsUrl . 'css/',
             'assets_url'        => $assetsUrl,
             'connector_url'     => $assetsUrl . 'connector.php',
-            'version'           => '1.2.0',
+            'version'           => '1.3.0',
             'branding_url'      => $this->modx->getOption('clientsettings.branding_url', null, ''),
             'branding_help_url' => $this->modx->getOption('clientsettings.branding_url_help', null, ''),
-            'has_permission'    => $this->hasPermission(),
+            'has_permission'    => (bool) $this->modx->hasPermission('clientsettings_admin'),
             'context'           => (bool) $this->getContexts(),
             'exclude_contexts'  => array_merge(['mgr'], explode(',', $this->modx->getOption('clientsettings.exclude_contexts', null, ''))),
+            'vtabs'             => (bool) $this->modx->getOption('clientsettings.vtabs', null, false)
         ], $config);
 
         $this->modx->addPackage('clientsettings', $this->config['model_path']);
@@ -116,15 +117,6 @@ class ClientSettings
     }
 
     /**
-     * @access public.
-     * @return Boolean.
-     */
-    public function hasPermission()
-    {
-        return $this->modx->hasPermission('clientsettings_admin');
-    }
-
-    /**
      * @access private.
      * @return Boolean.
      */
@@ -133,5 +125,40 @@ class ClientSettings
         return $this->modx->getCount('modContext', [
             'key:NOT IN' => array_merge(['mgr'], explode(',', $this->modx->getOption('clientsettings.exclude_contexts', null, '')))
         ]) === 1;
+    }
+
+    /**
+     * @access public.
+     * @return Array.
+     */
+    public function getXTypes()
+    {
+        $xtypes = [
+            'textfield'     => $this->modx->lexicon('clientsettings.xtype_textfield'),
+            'datefield'     => $this->modx->lexicon('clientsettings.xtype_datefield'),
+            'timefield'     => $this->modx->lexicon('clientsettings.xtype_timefield'),
+            'datetimefield' => $this->modx->lexicon('clientsettings.xtype_datetimefield'),
+            'passwordfield' => $this->modx->lexicon('clientsettings.xtype_passwordfield'),
+            'numberfield'   => $this->modx->lexicon('clientsettings.xtype_numberfield'),
+            'textarea'      => $this->modx->lexicon('clientsettings.xtype_textarea'),
+            'richtext'      => $this->modx->lexicon('clientsettings.xtype_richtext'),
+            'boolean'       => $this->modx->lexicon('clientsettings.xtype_boolean'),
+            'combo'         => $this->modx->lexicon('clientsettings.xtype_combo'),
+            'checkbox'      => $this->modx->lexicon('clientsettings.xtype_checkbox'),
+            'checkboxgroup' => $this->modx->lexicon('clientsettings.xtype_checkboxgroup'),
+            'radiogroup'    => $this->modx->lexicon('clientsettings.xtype_radiogroup'),
+            'resource'      => $this->modx->lexicon('clientsettings.xtype_resource'),
+            'browser'       => $this->modx->lexicon('clientsettings.xtype_browser')
+        ];
+
+        $object = $this->modx->getObject('modNamespace', [
+            'name' => 'clientgrid'
+        ]);
+
+        if ($object) {
+            $xtypes['clientgrid'] = $this->modx->lexicon('clientsettings.xtype_clientgrid');
+        }
+
+        return $xtypes;
     }
 }

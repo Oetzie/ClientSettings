@@ -21,6 +21,12 @@ class ClientSettingsAdminManagerController extends ClientSettingsManagerControll
         $this->addJavascript($this->modx->clientsettings->config['js_url'] . 'mgr/widgets/settings.grid.js');
 
         $this->addLastJavascript($this->modx->clientsettings->config['js_url'] . 'mgr/sections/admin.js');
+
+        $this->addHtml('<script type="text/javascript">
+            Ext.onReady(function() {
+                ClientSettings.config.xtypes = ' . $this->modx->toJSON($this->modx->clientsettings->getXTypes()) . ';
+            });
+        </script>');
     }
 
     /**

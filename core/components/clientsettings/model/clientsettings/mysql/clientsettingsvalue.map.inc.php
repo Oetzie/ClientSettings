@@ -11,6 +11,9 @@ $xpdo_meta_map['ClientSettingsValue'] = [
     'version'       => '1.0',
     'table'         => 'clientsettings_value',
     'extends'       => 'xPDOSimpleObject',
+    'tableMeta'     => [
+        'engine'        => 'InnoDB'
+    ],
     'fields'        => [
         'id'            => null,
         'setting_id'    => null,

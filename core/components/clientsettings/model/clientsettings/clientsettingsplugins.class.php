@@ -41,7 +41,7 @@ class ClientSettingsPlugins extends ClientSettings
         $criteria->setClassAlias('Value');
 
         $criteria->select($this->modx->getSelectColumns('ClientSettingsValue', 'Value'));
-        $criteria->select($this->modx->getSelectColumns('ClientSettingsSetting', 'Setting', 'setting_', ['key']));
+        $criteria->select($this->modx->getSelectColumns('ClientSettingsSetting', 'Setting', 'setting_', ['key', 'xtype', 'extra']));
 
         $criteria->innerJoin('ClientSettingsSetting', 'Setting');
 
@@ -58,10 +58,34 @@ class ClientSettingsPlugins extends ClientSettings
                     $value = implode(',', $value);
                 }
 
-                $settings[$setting->get('setting_key')] = $value;
+                $settings[$setting->get('setting_key')] = $this->formatValue($setting->get('setting_xtype'), json_decode($setting->get('setting_extra'), true), $value);
             }
         }
 
         return $settings;
+    }
+
+    /**
+     * @access public.
+     * @param String $type.
+     * @param Array $properties.
+     * @param String $value.
+     * @return String.
+     */
+    protected function formatValue($type, array $properties = [], $value = '')
+    {
+        if (!empty($value) && $type === 'browser') {
+            if (isset($properties['source'])) {
+                $source = $this->modx->getObject('modMediaSource', [
+                    'id' => $properties['source']
+                ]);
+
+                if ($source) {
+                    $value = trim($source->getProperties()['baseUrl']['value'], '/') . '/' . $value;
+                }
+            }
+        }
+
+        return $value;
     }
 }

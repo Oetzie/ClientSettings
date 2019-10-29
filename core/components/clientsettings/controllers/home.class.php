@@ -8,7 +8,8 @@
 
 require_once dirname(__DIR__) . '/index.class.php';
 
-class ClientSettingsHomeManagerController extends ClientSettingsManagerController {
+class ClientSettingsHomeManagerController extends ClientSettingsManagerController
+{
     /**
      * @access public.
      */
@@ -154,7 +155,7 @@ class ClientSettingsHomeManagerController extends ClientSettingsManagerControlle
                     $settingArray = array_merge($setting->toArray(), [
                         'label_formatted'       => $setting->get('label'),
                         'description_formatted' => $setting->get('description'),
-                        'extra'                 => json_decode($setting->get('extra'), true),
+                        'extra'                 => $setting->getExtraValues(),
                         'value'                 => []
                     ]);
 

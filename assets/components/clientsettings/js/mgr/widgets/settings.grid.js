@@ -111,7 +111,7 @@ ClientSettings.grid.Settings = function(config) {
     
     Ext.applyIf(config, {
         cm          : columns,
-        id          : 'clientsettings-grid-admin-settings',
+        id          : 'clientsettings-grid-settings',
         url         : ClientSettings.config.connector_url,
         baseParams  : {
             action      : 'mgr/settings/getlist'
@@ -121,7 +121,7 @@ ClientSettings.grid.Settings = function(config) {
         fields      : ['id', 'category_id', 'category_name', 'key', 'label', 'description', 'xtype', 'exclude', 'extra', 'menuindex', 'active', 'editedon', 'category_name_formatted', 'label_formatted', 'description_formatted'],
         paging      : true,
         pageSize    : MODx.config.default_per_page > 30 ? MODx.config.default_per_page : 30,
-        sortBy      : 'menuindex',
+        remoteSort  : true,
         grouping    : true,
         groupBy     : 'category_name_formatted',
         plugins     : expander,
@@ -141,12 +141,12 @@ ClientSettings.grid.Settings = function(config) {
         }],
         refreshGrid : [],
         enableDragDrop : true,
-        ddGroup     : 'clientsettings-grid-admin-settings'
+        ddGroup     : 'clientsettings-grid-settings'
     });
     
     ClientSettings.grid.Settings.superclass.constructor.call(this, config);
     
-    this.on('afterrender', this.sortSetting, this);
+    this.on('afterrender', this.sortSettings, this);
 };
 
 Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
@@ -188,12 +188,12 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
         if (typeof this.config.refreshGrid === 'string') {
             Ext.getCmp(this.config.refreshGrid).refresh();
         } else {
-            for (var i = 0; i < this.config.refreshGrid.length; i++) {
-                Ext.getCmp(this.config.refreshGrid[i]).refresh();
-            }
+            this.config.refreshGrid.forEach(function(grid) {
+                Ext.getCmp(grid).refresh();
+            });
         }
     },
-    sortSetting: function() {
+    sortSettings: function() {
         new Ext.dd.DropTarget(this.getView().mainBody, {
             ddGroup     : this.config.ddGroup,
             notifyOver  : function(dd, e, data) {
@@ -216,35 +216,37 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
                 return index >= minIndex && index <= maxIndex ? this.dropAllowed : this.dropNotAllowed;
             },
             notifyDrop  : function(dd, e, data) {
-                var index = dd.getDragData(e).rowIndex;
+                if (this.dropAllowed === this.notifyOver(dd, e, data)) {
+                    var index = dd.getDragData(e).rowIndex;
 
-                if (undefined !== index) {
-                    for (var i = 0; i < data.selections.length; i++) {
-                        data.grid.getStore().remove(data.grid.getStore().getById(data.selections[i].id));
-                        data.grid.getStore().insert(index, data.selections[i]);
-                    }
-
-                    var order = [];
-
-                    Ext.each(data.grid.getStore().data.items, (function(record) {
-                        order.push(record.id);
-                    }).bind(this));
-
-                    MODx.Ajax.request({
-                        url         : ClientSettings.config.connector_url,
-                        params      : {
-                            action      : 'mgr/settings/sort',
-                            sort        : order.join(',')
-                        },
-                        listeners   : {
-                            'success'   : {
-                                fn          : function() {
-
-                                },
-                                scope       : this
-                            }
+                    if (undefined !== index) {
+                        for (var i = 0; i < data.selections.length; i++) {
+                            data.grid.getStore().remove(data.grid.getStore().getById(data.selections[i].id));
+                            data.grid.getStore().insert(index, data.selections[i]);
                         }
-                    });
+
+                        var order = [];
+
+                        Ext.each(data.grid.getStore().data.items, (function(record) {
+                            order.push(record.id);
+                        }).bind(this));
+
+                        MODx.Ajax.request({
+                            url         : ClientSettings.config.connector_url,
+                            params      : {
+                                action      : 'mgr/settings/sort',
+                                sort        : order.join(',')
+                            },
+                            listeners   : {
+                                'success'   : {
+                                    fn          : function() {
+
+                                    },
+                                    scope       : this
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
@@ -345,28 +347,12 @@ Ext.extend(ClientSettings.grid.Settings, MODx.grid.Grid, {
 
         return parseInt(d) === 1 || d ? _('yes') : _('no');
     },
-    renderXtype: function(a, b, c) {
-        var xtypes = {
-            'textfield'     : _('clientsettings.textfield'),
-            'datefield'     : _('clientsettings.datefield'),
-            'timefield'     : _('clientsettings.timefield'),
-            'datetimefield' : _('clientsettings.datetimefield'),
-            'passwordfield' : _('clientsettings.passwordfield'),
-            'numberfield'   : _('clientsettings.numberfield'),
-            'textarea'      : _('clientsettings.textarea'),
-            'richtext'      : _('clientsettings.richtext'),
-            'boolean'       : _('clientsettings.boolean'),
-            'combo'         : _('clientsettings.combo'),
-            'checkbox'      : _('clientsettings.checkbox'),
-            'checkboxgroup' : _('clientsettings.checkboxgroup'),
-            'radiogroup'    : _('clientsettings.radiogroup'),
-            'resource'      : _('clientsettings.resource'),
-            'browser'       : _('clientsettings.browser')
-        };
+    renderXtype: function(d, c) {
+        if (ClientSettings.config.xtypes[d]) {
+            return ClientSettings.config.xtypes[d];
+        }
 
-        if (xtypes[a]) {
-            return xtypes[a];
-        }         
+        return '';
     },
     renderDate: function(a) {
         if (Ext.isEmpty(a)) {
@@ -656,8 +642,21 @@ ClientSettings.window.CreateSetting = function(config) {
                     }]
                 }, {
                     id          : 'clientsettings-extra-combo-create',
+                    layout      : 'form',
+                    labelSeparator : '',
                     items       : [{
                         xtype       : 'clientsettings-combo-values',
+                        fieldLabel  : _('clientsettings.label_setting_values')
+                    }, {
+                        xtype       : 'textarea',
+                        fieldLabel  : _('clientsettings.label_setting_binded_values'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_binded_values_desc'),
+                        name        : 'bindedValues',
+                        anchor      : '100%'
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_binded_values_desc'),
+                        cls         : 'desc-under'
                     }]
                 }, {
                     id          : 'clientsettings-extra-browser-create',
@@ -708,6 +707,21 @@ ClientSettings.window.CreateSetting = function(config) {
                             }]
                         }]
                     }]
+                }, {
+                    id          : 'clientsettings-extra-clientgrid-create',
+                    layout      : 'form',
+                    labelSeparator : '',
+                    items       : [{
+                        xtype       : 'textfield',
+                        fieldLabel  : _('clientsettings.label_setting_clientgrid'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_desc'),
+                        name        : 'grid',
+                        anchor      : '100%'
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_clientgrid_desc'),
+                        cls         : 'desc-under'
+                    }]
                 }]
             }]
         }]
@@ -725,7 +739,8 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
             datetimefield   : false,
             richtext        : false,
             combo           : false,
-            browser         : false
+            browser         : false,
+            clientgrid      : false
         };
         
         switch (event.getValue()) {
@@ -755,6 +770,10 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
             case 'browser':
                 elements.browser    = true;
             
+                break;
+            case 'clientgrid':
+                elements.clientgrid = true;
+
                 break;
             default:
                 elements.default    = true;
@@ -1045,9 +1064,9 @@ ClientSettings.window.DuplicateSetting = function(config) {
                                 xtype       : 'textfield',
                                 fieldLabel  : _('clientsettings.label_setting_plugins'),
                                 description : MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
-                                name        : config.record.extra.plugins || 'plugins',
+                                name        : 'plugins',
                                 anchor      : '100%',
-                                value       : ''
+                                value       : config.record.extra.plugins || 'plugins'
                             }, {
                                 xtype       : MODx.expandHelp ? 'label' : 'hidden',
                                 html        : _('clientsettings.label_setting_plugins_desc'),
@@ -1057,9 +1076,23 @@ ClientSettings.window.DuplicateSetting = function(config) {
                     }]
                 }, {
                     id          : 'clientsettings-extra-combo-copy',
+                    layout      : 'form',
+                    labelSeparator : '',
                     items       : [{
                         xtype       : 'clientsettings-combo-values',
+                        fieldLabel  : _('clientsettings.label_setting_values'),
                         value       : Ext.encode(config.record.extra.values) || '[]'
+                    }, {
+                        xtype       : 'textarea',
+                        fieldLabel  : _('clientsettings.label_setting_binded_values'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_binded_values_desc'),
+                        name        : 'bindedValues',
+                        anchor      : '100%',
+                        value       : config.record.extra.bindedValues || ''
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_binded_values_desc'),
+                        cls         : 'desc-under'
                     }]
                 }, {
                     id          : 'clientsettings-extra-browser-copy',
@@ -1110,8 +1143,24 @@ ClientSettings.window.DuplicateSetting = function(config) {
                             }]
                         }]
                     }]
+                }, {
+                    id          : 'clientsettings-extra-clientgrid-copy',
+                    layout      : 'form',
+                    labelSeparator : '',
+                    items       : [{
+                        xtype       : 'textfield',
+                        fieldLabel  : _('clientsettings.label_setting_clientgrid'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_desc'),
+                        name        : 'grid',
+                        anchor      : '100%',
+                        value       : config.record.extra.grid || ''
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_clientgrid_desc'),
+                        cls         : 'desc-under'
+                    }]
                 }]
-            }],
+            }]
         }]
     });
     
@@ -1127,7 +1176,8 @@ Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window, {
             datetimefield   : false,
             richtext        : false,
             combo           : false,
-            browser         : false
+            browser         : false,
+            clientgrid      : false
         };
 
         switch (event.getValue()) {
@@ -1156,6 +1206,10 @@ Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window, {
                 break;
             case 'browser':
                 elements.browser    = true;
+
+                break;
+            case 'clientgrid':
+                elements.clientgrid = true;
 
                 break;
             default:
@@ -1453,9 +1507,9 @@ ClientSettings.window.UpdateSetting = function(config) {
                                 xtype       : 'textfield',
                                 fieldLabel  : _('clientsettings.label_setting_plugins'),
                                 description : MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
-                                name        : config.record.extra.plugins || 'plugins',
+                                name        : 'plugins',
                                 anchor      : '100%',
-                                value       : ''
+                                value       : config.record.extra.plugins || ''
                             }, {
                                 xtype       : MODx.expandHelp ? 'label' : 'hidden',
                                 html        : _('clientsettings.label_setting_plugins_desc'),
@@ -1465,9 +1519,23 @@ ClientSettings.window.UpdateSetting = function(config) {
                     }]
                 }, {
                     id          : 'clientsettings-extra-combo-update',
+                    layout      : 'form',
+                    labelSeparator : '',
                     items       : [{
                         xtype       : 'clientsettings-combo-values',
+                        fieldLabel  : _('clientsettings.label_setting_values'),
                         value       : Ext.encode(config.record.extra.values) || '[]'
+                    }, {
+                        xtype       : 'textarea',
+                        fieldLabel  : _('clientsettings.label_setting_binded_values'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_binded_values_desc'),
+                        name        : 'bindedValues',
+                        anchor      : '100%',
+                        value       : config.record.extra.bindedValues || ''
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_binded_values_desc'),
+                        cls         : 'desc-under'
                     }]
                 }, {
                     id          : 'clientsettings-extra-browser-update',
@@ -1518,6 +1586,22 @@ ClientSettings.window.UpdateSetting = function(config) {
                             }]
                         }]
                     }]
+                }, {
+                    id          : 'clientsettings-extra-clientgrid-update',
+                    layout      : 'form',
+                    labelSeparator : '',
+                    items       : [{
+                        xtype       : 'textfield',
+                        fieldLabel  : _('clientsettings.label_setting_clientgrid'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_desc'),
+                        name        : 'grid',
+                        anchor      : '100%',
+                        value       : config.record.extra.grid || ''
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_clientgrid_desc'),
+                        cls         : 'desc-under'
+                    }]
                 }]
             }]
         }]
@@ -1535,7 +1619,8 @@ Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
             datetimefield   : false,
             richtext        : false,
             combo           : false,
-            browser         : false
+            browser         : false,
+            clientgrid      : false
         };
 
         switch (event.getValue()) {
@@ -1566,6 +1651,10 @@ Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
                 elements.browser    = true;
 
                 break;
+            case 'clientgrid':
+                elements.clientgrid = true;
+
+                break;
             default:
                 elements.default    = true;
 
@@ -1587,244 +1676,3 @@ Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
 });
 
 Ext.reg('clientsettings-window-setting-update', ClientSettings.window.UpdateSetting);
-
-ClientSettings.combo.Categories = function(config) {
-    config = config || {};
-    
-    Ext.applyIf(config, {
-        url         : ClientSettings.config.connector_url,
-        baseParams  : {
-            action      : 'mgr/categories/getlist',
-            combo       : true
-        },
-        fields      : ['id','name', 'name_formatted'],
-        hiddenName  : 'category_id',
-        pageSize    : 15,
-        valueField  : 'id',
-        displayField : 'name_formatted'
-    });
-    
-    ClientSettings.combo.Categories.superclass.constructor.call(this, config);
-};
-
-Ext.extend(ClientSettings.combo.Categories ,MODx.combo.ComboBox);
-
-Ext.reg('clientsettings-combo-categories', ClientSettings.combo.Categories);
-
-ClientSettings.combo.FieldTypes = function(config) {
-    config = config || {};
-    
-    Ext.applyIf(config, {
-        store   : new Ext.data.ArrayStore({
-            mode    : 'local',
-            fields  : ['xtype', 'label'],
-            data    : [
-                ['textfield', _('clientsettings.textfield')],
-                ['datefield', _('clientsettings.datefield')],
-                ['timefield', _('clientsettings.timefield')],
-                ['datetimefield', _('clientsettings.datetimefield')], //xdatetime
-                ['passwordfield', _('clientsettings.passwordfield')], //text-password
-                ['numberfield', _('clientsettings.numberfield')],
-                ['textarea', _('clientsettings.textarea')],
-                ['richtext', _('clientsettings.richtext')],
-                ['boolean', _('clientsettings.boolean')], //combo-boolean
-                ['combo', _('clientsettings.combo')], //modx-combo
-                ['checkbox', _('clientsettings.checkbox')],
-                ['checkboxgroup', _('clientsettings.checkboxgroup')],
-                ['radiogroup', _('clientsettings.radiogroup')],
-                ['resource', _('clientsettings.resource')], //modx-field-parent-change
-                ['browser', _('clientsettings.browser')] //modx-combo-browser
-            ]
-        }),
-        remoteSort  : ['label', 'asc'],
-        hiddenName  : 'xtype',
-        valueField  : 'xtype',
-        displayField : 'label',
-        mode        : 'local',
-        value       : 'textfield'
-    });
-    
-    ClientSettings.combo.FieldTypes.superclass.constructor.call(this, config);
-};
-
-Ext.extend(ClientSettings.combo.FieldTypes, MODx.combo.ComboBox);
-
-Ext.reg('clientsettings-combo-xtype', ClientSettings.combo.FieldTypes);
-
-ClientSettings.combo.Values = function(config) {
-    config = config || {};
-
-    var id = Ext.id();
-
-    Ext.applyIf(config, {
-        id          : config.id || id,
-        cls         : 'clientsettings-extra-combo',
-        items       : [{
-            xtype       : 'hidden',
-            name        : 'values',
-            id          : (config.id || id) + '-value',
-            value       : config.value || '[]'
-        }],
-        listeners   : {
-            afterrender : {
-                fn          : this.decodeData,
-                scope       : this
-            } 
-        }
-    });
-    
-    ClientSettings.combo.Values.superclass.constructor.call(this, config);
-};
-
-Ext.extend(ClientSettings.combo.Values, MODx.Panel, {
-    decodeData: function() {
-        var textfield = Ext.getCmp(this.config.id + '-value');
-
-        if (textfield) {
-            var data = Ext.decode(textfield.getValue() || '[]');
-
-            if (data && data.length >= 1) {
-                for (var i = 0; i < data.length; i++) {
-                    this.addElement(i, data[i]);
-                }
-            } else {
-                this.addElement(0, {});
-            }
-        }
-    },
-    encodeData: function() {
-        var textfield = Ext.getCmp(this.config.id + '-value');
-
-        if (textfield) {
-            var data = [];
-            var values = {
-                value : [],
-                label : []
-            };
-
-            this.findByType('textfield').forEach(function(element) {
-                if (element.xtype === 'textfield') {
-                    values[element.type].push(element.getValue());
-                }
-            });
-
-            values.value.forEach(function(value, index) {
-                data.push({
-                    value : value,
-                    label : values.label[index] || ''
-                });
-            });
-
-            textfield.setValue(Ext.encode(data));
-        }
-    },
-    addElement: function(index, data) {
-        this.insert(index, this.getElement(index, data));
-        this.doLayout();
-        
-        this.encodeData();
-    },
-    removeElement: function(index) {
-        this.remove(index);
-        this.doLayout();
-        
-        this.encodeData();
-    },
-    getElement: function(index, data) {
-        var id = Ext.id();
-    
-        var nextBtn = {
-            xtype       : 'box',
-            autoEl      : {
-                tag         : 'a',
-                html        : '<i class="icon icon-plus"></i>',
-                cls         : 'x-btn x-btn-clientsettings',
-                current     : this.config.id + '-' + id
-            },
-            listeners   : {
-                render      : {
-                    fn          : function(button) {
-                        button.getEl().on('click', (function(event) {
-                            var index = this.items.findIndexBy(function(item) {
-                                return item.id === button.autoEl.current;
-                            });
-
-                            this.addElement(index + 1, {});
-                        }).bind(this));
-                    },
-                    scope       : this
-                }
-            }
-        };
-    
-        var prevBtn = {
-            xtype       : 'box',
-            autoEl      : {
-                tag         : 'a',
-                html        : '<i class="icon icon-minus"></i>',
-                cls         : 'x-btn x-btn-clientsettings',
-                current     : this.config.id + '-' + id
-            },
-            listeners   : {
-                render      : {
-                    fn          : function(button) {
-                        button.getEl().on('click', (function(event) {
-                            var index = this.items.findIndexBy(function(item) {
-                                return item.id === button.autoEl.current;
-                            });
-
-                            this.removeElement(index);
-                        }).bind(this));
-                    },
-                    scope       : this
-                }
-            }
-        };
-    
-        return {
-            layout      : 'column',
-            id          : this.config.id + '-' + id,
-            cls         : 'clientsettings-extra-combo-item',
-            defaults    : {
-                layout      : 'form',
-                hideLabels  : true
-            },
-            items       : [{
-                columnWidth : .42,
-                items       : [{
-                    xtype       : 'textfield',
-                    anchor      : '100%',
-                    emptyText   : _('clientsettings.label_setting_value'),
-                    type        : 'value',
-                    value       : data.value || '',
-                    listeners   : {
-                        blur        : {
-                            fn          : this.encodeData,
-                            scope       : this
-                        }
-                    }
-                }]
-            }, {
-                columnWidth : .42,
-                items       : [{
-                    xtype       : 'textfield',
-                    anchor      : '100%',
-                    emptyText   : _('clientsettings.label_setting_label'),
-                    type        : 'label',
-                    value       : data.label || '',
-                    listeners   : {
-                        blur        : {
-                            fn          : this.encodeData,
-                            scope       : this
-                        }
-                    }
-                }]
-            }, {
-                columnWidth : .16,
-                items       : index === 0 ? [nextBtn] : [nextBtn, prevBtn]
-            }]
-        };
-    }
-});
-
-Ext.reg('clientsettings-combo-values', ClientSettings.combo.Values);

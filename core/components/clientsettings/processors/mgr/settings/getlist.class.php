@@ -55,10 +55,22 @@ class ClientSettingsSettingGetListProcessor extends modObjectGetListProcessor
 
     /**
      * @access public.
+     * @return Mixed.
+     */
+    public function beforeQuery()
+    {
+        $this->setProperty('sort', $this->defaultSortField);
+
+        return parent::beforeQuery();
+    }
+
+    /**
+     * @access public.
      * @param xPDOQuery $criteria.
      * @return xPDOQuery.
      */
-    public function prepareQueryBeforeCount(xPDOQuery $criteria) {
+    public function prepareQueryBeforeCount(xPDOQuery $criteria)
+    {
         $criteria->setClassAlias('Setting');
 
         $criteria->select($this->modx->getSelectColumns('ClientSettingsSetting', 'Setting'));
@@ -81,6 +93,18 @@ class ClientSettingsSettingGetListProcessor extends modObjectGetListProcessor
                 'Setting.key:LIKE' => '%' . $query . '%'
             ]);
         }
+
+        return $criteria;
+    }
+
+    /**
+     * @access public.
+     * @param xPDOQuery $criteria.
+     * @return xPDOQuery.
+     */
+    public function prepareQueryAfterCount(xPDOQuery $criteria)
+    {
+        $criteria->sortby('Category.menuindex', 'ASC');
 
         return $criteria;
     }
