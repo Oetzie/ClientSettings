@@ -37,6 +37,7 @@ ClientSettings.page.Home = function(config) {
     }, {
         text        : _('save'),
         cls         : 'primary-button',
+        id          : 'modx-abtn-save',
         method      : 'remote',
         process     : 'mgr/save',
         keys        : [{

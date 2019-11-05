@@ -5,7 +5,7 @@
  * Copyright 2019 by Oene Tjeerd de Bruin <modx@oetzie.nl>
  */
 
-if (in_array($modx->event->name, ['OnLoadWebDocument'], true)) {
+if (in_array($modx->event->name, ['OnMODXInit', 'OnHandleRequest', 'pdoToolsOnFenomInit'], true)) {
     $instance = $modx->getService('clientsettingsplugins', 'ClientSettingsPlugins', $modx->getOption('clientsettings.core_path', null, $modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
 
     if ($instance instanceof ClientSettingsPlugins) {

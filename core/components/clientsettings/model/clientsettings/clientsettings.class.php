@@ -151,14 +151,76 @@ class ClientSettings
             'browser'       => $this->modx->lexicon('clientsettings.xtype_browser')
         ];
 
-        $object = $this->modx->getObject('modNamespace', [
-            'name' => 'clientgrid'
-        ]);
+        if ($this->modx->getObject('modNamespace', ['name' => 'tinymce'])) {
+            $xtypes['tinymce'] = $this->modx->lexicon('clientsettings.xtype_tinymce');
+        }
 
-        if ($object) {
+        if ($this->modx->getObject('modNamespace', ['name' => 'clientgrid'])) {
             $xtypes['clientgrid'] = $this->modx->lexicon('clientsettings.xtype_clientgrid');
         }
 
         return $xtypes;
+    }
+
+    /**
+     * @access public.
+     * @param String $context.
+     * @return Array.
+     */
+    public function getSettingsValues($context)
+    {
+        $settings = [];
+
+        $criteria = $this->modx->newQuery('ClientSettingsValue');
+
+        $criteria->setClassAlias('Value');
+
+        $criteria->select($this->modx->getSelectColumns('ClientSettingsValue', 'Value'));
+        $criteria->select($this->modx->getSelectColumns('ClientSettingsSetting', 'Setting', 'setting_', ['key', 'xtype', 'extra']));
+
+        $criteria->innerJoin('ClientSettingsSetting', 'Setting');
+
+        $criteria->where([
+            'Setting.active'    => 1,
+            'Value.context'     => $context
+        ]);
+
+        foreach ($this->modx->getCollection('ClientSettingsValue', $criteria) as $setting) {
+            if ($setting->get('key') === 'value') {
+                $value = unserialize($setting->get('value'));
+
+                if (is_array($value)) {
+                    $value = implode(',', $value);
+                }
+
+                $settings[$setting->get('setting_key')] = $this->formatValue($setting->get('setting_xtype'), json_decode($setting->get('setting_extra'), true), $value);
+            }
+        }
+
+        return $settings;
+    }
+
+    /**
+     * @access public.
+     * @param String $type.
+     * @param Array $properties.
+     * @param String $value.
+     * @return String.
+     */
+    protected function formatValue($type, array $properties = [], $value = '')
+    {
+        if (!empty($value) && $type === 'browser') {
+            if (isset($properties['source'])) {
+                $source = $this->modx->getObject('modMediaSource', [
+                    'id' => $properties['source']
+                ]);
+
+                if ($source) {
+                    $value = trim($source->getProperties()['baseUrl']['value'], '/') . '/' . $value;
+                }
+            }
+        }
+
+        return $value;
     }
 }

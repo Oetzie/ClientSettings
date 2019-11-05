@@ -91,15 +91,6 @@ class ClientSettingsSettingCreateProcessor extends modObjectCreateProcessor
                     ];
 
                     break;
-                case 'richtext':
-                    $extra = [
-                        'toolbar1'          => $this->getProperty('toolbar1'),
-                        'toolbar2'          => $this->getProperty('toolbar2'),
-                        'toolbar3'          => $this->getProperty('toolbar3'),
-                        'plugins'           => $this->getProperty('plugins')
-                    ];
-
-                    break;
                 case 'combo':
                 case 'checkboxgroup':
                 case 'radiogroup':
@@ -117,9 +108,15 @@ class ClientSettingsSettingCreateProcessor extends modObjectCreateProcessor
                     ];
 
                     break;
+                case 'tinymce':
+                    $extra = [
+                        'tinymceConfig'     => $this->getProperty('tinymceConfig')
+                    ];
+
+                    break;
                 case 'clientgrid':
                     $extra = [
-                        'grid'              => $this->getProperty('grid')
+                        'gridConfig'        => $this->getProperty('gridConfig')
                     ];
 
                     break;

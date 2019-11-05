@@ -145,17 +145,7 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                                 afterrender     : {
                                     fn              : function(event) {
                                         if (MODx.loadRTE) {
-                                            MODx.loadRTE(event.id, {
-                                                toolbar1    : element.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent',
-                                                toolbar2    : element.extra.toolbar2 || '',
-                                                toolbar3    : element.extra.toolbar3 || '',
-                                                plugins     : element.extra.plugins || '',
-                                                menubar     : false,
-                                                statusbar   : false,
-                                                width       : '60%',
-                                                height      : '250px',
-                                                toggle      : false
-                                            });
+                                            MODx.loadRTE(event.id);
                                         }
                                     }
                                 }
@@ -270,10 +260,25 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                         }, element);
 
                         break;
+                    case 'tinymce':
+                        element = Ext.applyIf({
+                            xtype           : 'textarea',
+                            listeners       : {
+                                afterrender     : {
+                                    fn              : function(event) {
+                                        if (MODx.loadRTE) {
+                                            MODx.loadRTE(event.id, element.extra.tinymceConfig);
+                                        }
+                                    }
+                                }
+                            }
+                        }, element);
+
+                        break;
                     case 'clientgrid':
                         element = Ext.applyIf({
                             xtype           : 'clientgrid-panel-gridview',
-                            grid            : element.extra.grid
+                            grid            : element.extra.gridConfig
                         }, element);
 
                         break;

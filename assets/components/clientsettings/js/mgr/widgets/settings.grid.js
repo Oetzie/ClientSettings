@@ -581,66 +581,6 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }]
                 }, {
-                    id          : 'clientsettings-extra-richtext-create',
-                    items       : [{
-                        layout      : 'column',
-                        defaults    : {
-                            layout      : 'form',
-                            labelSeparator : ''
-                        },
-                        items       : [{
-                            columnWidth     : .5,
-                            items       : [{
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar1'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar1_desc'),
-                                name        : 'toolbar1',
-                                anchor      : '100%',
-                                value       : 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent'
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar1_desc'),
-                                cls         : 'desc-under'
-                            }, {
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar3'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar3_desc'),
-                                name        : 'toolbar3',
-                                anchor      : '100%',
-                                value       : ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar3_desc'),
-                                cls         : 'desc-under'
-                            }]
-                        }, {
-                            columnWidth : .5,
-                            items       : [{
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar2'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar2_desc'),
-                                name        : 'toolbar2',
-                                anchor      : '100%',
-                                value       : ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar2_desc'),
-                                cls         : 'desc-under'
-                            }, {
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_plugins'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
-                                name        : 'plugins',
-                                anchor      : '100%',
-                                value       : ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_plugins_desc'),
-                                cls         : 'desc-under'
-                            }]
-                        }]
-                    }]
-                }, {
                     id          : 'clientsettings-extra-combo-create',
                     layout      : 'form',
                     labelSeparator : '',
@@ -708,18 +648,33 @@ ClientSettings.window.CreateSetting = function(config) {
                         }]
                     }]
                 }, {
+                    id          : 'clientsettings-extra-tinymce-create',
+                    layout      : 'form',
+                    labelSeparator : '',
+                    items       : [{
+                        xtype       : 'tinymce-combo-config',
+                        fieldLabel  : _('clientsettings.label_setting_tinymce_config'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_tinymce_config_desc'),
+                        hiddenName  : 'tinymceConfig',
+                        anchor      : '100%'
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_tinymce_config_desc'),
+                        cls         : 'desc-under'
+                    }]
+                }, {
                     id          : 'clientsettings-extra-clientgrid-create',
                     layout      : 'form',
                     labelSeparator : '',
                     items       : [{
-                        xtype       : 'textfield',
-                        fieldLabel  : _('clientsettings.label_setting_clientgrid'),
-                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_desc'),
-                        name        : 'grid',
+                        xtype       : 'clientgrid-combo-config',
+                        fieldLabel  : _('clientsettings.label_setting_clientgrid_config'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_config_desc'),
+                        hiddenName  : 'gridConfig',
                         anchor      : '100%'
                     }, {
                         xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                        html        : _('clientsettings.label_setting_clientgrid_desc'),
+                        html        : _('clientsettings.label_setting_clientgrid_config_desc'),
                         cls         : 'desc-under'
                     }]
                 }]
@@ -737,9 +692,9 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
             datefield       : false,
             timefield       : false,
             datetimefield   : false,
-            richtext        : false,
             combo           : false,
             browser         : false,
+            tinymce         : false,
             clientgrid      : false
         };
         
@@ -757,10 +712,6 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
                 elements.timefield  = true;
                 
                 break;
-            case 'richtext':
-                elements.richtext   = true;
-                
-                break;
             case 'combo':
             case 'radiogroup':
             case 'checkboxgroup':
@@ -770,6 +721,10 @@ Ext.extend(ClientSettings.window.CreateSetting, MODx.Window, {
             case 'browser':
                 elements.browser    = true;
             
+                break;
+            case 'tinymce':
+                elements.tinymce   = true;
+
                 break;
             case 'clientgrid':
                 elements.clientgrid = true;
@@ -1015,66 +970,6 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }]
                 }, {
-                    id          : 'clientsettings-extra-richtext-copy',
-                    items       : [{
-                        layout      : 'column',
-                        defaults    : {
-                            layout      : 'form',
-                            labelSeparator : ''
-                        },
-                        items       : [{
-                            columnWidth : .5,
-                            items       : [{
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar1'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar1_desc'),
-                                name        : 'toolbar1',
-                                anchor      : '100%',
-                                value       : config.record.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent'
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar1_desc'),
-                                cls         : 'desc-under'
-                            }, {
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar3'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar3_desc'),
-                                name        : 'toolbar3',
-                                anchor      : '100%',
-                                value       : config.record.extra.toolbar3 || ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar3_desc'),
-                                cls         : 'desc-under'
-                            }]
-                        }, {
-                            columnWidth : .5,
-                            items       : [{
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar2'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar2_desc'),
-                                name        : 'toolbar2',
-                                anchor      : '100%',
-                                value       : config.record.extra.toolbar2 || ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar2_desc'),
-                                cls         : 'desc-under'
-                            }, {
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_plugins'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
-                                name        : 'plugins',
-                                anchor      : '100%',
-                                value       : config.record.extra.plugins || 'plugins'
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_plugins_desc'),
-                                cls         : 'desc-under'
-                            }]
-                        }]
-                    }]
-                }, {
                     id          : 'clientsettings-extra-combo-copy',
                     layout      : 'form',
                     labelSeparator : '',
@@ -1144,19 +1039,35 @@ ClientSettings.window.DuplicateSetting = function(config) {
                         }]
                     }]
                 }, {
+                    id          : 'clientsettings-extra-tinymce-copy',
+                    layout      : 'form',
+                    labelSeparator : '',
+                    items       : [{
+                        xtype       : 'tinymce-combo-config',
+                        fieldLabel  : _('clientsettings.label_setting_tinymce_config'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_tinymce_config_desc'),
+                        hiddenName  : 'tinymceConfig',
+                        anchor      : '100%',
+                        value       : config.record.extra.tinymceConfig || ''
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_tinymce_config_desc'),
+                        cls         : 'desc-under'
+                    }]
+                }, {
                     id          : 'clientsettings-extra-clientgrid-copy',
                     layout      : 'form',
                     labelSeparator : '',
                     items       : [{
-                        xtype       : 'textfield',
-                        fieldLabel  : _('clientsettings.label_setting_clientgrid'),
-                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_desc'),
-                        name        : 'grid',
+                        xtype       : 'clientgrid-combo-config',
+                        fieldLabel  : _('clientsettings.label_setting_clientgrid_config'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_config_desc'),
+                        hiddenName  : 'gridConfig',
                         anchor      : '100%',
-                        value       : config.record.extra.grid || ''
+                        value       : config.record.extra.gridConfig || ''
                     }, {
                         xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                        html        : _('clientsettings.label_setting_clientgrid_desc'),
+                        html        : _('clientsettings.label_setting_clientgrid_config_desc'),
                         cls         : 'desc-under'
                     }]
                 }]
@@ -1174,9 +1085,9 @@ Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window, {
             datefield       : false,
             timefield       : false,
             datetimefield   : false,
-            richtext        : false,
             combo           : false,
             browser         : false,
+            tinymce         : false,
             clientgrid      : false
         };
 
@@ -1194,10 +1105,6 @@ Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window, {
                 elements.timefield  = true;
 
                 break;
-            case 'richtext':
-                elements.richtext   = true;
-
-                break;
             case 'combo':
             case 'radiogroup':
             case 'checkboxgroup':
@@ -1208,8 +1115,12 @@ Ext.extend(ClientSettings.window.DuplicateSetting, MODx.Window, {
                 elements.browser    = true;
 
                 break;
+            case 'tinymce':
+                elements.tinymce    = true;
+
+                break;
             case 'clientgrid':
-                elements.clientgrid = true;
+                elements.clientgrid  = true;
 
                 break;
             default:
@@ -1458,66 +1369,6 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }]
                 }, {
-                    id          : 'clientsettings-extra-richtext-update',
-                    items       : [{
-                        layout      : 'column',
-                        defaults    : {
-                            layout      : 'form',
-                            labelSeparator : ''
-                        },
-                        items       : [{
-                            columnWidth : .5,
-                            items       : [{
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar1'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar1_desc'),
-                                name        : 'toolbar1',
-                                anchor      : '100%',
-                                value       : config.record.extra.toolbar1 || 'undo redo | bold italic underline strikethrough | styleselect bullist numlist outdent indent'
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar1_desc'),
-                                cls         : 'desc-under'
-                            }, {
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar3'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar3_desc'),
-                                name        : 'toolbar3',
-                                anchor      : '100%',
-                                value       : config.record.extra.toolbar3 || ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar3_desc'),
-                                cls         : 'desc-under'
-                            }]
-                        }, {
-                            columnWidth : .5,
-                            items       : [{
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_toolbar2'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_toolbar2_desc'),
-                                name        : 'toolbar2',
-                                anchor      : '100%',
-                                value       : config.record.extra.toolbar2 || ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_toolbar2_desc'),
-                                cls         : 'desc-under'
-                            }, {
-                                xtype       : 'textfield',
-                                fieldLabel  : _('clientsettings.label_setting_plugins'),
-                                description : MODx.expandHelp ? '' : _('clientsettings.label_setting_plugins_desc'),
-                                name        : 'plugins',
-                                anchor      : '100%',
-                                value       : config.record.extra.plugins || ''
-                            }, {
-                                xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                                html        : _('clientsettings.label_setting_plugins_desc'),
-                                cls         : 'desc-under'
-                            }]
-                        }]
-                    }]
-                }, {
                     id          : 'clientsettings-extra-combo-update',
                     layout      : 'form',
                     labelSeparator : '',
@@ -1587,19 +1438,35 @@ ClientSettings.window.UpdateSetting = function(config) {
                         }]
                     }]
                 }, {
+                    id          : 'clientsettings-extra-tinymce-update',
+                    layout      : 'form',
+                    labelSeparator : '',
+                    items       : [{
+                        xtype       : 'tinymce-combo-config',
+                        fieldLabel  : _('clientsettings.label_setting_tinymce_config'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_tinymce_config_desc'),
+                        hiddenName  : 'tinymceConfig',
+                        anchor      : '100%',
+                        value       : config.record.extra.tinymceConfig || ''
+                    }, {
+                        xtype       : MODx.expandHelp ? 'label' : 'hidden',
+                        html        : _('clientsettings.label_setting_tinymce_config_desc'),
+                        cls         : 'desc-under'
+                    }]
+                }, {
                     id          : 'clientsettings-extra-clientgrid-update',
                     layout      : 'form',
                     labelSeparator : '',
                     items       : [{
-                        xtype       : 'textfield',
-                        fieldLabel  : _('clientsettings.label_setting_clientgrid'),
-                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_desc'),
-                        name        : 'grid',
+                        xtype       : 'clientgrid-combo-config',
+                        fieldLabel  : _('clientsettings.label_setting_clientgrid_config'),
+                        description : MODx.expandHelp ? '' : _('clientsettings.label_setting_clientgrid_config_desc'),
+                        name        : 'gridConfig',
                         anchor      : '100%',
-                        value       : config.record.extra.grid || ''
+                        value       : config.record.extra.gridConfig || ''
                     }, {
                         xtype       : MODx.expandHelp ? 'label' : 'hidden',
-                        html        : _('clientsettings.label_setting_clientgrid_desc'),
+                        html        : _('clientsettings.label_setting_clientgrid_config_desc'),
                         cls         : 'desc-under'
                     }]
                 }]
@@ -1617,9 +1484,9 @@ Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
             datefield       : false,
             timefield       : false,
             datetimefield   : false,
-            richtext        : false,
             combo           : false,
             browser         : false,
+            tinymce         : false,
             clientgrid      : false
         };
 
@@ -1637,10 +1504,6 @@ Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
                 elements.timefield  = true;
 
                 break;
-            case 'richtext':
-                elements.richtext   = true;
-
-                break;
             case 'combo':
             case 'radiogroup':
             case 'checkboxgroup':
@@ -1649,6 +1512,10 @@ Ext.extend(ClientSettings.window.UpdateSetting, MODx.Window, {
                 break;
             case 'browser':
                 elements.browser    = true;
+
+                break;
+            case 'tinymce':
+                elements.tinymce    = true;
 
                 break;
             case 'clientgrid':

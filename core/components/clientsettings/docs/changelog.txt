@@ -8,7 +8,8 @@ Released: 2019-10-20
 ----------------------
 - Bug fixes
 - Database query/snippet support for combo's
-- ClientGrid support if installed
+- ClientGrid support if installed (https://github.com/Oetzie/ClientGrid)
+- TinyMCE support if installed (https://github.com/Oetzie/TinyMCE)
 
 ----------------------
 Version: 1.2.0-pl
