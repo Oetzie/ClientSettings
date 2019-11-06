@@ -118,7 +118,7 @@ class ClientSettingsHomeManagerController extends ClientSettingsManagerControlle
 
                 $categoryArray = array_merge($category->toArray(), [
                     'name_formatted'        => $category->get('name'),
-                    'description_formatted' => $category->get('formatted'),
+                    'description_formatted' => $category->get('description'),
                     'settings'              => []
                 ]);
 
