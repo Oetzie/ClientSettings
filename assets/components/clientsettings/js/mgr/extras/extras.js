@@ -26,20 +26,20 @@ ClientSettings.combo.FieldTypes = function(config) {
 
     var data = [];
 
-    Ext.iterate(ClientSettings.config.xtypes, function(xtype, label) {
-        data.push([xtype, label]);
+    Ext.iterate(ClientSettings.config.xtypes, function(key, xtype) {
+        data.push([key, xtype.name, xtype.type || 'custom', xtype.fields || []]);
     });
 
     Ext.applyIf(config, {
         store       : new Ext.data.ArrayStore({
             mode        : 'local',
-            fields      : ['xtype', 'label'],
+            fields      : ['id', 'name', 'xtype', 'fields'],
             data        : data
         }),
-        remoteSort  : ['label', 'asc'],
+        remoteSort  : ['name', 'asc'],
         hiddenName  : 'xtype',
-        valueField  : 'xtype',
-        displayField : 'label',
+        valueField  : 'id',
+        displayField : 'name',
         mode        : 'local',
         value       : 'textfield'
     });
@@ -47,7 +47,11 @@ ClientSettings.combo.FieldTypes = function(config) {
     ClientSettings.combo.FieldTypes.superclass.constructor.call(this, config);
 };
 
-Ext.extend(ClientSettings.combo.FieldTypes, MODx.combo.ComboBox);
+Ext.extend(ClientSettings.combo.FieldTypes, MODx.combo.ComboBox, {
+    getRecordValue: function() {
+        return this.store.getAt(this.store.find(this.valueField, this.getValue()));
+    }
+});
 
 Ext.reg('clientsettings-combo-xtype', ClientSettings.combo.FieldTypes);
 
@@ -63,7 +67,7 @@ ClientSettings.combo.Values = function(config) {
         labelSeparator  : '',
         items       : [{
             xtype       : 'hidden',
-            name        : 'values',
+            name        : config.name || 'values',
             id          : (config.id || id) + '-value',
             value       : config.value || '[]',
             anchor      : '100%'

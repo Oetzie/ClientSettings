@@ -35,7 +35,7 @@ class ClientSettings
 
         $this->config = array_merge([
             'namespace'         => 'clientsettings',
-            'lexicons'          => ['clientsettings:default', 'clientsettings:settings', 'base:default', 'site:default'],
+            'lexicons'          => ['clientsettings:default', 'clientsettings:settings', 'base:clientsettings', 'site:clientsettings'],
             'base_path'         => $corePath,
             'core_path'         => $corePath,
             'model_path'        => $corePath . 'model/',
@@ -50,7 +50,7 @@ class ClientSettings
             'css_url'           => $assetsUrl . 'css/',
             'assets_url'        => $assetsUrl,
             'connector_url'     => $assetsUrl . 'connector.php',
-            'version'           => '1.3.0',
+            'version'           => '1.4.0',
             'branding_url'      => $this->modx->getOption('clientsettings.branding_url', null, ''),
             'branding_help_url' => $this->modx->getOption('clientsettings.branding_url_help', null, ''),
             'has_permission'    => (bool) $this->modx->hasPermission('clientsettings_admin'),
@@ -134,29 +134,78 @@ class ClientSettings
     public function getXTypes()
     {
         $xtypes = [
-            'textfield'     => $this->modx->lexicon('clientsettings.xtype_textfield'),
-            'datefield'     => $this->modx->lexicon('clientsettings.xtype_datefield'),
-            'timefield'     => $this->modx->lexicon('clientsettings.xtype_timefield'),
-            'datetimefield' => $this->modx->lexicon('clientsettings.xtype_datetimefield'),
-            'passwordfield' => $this->modx->lexicon('clientsettings.xtype_passwordfield'),
-            'numberfield'   => $this->modx->lexicon('clientsettings.xtype_numberfield'),
-            'textarea'      => $this->modx->lexicon('clientsettings.xtype_textarea'),
-            'richtext'      => $this->modx->lexicon('clientsettings.xtype_richtext'),
-            'boolean'       => $this->modx->lexicon('clientsettings.xtype_boolean'),
-            'combo'         => $this->modx->lexicon('clientsettings.xtype_combo'),
-            'checkbox'      => $this->modx->lexicon('clientsettings.xtype_checkbox'),
-            'checkboxgroup' => $this->modx->lexicon('clientsettings.xtype_checkboxgroup'),
-            'radiogroup'    => $this->modx->lexicon('clientsettings.xtype_radiogroup'),
-            'resource'      => $this->modx->lexicon('clientsettings.xtype_resource'),
-            'browser'       => $this->modx->lexicon('clientsettings.xtype_browser')
+            'textfield'     => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_textfield')
+            ],
+            'datefield'     => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_datefield')
+            ],
+            'timefield'     => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_timefield')
+            ],
+            'datetimefield' => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_datetimefield')
+            ],
+            'passwordfield' => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_passwordfield')
+            ],
+            'numberfield'   => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_numberfield')
+            ],
+            'textarea'      => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_textarea')
+            ],
+            'richtext'     => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_richtext')
+            ],
+            'boolean'       => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_boolean')
+            ],
+            'combo'         => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_combo')
+            ],
+            'checkbox'     => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_checkbox')
+            ],
+            'checkboxgroup' => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_checkboxgroup')
+            ],
+            'radiogroup'    => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_radiogroup')
+            ],
+            'resource'      => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_resource')
+            ],
+            'browser'      => [
+                'type'          => 'default',
+                'name'          => $this->modx->lexicon('clientsettings.xtype_browser')
+            ]
         ];
 
-        if ($this->modx->getObject('modNamespace', ['name' => 'tinymce'])) {
-            $xtypes['tinymce'] = $this->modx->lexicon('clientsettings.xtype_tinymce');
-        }
+        $this->modx->invokeEvent('OnClientSettingsRegisterSettings', [
+            'settings' => &$xtypes
+        ]);
 
-        if ($this->modx->getObject('modNamespace', ['name' => 'clientgrid'])) {
-            $xtypes['clientgrid'] = $this->modx->lexicon('clientsettings.xtype_clientgrid');
+        foreach ($xtypes as $key => $xtype) {
+            $xtypes[$key] = array_merge([
+                'type'      => 'custom',
+                'xtype'     => 'textfield',
+                'fields'    => []
+            ], $xtype);
         }
 
         return $xtypes;
@@ -210,9 +259,9 @@ class ClientSettings
     protected function formatValue($type, array $properties = [], $value = '')
     {
         if (!empty($value) && $type === 'browser') {
-            if (isset($properties['source'])) {
+            if (isset($properties['browser_source'])) {
                 $source = $this->modx->getObject('modMediaSource', [
-                    'id' => $properties['source']
+                    'id' => $properties['browser_source']
                 ]);
 
                 if ($source) {

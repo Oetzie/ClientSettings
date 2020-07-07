@@ -35,7 +35,7 @@ class ClientSettingsPlugins extends ClientSettings
     }
 
     /**
-     * @access public.
+     * @access private.
      */
     private function onHandleSettings()
     {

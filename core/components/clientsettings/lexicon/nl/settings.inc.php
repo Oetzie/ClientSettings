@@ -6,14 +6,14 @@
  * Copyright 2019 by Oene Tjeerd de Bruin <modx@oetzie.nl>
  */
     
-$_lang['category_clientsettings.general']                       = 'Algemeen';
-$_lang['category_clientsettings.general_desc']                  = 'Wijzig hier de algemene gegevens van de website.';
-$_lang['category_clientsettings.forms']                         = 'Formulieren';
-$_lang['category_clientsettings.forms_desc']                    = 'Wijzig hier de gegevens van alle formulieren van de website.';
-$_lang['category_clientsettings.social_media']                  = 'Social Media';
-$_lang['category_clientsettings.social_media_desc']             = 'Wijzig hier de social media accounts van de website.';
-$_lang['category_clientsettings.apis']                          = 'API\'s';
-$_lang['category_clientsettings.apis_desc']                     = 'Wijzig hier de API accounts.';
+$_lang['clientsettings.category_general']                       = 'Algemeen';
+$_lang['clientsettings.category_general_desc']                  = 'Wijzig hier de algemene gegevens van de website.';
+$_lang['clientsettings.category_forms']                         = 'Formulieren';
+$_lang['clientsettings.category_forms_desc']                    = 'Wijzig hier de gegevens van alle formulieren van de website.';
+$_lang['clientsettings.category_social_media']                  = 'Social Media';
+$_lang['clientsettings.category_social_media_desc']             = 'Wijzig hier de social media accounts van de website.';
+$_lang['clientsettings.category_apis']                          = 'API\'s';
+$_lang['clientsettings.category_apis_desc']                     = 'Wijzig hier de API accounts.';
 
 $_lang['setting_clientsettings.base_description']               = 'Website omschrijving';
 $_lang['setting_clientsettings.base_description_desc']          = 'De standaard website omschrijving, deze wordt getoond als er op paginaniveau geen omschrijving wordt opgegeven.';

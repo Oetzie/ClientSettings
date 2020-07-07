@@ -34,13 +34,22 @@ class ClientSettingsSettingUpdateProcessor extends modObjectUpdateProcessor
     {
         $this->modx->getService('clientsettings', 'ClientSettings', $this->modx->getOption('clientsettings.core_path', null, $this->modx->getOption('core_path') . 'components/clientsettings/') . 'model/clientsettings/');
 
-        $this->setProperty('key', strtolower(str_replace([' ', '-'], '_', $this->getProperty('key'))));
-
         if ($this->getProperty('active') === null) {
             $this->setProperty('active', 0);
         }
 
         return parent::initialize();
+    }
+
+    /**
+     * @access public.
+     * @return Mixed.
+     */
+    public function beforeSet()
+    {
+        $this->setProperty('key', strtolower(str_replace([' ', '-'], '_', $this->getProperty('key'))));
+
+        return parent::beforeSet();
     }
 
     /**
@@ -63,29 +72,30 @@ class ClientSettingsSettingUpdateProcessor extends modObjectUpdateProcessor
         $xtype = $this->getProperty('xtype');
 
         if ($xtype) {
-            $extra = [];
+            $extra      = [];
+            $properties = $this->getProperty('extra');
 
             switch($xtype) {
                 case 'datefield':
                     $extra = [
-                        'minDateValue'      => $this->getProperty('minDateValue'),
-                        'maxDateValue'      => $this->getProperty('maxDateValue')
+                        'min_date_value'                => $properties['min_date_value'] ?: '',
+                        'max_date_value'                => $properties['max_date_value'] ?: ''
                     ];
 
                     break;
                 case 'timefield':
                     $extra = [
-                        'minTimeValue'      => $this->getProperty('minTimeValue'),
-                        'maxTimeValue'      => $this->getProperty('maxTimeValue')
+                        'min_time_value'                => $properties['min_time_value'] ?: '',
+                        'max_time_value'                => $properties['max_time_value'] ?: ''
                     ];
 
                     break;
                 case 'datetimefield':
                     $extra = [
-                        'minDateValue'      => $this->getProperty('minDateValue'),
-                        'maxDateValue'      => $this->getProperty('maxDateValue'),
-                        'minTimeValue'      => $this->getProperty('minTimeValue'),
-                        'maxTimeValue'      => $this->getProperty('maxTimeValue')
+                        'min_date_value'                => $properties['min_date_value'] ?: '',
+                        'max_date_value'                => $properties['max_date_value'] ?: '',
+                        'min_time_value'                => $properties['min_time_value'] ?: '',
+                        'max_time_value'                => $properties['max_time_value'] ?: ''
                     ];
 
                     break;
@@ -93,29 +103,25 @@ class ClientSettingsSettingUpdateProcessor extends modObjectUpdateProcessor
                 case 'checkboxgroup':
                 case 'radiogroup':
                     $extra = [
-                        'values'            => json_decode($this->getProperty('values'), true),
-                        'bindedValues'      => $this->getProperty('bindedValues')
+                        'values'                        => json_decode($properties['values'] ?: '{}', true),
+                        'binded_values'                 => $properties['binded_values'] ?: ''
                     ];
 
                     break;
                 case 'browser':
                     $extra = [
-                        'source'            => $this->getProperty('source'),
-                        'openTo'            => $this->getProperty('openTo'),
-                        'allowedFileTypes'  => $this->getProperty('allowedFileTypes')
+                        'browser_source'                => $properties['browser_source'] ?: '',
+                        'browser_open_to'               => $properties['browser_open_to'] ?: '',
+                        'browser_allowed_file_types'    => $properties['browser_allowed_file_types'] ?: ''
                     ];
 
                     break;
-                case 'tinymce':
-                    $extra = [
-                        'tinymceConfig'     => $this->getProperty('tinymceConfig')
-                    ];
-
-                    break;
-                case 'clientgrid':
-                    $extra = [
-                        'gridConfig'        => $this->getProperty('gridConfig')
-                    ];
+                default:
+                    foreach ((array) $properties as $key => $property) {
+                        if (strpos($key, $xtype . '_') !== false) {
+                            $extra[$key] = $property;
+                        }
+                    }
 
                     break;
             }

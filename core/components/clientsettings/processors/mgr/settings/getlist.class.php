@@ -123,11 +123,11 @@ class ClientSettingsSettingGetListProcessor extends modObjectGetListProcessor
         ]);
 
         if (empty($object->get('label'))) {
-            $key        = 'setting_clientsettings.' . strtolower($object->get('key'));
-            $lexicon    = $this->modx->lexicon($key);
+            $labelLexicon   = 'setting_clientsettings.' . strtolower($object->get('key'));
+            $labelFormatted = $this->modx->lexicon($labelLexicon);
 
-            if ($key !== $lexicon) {
-                $array['label_formatted'] = $lexicon;
+            if ($labelLexicon !== $labelFormatted) {
+                $array['label_formatted'] = $labelFormatted;
             } else {
                 $array['label_formatted'] = $object->get('key');
             }
@@ -142,13 +142,11 @@ class ClientSettingsSettingGetListProcessor extends modObjectGetListProcessor
             }
         }
 
-        $key        = 'category_clientsettings.' . strtolower($object->get('category_name'));
-        $lexicon    = $this->modx->lexicon($key);
+        $categoryNameLexicon    = 'clientsettings.category_' . $object->get('category_name');
+        $categoryNameFormatted  = $this->modx->lexicon($categoryNameLexicon);
 
-        if ($key !== $lexicon) {
-            $array['category_name_formatted'] = $lexicon;
-        } else {
-            $array['category_name_formatted'] = $object->get('category_name');
+        if ($categoryNameLexicon !== $categoryNameFormatted) {
+            $array['category_name_formatted'] = $categoryNameFormatted;
         }
 
         if (in_array($object->get('editedon'), ['-001-11-30 00:00:00', '-1-11-30 00:00:00', '0000-00-00 00:00:00', null], true)) {

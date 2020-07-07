@@ -21,7 +21,8 @@ class ClientSettingsHomeManagerController extends ClientSettingsManagerControlle
 
         $this->addHtml('<script type="text/javascript">
             Ext.onReady(function() {
-                ClientSettings.config.settings = ' . $this->modx->toJSON($this->getSettings()) . ';
+                ClientSettings.config.xtypes    = ' . $this->modx->toJSON($this->modx->clientsettings->getXTypes()) . ';
+                ClientSettings.config.settings  = ' . $this->modx->toJSON($this->getSettings()) . ';
             });
         </script>');
     }
@@ -122,22 +123,18 @@ class ClientSettingsHomeManagerController extends ClientSettingsManagerControlle
                     'settings'              => []
                 ]);
 
-                $key        = 'category_clientsettings.' . strtolower($category->get('name'));
-                $lexicon    = $this->modx->lexicon($key);
+                $categoryNameLexicon    = 'clientsettings.category_' . $category->get('name');
+                $categoryNameFormatted  = $this->modx->lexicon($categoryNameLexicon);
 
-                if ($key !== $lexicon) {
-                    $categoryArray['name_formatted'] = $lexicon;
-                } else {
-                    $categoryArray['name_formatted'] = $category->get('name');
+                if ($categoryNameLexicon !== $categoryNameFormatted) {
+                    $categoryArray['name_formatted'] = $categoryNameFormatted;
                 }
 
-                if (empty($category->get('description'))) {
-                    $key        = 'category_clientsettings.' . strtolower($category->get('name')) . '_desc';
-                    $lexicon    = $this->modx->lexicon($key);
+                $descLexicon    = 'clientsettings.category_' . $category->get('name') . '_desc';
+                $descFormatted  = $this->modx->lexicon($descLexicon);
 
-                    if ($key !== $lexicon) {
-                        $categoryArray['description_formatted'] = $lexicon;
-                    }
+                if ($descLexicon !== $descFormatted) {
+                    $categoryArray['description_formatted'] = $descFormatted;
                 }
 
                 $criteria = $this->modx->newQuery('ClientSettingsSetting', [

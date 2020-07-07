@@ -6,14 +6,14 @@
  * Copyright 2019 by Oene Tjeerd de Bruin <modx@oetzie.nl>
  */
     
-$_lang['category_clientsettings.general']                       = 'General';
-$_lang['category_clientsettings.general_desc']                  = 'Manage here all the general settings of the site.';
-$_lang['category_clientsettings.forms']                         = 'Forms';
-$_lang['category_clientsettings.forms_desc']                    = 'Manage here all the form settings of the site.';
-$_lang['category_clientsettings.social_media']                  = 'Social Media';
-$_lang['category_clientsettings.social_media_desc']             = 'Manage here all the social media accounts of the site.';
-$_lang['category_clientsettings.apis']                          = 'APIs';
-$_lang['category_clientsettings.apis_desc']                     = 'Manage here all the API accounts.';
+$_lang['clientsettings.category_general']                       = 'General';
+$_lang['clientsettings.category_general_desc']                  = 'Manage here all the general settings of the site.';
+$_lang['clientsettings.category_forms']                         = 'Forms';
+$_lang['clientsettings.category_forms_desc']                    = 'Manage here all the form settings of the site.';
+$_lang['clientsettings.category_social_media']                  = 'Social Media';
+$_lang['clientsettings.category_social_media_desc']             = 'Manage here all the social media accounts of the site.';
+$_lang['clientsettings.category_apis']                          = 'APIs';
+$_lang['clientsettings.category_apis_desc']                     = 'Manage here all the API accounts.';
 
 $_lang['setting_clientsettings.base_description']               = 'Site description';
 $_lang['setting_clientsettings.base_description_desc']          = 'The defailt website description, this is shown if no description is specified on page level.';

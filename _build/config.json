@@ -3,7 +3,7 @@
     "lowCaseName": "clientsettings",
     "description": "A client settings solution for MODX Revolution.",
     "author": "Oetzie.nl",
-    "version": "1.3.0-pl",
+    "version": "1.4.0-pl",
     "package":{
         "menus": [{
             "text": "clientsettings",
@@ -35,7 +35,7 @@
             "key": "exclude_contexts",
             "area": "clientsettings"
         },{
-            "xtype": "combo-boolean",
+            "type": "combo-boolean",
             "key": "vtabs",
             "value": "0",
             "area": "clientsettings"
@@ -48,7 +48,8 @@
         "resolver": {
             "after": [
                 "tables.resolver.php",
-                "permissions.resolver.php"
+                "permissions.resolver.php",
+                "events.resolver.php"
             ]
         }
     }

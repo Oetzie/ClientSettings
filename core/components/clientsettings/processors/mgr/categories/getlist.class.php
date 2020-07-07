@@ -93,22 +93,18 @@ class ClientSettingsCategoryGetListProcessor extends modObjectGetListProcessor
             'description_formatted' => $object->get('description')
         ]);
 
-        $key        = 'category_clientsettings.' . strtolower($object->get('name'));
-        $lexicon    = $this->modx->lexicon($key);
+        $nameLexicon    = 'clientsettings.category_' . $object->get('name');
+        $nameFormatted  = $this->modx->lexicon($nameLexicon);
 
-        if ($key !== $lexicon) {
-            $array['name_formatted'] = $lexicon;
-        } else {
-            $array['name_formatted'] = $object->get('name');
+        if ($nameLexicon !== $nameFormatted) {
+            $array['name_formatted'] = $nameFormatted;
         }
 
-        if (empty($object->get('description'))) {
-            $key        = 'category_clientsettings.' . strtolower($object->get('name')) . '_desc';
-            $lexicon    = $this->modx->lexicon($key);
+        $descLexicon    = 'clientsettings.category_' . $object->get('name') . '_desc';
+        $descFormatted  = $this->modx->lexicon($descLexicon);
 
-            if ($key !== $lexicon) {
-                $array['description_formatted'] = $lexicon;
-            }
+        if ($descLexicon !== $descFormatted) {
+            $array['description_formatted'] = $descFormatted;
         }
 
         if (in_array($object->get('editedon'), ['-001-11-30 00:00:00', '-1-11-30 00:00:00', '0000-00-00 00:00:00', null], true)) {

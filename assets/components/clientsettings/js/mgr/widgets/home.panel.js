@@ -103,8 +103,8 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                         element = Ext.applyIf({
                             format          : MODx.config.manager_date_format,
                             startDay        : parseInt(MODx.config.manager_week_start),
-                            minValue        : element.extra.minDateValue,
-                            maxValue        : element.extra.maxDateValue
+                            minValue        : element.extra.min_date_value,
+                            maxValue        : element.extra.max_date_value
                         }, element);
 
                         break;
@@ -112,8 +112,8 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                         element = Ext.applyIf({
                             format          : MODx.config.manager_time_format,
                             offset_time     : MODx.config.server_offset_time,
-                            minValue        : element.extra.minTimeValue,
-                            maxValue        : element.extra.maxTimeValue
+                            minValue        : element.extra.min_time_value,
+                            maxValue        : element.extra.max_time_value
                         }, element);
 
                         break;
@@ -124,10 +124,10 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                             timeFormat      : MODx.config.manager_time_format,
                             startDay        : parseInt(MODx.config.manager_week_start),
                             offset_time     : MODx.config.server_offset_time,
-                            minDateValue    : element.extra.minDateValue,
-                            maxDateValue    : element.extra.maxDateValue,
-                            minTimeValue    : element.extra.minTimeValue,
-                            maxTimeValue    : element.extra.maxTimeValue
+                            minDateValue    : element.extra.min_date_value,
+                            maxDateValue    : element.extra.max_date_value,
+                            minTimeValue    : element.extra.min_time_value,
+                            maxTimeValue    : element.extra.max_time_value
                         }, element);
 
                         break;
@@ -254,32 +254,40 @@ Ext.extend(ClientSettings.panel.Home, MODx.FormPanel, {
                     case 'browser':
                         element = Ext.applyIf({
                             xtype           : 'modx-combo-browser',
-                            source          : element.extra.source || MODx.config.default_media_source,
-                            openTo          : element.extra.openTo || '/',
-                            allowedFileTypes : element.extra.allowedFileTypes || ''
+                            source          : element.extra.browser_source || MODx.config.default_media_source,
+                            openTo          : element.extra.browser_open_to || '/',
+                            allowedFileTypes : element.extra.browser_allowed_file_types || ''
                         }, element);
 
                         break;
-                    case 'tinymce':
-                        element = Ext.applyIf({
-                            xtype           : 'textarea',
-                            listeners       : {
-                                afterrender     : {
-                                    fn              : function(event) {
-                                        if (MODx.loadRTE) {
-                                            MODx.loadRTE(event.id, element.extra.tinymceConfig);
-                                        }
+                    default:
+                        if (ClientSettings.config.xtypes[setting.xtype]) {
+                            var customXType = ClientSettings.config.xtypes[setting.xtype];
+
+                            if (customXType.type === 'custom') {
+                                element.xtype = customXType.xtype;
+
+                                Ext.iterate(customXType.fields, (function(field) {
+                                    if (element.extra[setting.xtype + '_' + field.name]) {
+                                        element[field.name] = element.extra[setting.xtype + '_' + field.name];
+                                    } else {
+                                        element[field.name] = '';
                                     }
+                                }).bind(this));
+
+                                if (setting.xtype === 'tinymce') {
+                                    element.listeners = {
+                                        afterrender     : {
+                                            fn              : function(event) {
+                                                if (MODx.loadRTE) {
+                                                    MODx.loadRTE(event.id, element.config || null);
+                                                }
+                                            }
+                                        }
+                                    };
                                 }
                             }
-                        }, element);
-
-                        break;
-                    case 'clientgrid':
-                        element = Ext.applyIf({
-                            xtype           : 'clientgrid-panel-gridview',
-                            grid            : element.extra.gridConfig
-                        }, element);
+                        }
 
                         break;
                 }

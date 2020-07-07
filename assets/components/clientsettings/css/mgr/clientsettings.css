@@ -19,24 +19,23 @@
 }
 
 .modx-config-error {
-    padding: 15px;
     background-color: #fff;
 }
 
 .modx-config-error .x-panel-bwrap {
     color: #856404;
-    padding: 12px 20px;
+    padding: 12px 20px !important;
     background: #fff3cd !important;
     border: 1px solid #ffeeba;
     border-radius: 3px;
 }
 
-.vertical-tabs-body .panel-desc {
-    margin: 0;
+.x-form-element .modx-config-error {
+    margin: 8px 0;
 }
 
-.vertical-tabs-body .modx-config-error {
-    padding: 15px 0 0;
+.vertical-tabs-body .panel-desc {
+    margin: 0;
 }
 
 .x-window .vertical-tabs-bwrap {

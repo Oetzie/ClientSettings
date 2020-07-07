@@ -3,6 +3,13 @@ Client Settings
 ----------------------
 
 ----------------------
+Version: 1.4.0-pl
+Released: 2020-07-07
+----------------------
+- Bug fixes
+- ImageCropper support if installed (https://github.com/Sterc/imagecropper)
+
+----------------------
 Version: 1.3.0-pl
 Released: 2019-10-20
 ----------------------
@@ -42,7 +49,7 @@ Released: 2016-01-19
 ----------------------
 - Bug and code fixes
 - New settings types added
-	- extra setting values added
+    - extra setting values added
 
 ----------------------
 Version: 1.0.2-pl
@@ -50,9 +57,9 @@ Released: 2015-02-10
 ----------------------
 - Bug fixed
 - New setting types added
-	- 'Select resource from tree' type
-	- Media browser type
-	- Date / time type
+    - 'Select resource from tree' type
+    - Media browser type
+    - Date / time type
 
 ----------------------
 Version: 1.0.1-pl

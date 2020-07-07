@@ -75,7 +75,7 @@ class ClientSettingsSaveProcessor extends modObjectProcessor
             }
         }
 
-        $this->modx->invokeEvent('onClientSettingsSave');
+        $this->modx->invokeEvent('OnClientSettingsSave');
 
         return $this->success();
     }
